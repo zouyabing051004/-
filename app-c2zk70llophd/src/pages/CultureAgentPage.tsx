@@ -1,9 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { Bot, Clapperboard, Globe, Loader2, Palette, Send, Sparkles, Square, User, Volume2 } from "lucide-react";
+import {
+  Bot, Globe, Heart, Loader2, Palette, Send, Sparkles, Square, Star, User, Volume2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   type AgentLanguage,
   type ChatTurn,
@@ -12,13 +15,20 @@ import {
   extractSceneSpec,
   generateScenePicture,
   generateSceneVideo,
-  loadProfile,
-  rememberTopics,
-  saveProfile,
   streamCultureChat,
   waitForVideo,
 } from "@/services/cultureAgent";
+import {
+  type AgentMemory,
+  EMPTY_MEMORY,
+  absorbMessage,
+  loadMemory,
+  memoryForPrompt,
+  saveMemory,
+  toggleFavorite,
+} from "@/services/userMemory";
 import { generateSpeech } from "@/services/ai";
+import { searchPoems } from "@/data/poetryLibrary";
 
 interface AgentMessage {
   role: "user" | "assistant";
@@ -26,96 +36,104 @@ interface AgentMessage {
   imageUrl?: string;
   videoUrl?: string;
   pending?: boolean;
+  poemRef?: { id: string; title: string }; // 本条回答关联的诗（用于收藏）
 }
 
 const LANGUAGE_OPTIONS: { id: AgentLanguage; label: string }[] = [
   { id: "zh", label: "中文" },
   { id: "en", label: "English" },
-  { id: "bilingual", label: "双语 Bilingual" },
+  { id: "bilingual", label: "双语" },
 ];
 
-// 界面文案（跟随所选语言）
 const UI_TEXT: Record<AgentLanguage, {
-  greeting: string;
+  greeting: (nickname?: string) => string;
   banner: string;
   bannerSub: string;
   styleTitle: string;
   styleHint: string;
   promptsTitle: string;
+  memoryTitle: string;
+  memoryLogin: string;
+  memoryEmpty: string;
+  memoryLearned: (n: number) => string;
+  memoryFav: string;
   placeholder: string;
   footer: string;
   thinking: string;
+  favAdd: (t: string) => string;
+  favDone: string;
   suggestions: string[];
 }> = {
   zh: {
-    greeting:
-      "你好呀，我是知节 🌾 你的传统文化小伙伴！\n我会讲节气故事、读古诗，还会为诗句画画、做小视频。\n试试对我说：给《小池》配一幅水墨画",
+    greeting: (n) =>
+      `${n ? `${n}，欢迎回来！` : "你好呀！"}我是知节 🌾 你的传统文化小伙伴～\n我会讲节气故事、教你读古诗，还能为诗句画画、做小视频！`,
     banner: "知节 · AI文化伙伴",
-    bannerSub: "会讲节气、会读诗，还会为诗句画画、做小视频的传统文化智能体",
+    bannerSub: "讲节气 · 教古诗 · 会画画 · 记得你的每一个喜好",
     styleTitle: "画风选择",
-    styleHint: "生成图片和视频时会使用选中的画风",
+    styleHint: "画画和做视频时用这个风格",
     promptsTitle: "试试这样问",
-    placeholder: "问我节气诗词，或说：画一幅…／做一个…视频",
-    footer: "图片与视频均由 AI 生成 · 诗词原文、拼音与译文来自站内精选诗库",
-    thinking: "正在思考...",
-    suggestions: [
-      "给《小池》配一幅水墨画",
-      "把小暑的荷塘做成小视频",
-      "冬至为什么要吃饺子？",
-      "画一幅国潮风的春节",
-      "教我读《静夜思》",
-      "我们来玩诗词接龙吧！",
-    ],
+    memoryTitle: "知节记得你",
+    memoryLogin: "登录后，知节会永远记住你学过的诗和喜好，换手机也不会忘哦 🌱",
+    memoryEmpty: "多和知节聊聊，我会慢慢了解你喜欢什么～",
+    memoryLearned: (n) => `已经一起读过 ${n} 首诗啦`,
+    memoryFav: "我收藏的诗",
+    placeholder: "问我节气诗词，或说：画一幅…",
+    footer: "图片与视频由 AI 生成 · 诗词原文来自 500 首精选诗库",
+    thinking: "让我想想…",
+    favAdd: (t) => `⭐ 收藏《${t}》`,
+    favDone: "💛 已收藏",
+    suggestions: ["🌙 教我读《静夜思》", "🎨 给《小池》配幅水墨画", "🥟 冬至为什么吃饺子？", "🎬 把梅花做成小视频", "🀄 我们玩诗词接龙吧！"],
   },
   en: {
-    greeting:
-      "Hi! I'm Zhijie 🌾 your Chinese culture buddy!\nI can tell stories about the 24 solar terms, teach you Chinese poems (with pinyin!), and even paint pictures or make little videos for them.\nTry: Teach me the poem \"Spring Morning\"",
+    greeting: (n) =>
+      `${n ? `Welcome back, ${n}!` : "Hi there!"} I'm Zhijie 🌾 your Chinese culture buddy!\nI teach poems with pinyin, tell festival stories, and can paint or animate them!`,
     banner: "Zhijie · AI Culture Buddy",
-    bannerSub: "An AI friend who tells solar-term stories, teaches Chinese poems, and paints & animates them",
+    bannerSub: "Solar terms · Poems with pinyin · AI art · Remembers what you love",
     styleTitle: "Art Style",
-    styleHint: "Pictures and videos will use the selected style",
+    styleHint: "Used when painting & making videos",
     promptsTitle: "Try asking",
-    placeholder: "Ask about poems & festivals, or say: draw… / make a video of…",
-    footer: "Pictures & videos are AI-generated · Poem texts, pinyin and translations come from our curated library",
-    thinking: "Thinking...",
-    suggestions: [
-      "Teach me the poem \"Spring Morning\"",
-      "Draw an ink-wash picture of \"The Little Pond\"",
-      "Make a video of lotus flowers in summer",
-      "Why do people eat dumplings on Dongzhi?",
-      "What is the Chinese New Year like?",
-      "Tell me a story about the Mid-Autumn moon",
-    ],
+    memoryTitle: "Zhijie remembers you",
+    memoryLogin: "Log in and Zhijie will remember your poems & interests on any device 🌱",
+    memoryEmpty: "Chat with me and I'll learn what you like!",
+    memoryLearned: (n) => `We've read ${n} poems together`,
+    memoryFav: "My favorite poems",
+    placeholder: "Ask about poems, or say: draw…",
+    footer: "Pictures & videos are AI-generated · Poems from our 500-poem library",
+    thinking: "Thinking…",
+    favAdd: (t) => `⭐ Save "${t}"`,
+    favDone: "💛 Saved",
+    suggestions: ["🌙 Teach me the moon poem", "🎨 Draw the Little Pond in ink wash", "🧧 What is Chinese New Year?", "🎬 Make a video of plum blossoms", "🐉 Tell me about the Dragon Boat Festival"],
   },
   bilingual: {
-    greeting:
-      "你好呀，我是知节！Hi, I'm Zhijie! 🌾\n我会用中文和英文，给你讲节气、教古诗、画画、做小视频。\nI'll teach you Chinese culture in both languages — poems come with pinyin so you can read along!",
-    banner: "知节 Zhijie · AI文化伙伴 Culture Buddy",
-    bannerSub: "双语讲节气、教古诗、配画做视频 · Solar terms, poems, art & videos in two languages",
+    greeting: (n) =>
+      `${n ? `${n}，欢迎回来！Welcome back!` : "你好呀！Hi!"} 我是知节 Zhijie 🌾\n双语教古诗（带拼音）、讲节气，还会画画、做视频！`,
+    banner: "知节 Zhijie · AI文化伙伴",
+    bannerSub: "双语教诗 · 会画画 · 记得你 | Bilingual poems · AI art · Remembers you",
     styleTitle: "画风 Art Style",
-    styleHint: "生成图片和视频时会使用选中的画风 / Used for pictures & videos",
-    promptsTitle: "试试这样问 Try asking",
-    placeholder: "中文或English都可以 / Ask in Chinese or English",
-    footer: "AI 生成内容 AI-generated · 诗词原文、拼音与译文来自精选诗库 Poems from curated library",
-    thinking: "正在思考 Thinking...",
-    suggestions: [
-      "教我读《静夜思》 Teach me \"Thoughts on a Quiet Night\"",
-      "Draw the poem \"River Snow\" 画《江雪》",
-      "春节是什么？What is Chinese New Year?",
-      "Make a video of plum blossoms 梅花视频",
-      "我们玩诗词接龙 Let's play a poem game!",
-    ],
+    styleHint: "画画和视频用这个风格 / Used for art & videos",
+    promptsTitle: "试试 Try asking",
+    memoryTitle: "知节记得你 Zhijie remembers",
+    memoryLogin: "登录后跨设备记住你 Log in to be remembered on any device 🌱",
+    memoryEmpty: "多聊聊，我会了解你 Chat and I'll learn what you like!",
+    memoryLearned: (n) => `一起读过 ${n} 首诗 poems read together`,
+    memoryFav: "收藏 Favorites",
+    placeholder: "中文或 English 都可以",
+    footer: "AI 生成 AI-generated · 500 首诗库 500-poem library",
+    thinking: "想想 Thinking…",
+    favAdd: (t) => `⭐ 收藏 Save《${t}》`,
+    favDone: "💛 已收藏 Saved",
+    suggestions: ["🌙 教我读《静夜思》Moon poem", "🎨 Draw《江雪》River Snow", "🧧 春节 Chinese New Year?", "🎬 梅花视频 plum blossom video"],
   },
 };
 
 export default function CultureAgentPage() {
-  const [profile, setProfile] = useState(() => loadProfile());
-  const language = profile.language;
+  const { user } = useAuth();
+  const [memory, setMemory] = useState<AgentMemory>(EMPTY_MEMORY);
+  const [memoryReady, setMemoryReady] = useState(false);
+  const language = memory.language;
   const t = UI_TEXT[language];
 
-  const [messages, setMessages] = useState<AgentMessage[]>([
-    { role: "assistant", content: UI_TEXT[loadProfile().language].greeting },
-  ]);
+  const [messages, setMessages] = useState<AgentMessage[]>([]);
   const [input, setInput] = useState("");
   const [styleId, setStyleId] = useState(SCENE_STYLES[0].id);
   const [isLoading, setIsLoading] = useState(false);
@@ -125,13 +143,56 @@ export default function CultureAgentPage() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const speechCache = useRef<Map<string, string>>(new Map());
   const scrollRef = useRef<HTMLDivElement>(null);
+  const memoryRef = useRef(memory);
+  memoryRef.current = memory;
 
-  // 卸载时停止朗读
+  // 加载专属记忆（登录=云端，游客=本地），并用记忆里的称呼打招呼
+  useEffect(() => {
+    let cancelled = false;
+    loadMemory(user?.id ?? null).then((m) => {
+      if (cancelled) return;
+      setMemory(m);
+      setMemoryReady(true);
+      setMessages([{ role: "assistant", content: UI_TEXT[m.language].greeting(m.nickname) }]);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [user?.id]);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages]);
+
   useEffect(() => {
     return () => {
       audioRef.current?.pause();
     };
   }, []);
+
+  const updateMemory = (next: AgentMemory) => {
+    setMemory(next);
+    void saveMemory(user?.id ?? null, next);
+  };
+
+  const switchLanguage = (lang: AgentLanguage) => {
+    const next = { ...memory, language: lang };
+    updateMemory(next);
+    setMessages((prev) => [
+      ...prev,
+      { role: "assistant", content: UI_TEXT[lang].greeting(next.nickname) },
+    ]);
+  };
+
+  const updateLast = (patch: Partial<AgentMessage>) => {
+    setMessages((prev) => {
+      const next = [...prev];
+      next[next.length - 1] = { ...next[next.length - 1], ...patch };
+      return next;
+    });
+  };
 
   const stopSpeaking = () => {
     audioRef.current?.pause();
@@ -139,14 +200,12 @@ export default function CultureAgentPage() {
     setSpeakingIdx(null);
   };
 
-  // 「读给我听」：复用站内 MiniMax TTS 云函数，同一段话的音频缓存复用
   const handleSpeak = async (idx: number, text: string) => {
     if (speakingIdx === idx) {
       stopSpeaking();
       return;
     }
     stopSpeaking();
-    // 去掉 emoji 和链接，控制长度，让朗读干净
     const clean = text
       .replace(/\p{Extended_Pictographic}/gu, "")
       .replace(/https?:\/\/\S+/g, "")
@@ -174,27 +233,6 @@ export default function CultureAgentPage() {
     }
   };
 
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, [messages]);
-
-  const switchLanguage = (lang: AgentLanguage) => {
-    const next = { ...profile, language: lang };
-    setProfile(next);
-    saveProfile(next);
-    setMessages((prev) => [...prev, { role: "assistant", content: UI_TEXT[lang].greeting }]);
-  };
-
-  const updateLast = (patch: Partial<AgentMessage>) => {
-    setMessages((prev) => {
-      const next = [...prev];
-      next[next.length - 1] = { ...next[next.length - 1], ...patch };
-      return next;
-    });
-  };
-
   const runMediaPipeline = async (userMsg: string, wantVideo: boolean) => {
     const zh = language !== "en";
     setMessages((prev) => [
@@ -210,8 +248,8 @@ export default function CultureAgentPage() {
       const style = SCENE_STYLES.find((s) => s.id === styleId) ?? SCENE_STYLES[0];
       updateLast({
         content: zh
-          ? `构思好啦：${spec.scene}。正在用${style.name}风格落笔…`
-          : `Got it: ${spec.scene}. Painting in ${style.nameEn} style…`,
+          ? `构思好啦：${spec.scene}。正在用${style.name}风格落笔…🖌️`
+          : `Got it: ${spec.scene}. Painting in ${style.nameEn} style… 🖌️`,
       });
 
       const imageUrl = await generateScenePicture(style.build(spec));
@@ -228,8 +266,8 @@ export default function CultureAgentPage() {
 
       updateLast({
         content: zh
-          ? "画好底稿了，现在让画面动起来（大约需要1-2分钟）…🎬"
-          : "The picture is ready — now making it move (about 1-2 minutes)… 🎬",
+          ? "画好底稿了，现在让画面动起来（大约1-2分钟）…🎬"
+          : "The picture is ready — now making it move (1-2 min)… 🎬",
         imageUrl,
       });
       const taskId = await generateSceneVideo(imageUrl, spec);
@@ -259,16 +297,17 @@ export default function CultureAgentPage() {
   };
 
   const handleSend = async (preset?: string) => {
-    const userMsg = (preset ?? input).trim();
-    if (!userMsg || isLoading) return;
+    const userMsg = (preset ?? input).trim().replace(/^\p{Extended_Pictographic}\s*/u, "");
+    if (!userMsg || isLoading || !memoryReady) return;
 
     setInput("");
     setMessages((prev) => [...prev, { role: "user", content: userMsg }]);
     setIsLoading(true);
 
-    // 沉淀话题记忆（延时记忆第一步）
-    const nextProfile = rememberTopics(profile, userMsg);
-    if (nextProfile !== profile) setProfile(nextProfile);
+    // 沉淀专属记忆（话题/兴趣/学过的诗/自称）
+    const nextMemory = absorbMessage(memoryRef.current, userMsg);
+    updateMemory(nextMemory);
+    const matchedPoem = searchPoems(userMsg, 1)[0];
 
     const intent = detectMediaIntent(userMsg);
     if (intent) {
@@ -277,7 +316,6 @@ export default function CultureAgentPage() {
       return;
     }
 
-    // 纯对话：流式输出
     const history: ChatTurn[] = messages
       .filter((m) => m.content && !m.pending)
       .slice(-8)
@@ -285,13 +323,20 @@ export default function CultureAgentPage() {
 
     abortRef.current = new AbortController();
     let assistantContent = "";
-    setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
+    setMessages((prev) => [
+      ...prev,
+      {
+        role: "assistant",
+        content: "",
+        poemRef: matchedPoem ? { id: matchedPoem.id, title: matchedPoem.title } : undefined,
+      },
+    ]);
 
     await streamCultureChat(
       userMsg,
       history,
       language,
-      nextProfile,
+      memoryForPrompt(nextMemory),
       (chunk) => {
         assistantContent += chunk;
         updateLast({ content: assistantContent });
@@ -311,6 +356,8 @@ export default function CultureAgentPage() {
     );
   };
 
+  const isFav = (id?: string) => !!id && memory.favoritePoems.some((p) => p.id === id);
+
   return (
     <div className="pb-10">
       {/* 顶部 Banner */}
@@ -318,11 +365,11 @@ export default function CultureAgentPage() {
         <div className="p-6 md:p-8 max-w-5xl mx-auto">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
-              <h1 className="text-2xl font-bold text-white drop-shadow font-serif flex items-center gap-2">
-                <Sparkles className="w-6 h-6" />
+              <h1 className="text-2xl md:text-3xl font-bold text-white drop-shadow font-serif flex items-center gap-2">
+                <Sparkles className="w-7 h-7" />
                 {t.banner}
               </h1>
-              <p className="text-white/85 text-sm mt-1">{t.bannerSub}</p>
+              <p className="text-white/85 text-sm mt-1.5">{t.bannerSub}</p>
             </div>
             <div className="flex items-center gap-1 bg-white/15 rounded-full p-1">
               <Globe className="w-4 h-4 text-white/80 ml-2" />
@@ -331,7 +378,7 @@ export default function CultureAgentPage() {
                   key={opt.id}
                   size="sm"
                   variant="ghost"
-                  className={`rounded-full h-7 px-3 text-xs ${
+                  className={`rounded-full h-9 px-4 text-sm ${
                     language === opt.id
                       ? "bg-white text-emerald-900 hover:bg-white"
                       : "text-white/85 hover:bg-white/20 hover:text-white"
@@ -348,8 +395,65 @@ export default function CultureAgentPage() {
 
       <div className="p-4 md:p-6 max-w-5xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* 左侧：画风选择 + 灵感 */}
+          {/* 左侧：专属记忆 + 画风 + 灵感 */}
           <div className="space-y-4">
+            {/* 知节记得你 */}
+            <Card className="bg-card border-border shadow-card overflow-hidden">
+              <CardHeader className="pb-2 bg-gradient-to-r from-emerald-50 to-amber-50 dark:from-emerald-950 dark:to-amber-950">
+                <CardTitle className="text-sm flex items-center gap-2">
+                  <Heart className="w-4 h-4 text-rose-500" />
+                  {t.memoryTitle}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-3 space-y-2.5">
+                {!user && (
+                  <p className="text-xs text-muted-foreground leading-relaxed">{t.memoryLogin}</p>
+                )}
+                {memory.learnedPoems.length > 0 && (
+                  <p className="text-xs text-foreground flex items-center gap-1.5">
+                    <span className="text-base">📖</span>
+                    {t.memoryLearned(memory.learnedPoems.length)}
+                  </p>
+                )}
+                {memory.interests.length > 0 ? (
+                  <div className="flex flex-wrap gap-1.5">
+                    {memory.interests.map((tag) => (
+                      <span
+                        key={tag}
+                        className="text-[11px] px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-xs text-muted-foreground">{t.memoryEmpty}</p>
+                )}
+                {memory.favoritePoems.length > 0 && (
+                  <div>
+                    <p className="text-[11px] text-muted-foreground mb-1 flex items-center gap-1">
+                      <Star className="w-3 h-3 text-amber-500" />
+                      {t.memoryFav}
+                    </p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {memory.favoritePoems.map((p) => (
+                        <button
+                          key={p.id}
+                          type="button"
+                          className="text-[11px] px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200 hover:scale-105 transition-transform"
+                          onClick={() =>
+                            handleSend(language === "en" ? `Teach me "${p.title}"` : `教我读《${p.title}》`)
+                          }
+                        >
+                          《{p.title}》
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
             <Card className="bg-card border-border shadow-card">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm flex items-center gap-2">
@@ -358,17 +462,18 @@ export default function CultureAgentPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-0 space-y-2">
-                {SCENE_STYLES.map((s) => (
-                  <Button
-                    key={s.id}
-                    variant={styleId === s.id ? "default" : "ghost"}
-                    className="w-full justify-start text-sm h-auto py-2 px-3"
-                    onClick={() => setStyleId(s.id)}
-                  >
-                    <Clapperboard className="w-3 h-3 mr-2 shrink-0" />
-                    {language === "en" ? s.nameEn : `${s.name} ${s.nameEn}`}
-                  </Button>
-                ))}
+                <div className="flex flex-wrap gap-2">
+                  {SCENE_STYLES.map((s) => (
+                    <Button
+                      key={s.id}
+                      variant={styleId === s.id ? "default" : "outline"}
+                      className="rounded-full h-10 px-4 text-sm"
+                      onClick={() => setStyleId(s.id)}
+                    >
+                      {language === "en" ? s.nameEn : s.name}
+                    </Button>
+                  ))}
+                </div>
                 <p className="text-xs text-muted-foreground pt-1">{t.styleHint}</p>
               </CardContent>
             </Card>
@@ -380,14 +485,14 @@ export default function CultureAgentPage() {
                   {t.promptsTitle}
                 </CardTitle>
               </CardHeader>
-              <CardContent className="pt-0 space-y-2">
+              <CardContent className="pt-0 space-y-1.5">
                 {t.suggestions.map((q) => (
                   <Button
                     key={q}
                     variant="ghost"
-                    className="w-full justify-start text-sm h-auto py-2 px-3 text-left whitespace-normal"
+                    className="w-full justify-start text-sm h-auto min-h-10 py-2.5 px-3 text-left whitespace-normal rounded-xl hover:bg-emerald-50 dark:hover:bg-emerald-950"
                     onClick={() => handleSend(q)}
-                    disabled={isLoading}
+                    disabled={isLoading || !memoryReady}
                   >
                     <span className="text-foreground">{q}</span>
                   </Button>
@@ -398,19 +503,23 @@ export default function CultureAgentPage() {
 
           {/* 右侧：对话区 */}
           <div className="lg:col-span-2">
-            <div className="flex flex-col h-[560px] bg-card rounded-xl border border-border shadow-card">
-              <div className="flex items-center gap-2 p-4 border-b border-border">
-                <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center">
-                  <Bot className="w-4 h-4 text-secondary-foreground" />
+            <div className="flex flex-col h-[600px] bg-card rounded-2xl border border-border shadow-card">
+              <div className="flex items-center gap-3 p-4 border-b border-border">
+                <div className={`w-10 h-10 rounded-full bg-secondary flex items-center justify-center ${isLoading ? "animate-bounce" : ""}`}>
+                  <Bot className="w-5 h-5 text-secondary-foreground" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-semibold text-foreground">
+                  <h3 className="text-base font-semibold text-foreground">
                     {language === "en" ? "Zhijie" : "知节"}
+                    {memory.nickname && (
+                      <span className="ml-2 text-xs font-normal text-muted-foreground">
+                        {language === "en" ? `with ${memory.nickname}` : `和${memory.nickname}在一起`}
+                      </span>
+                    )}
                   </h3>
                   <p className="text-xs text-muted-foreground">
-                    {language === "en"
-                      ? "Chinese Culture Agent · Powered by DeepSeek"
-                      : "传统文化智能体 · DeepSeek驱动"}
+                    {language === "en" ? "Chinese Culture Agent" : "传统文化智能体"}
+                    {memory.qaCount > 0 && ` · ${memory.qaCount}${language === "en" ? " chats" : " 次对话"}`}
                   </p>
                 </div>
                 {isLoading && <Loader2 className="w-4 h-4 text-secondary animate-spin ml-auto" />}
@@ -424,56 +533,37 @@ export default function CultureAgentPage() {
                       className={`flex gap-2 ${msg.role === "user" ? "flex-row-reverse" : "flex-row"}`}
                     >
                       <div
-                        className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 ${
+                        className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
                           msg.role === "user" ? "bg-primary" : "bg-secondary"
                         }`}
                       >
                         {msg.role === "user" ? (
-                          <User className="w-3.5 h-3.5 text-primary-foreground" />
+                          <User className="w-4 h-4 text-primary-foreground" />
                         ) : (
-                          <Bot className="w-3.5 h-3.5 text-secondary-foreground" />
+                          <Bot className="w-4 h-4 text-secondary-foreground" />
                         )}
                       </div>
                       <div
-                        className={`max-w-[80%] rounded-lg px-3 py-2 text-sm whitespace-pre-wrap ${
+                        className={`max-w-[82%] rounded-2xl px-4 py-2.5 text-[15px] leading-relaxed whitespace-pre-wrap ${
                           msg.role === "user"
-                            ? "bg-primary text-primary-foreground"
-                            : "bg-accent text-accent-foreground"
+                            ? "bg-primary text-primary-foreground rounded-br-md"
+                            : "bg-accent text-accent-foreground rounded-bl-md"
                         }`}
                       >
                         {msg.content || (
-                          <span className="inline-flex items-center gap-1">
-                            <Loader2 className="w-3 h-3 animate-spin" />
+                          <span className="inline-flex items-center gap-1.5">
+                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
                             {t.thinking}
                           </span>
                         )}
                         {msg.pending && msg.content && (
-                          <Loader2 className="w-3 h-3 animate-spin inline-block ml-1" />
-                        )}
-                        {msg.role === "assistant" && msg.content && !msg.pending && (
-                          <button
-                            type="button"
-                            onClick={() => handleSpeak(idx, msg.content)}
-                            className="mt-1.5 flex items-center gap-1 text-xs opacity-70 hover:opacity-100 transition-opacity"
-                            aria-label={language === "en" ? "Read aloud" : "读给我听"}
-                          >
-                            {speechLoadingIdx === idx ? (
-                              <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                            ) : speakingIdx === idx ? (
-                              <Square className="w-3.5 h-3.5" />
-                            ) : (
-                              <Volume2 className="w-3.5 h-3.5" />
-                            )}
-                            {speakingIdx === idx
-                              ? language === "en" ? "Stop" : "停止"
-                              : language === "en" ? "Read aloud" : "读给我听"}
-                          </button>
+                          <Loader2 className="w-3.5 h-3.5 animate-spin inline-block ml-1.5" />
                         )}
                         {msg.imageUrl && (
                           <img
                             src={msg.imageUrl}
                             alt="AI generated scene"
-                            className="mt-2 rounded-lg w-full max-w-[320px]"
+                            className="mt-2 rounded-xl w-full max-w-[320px]"
                           />
                         )}
                         {msg.videoUrl && (
@@ -483,8 +573,38 @@ export default function CultureAgentPage() {
                             autoPlay
                             muted
                             loop
-                            className="mt-2 rounded-lg w-full max-w-[320px]"
+                            className="mt-2 rounded-xl w-full max-w-[320px]"
                           />
+                        )}
+                        {msg.role === "assistant" && msg.content && !msg.pending && (
+                          <div className="mt-2 flex items-center gap-3 flex-wrap">
+                            <button
+                              type="button"
+                              onClick={() => handleSpeak(idx, msg.content)}
+                              className="flex items-center gap-1 text-xs opacity-75 hover:opacity-100 transition-opacity min-h-8"
+                              aria-label={language === "en" ? "Read aloud" : "读给我听"}
+                            >
+                              {speechLoadingIdx === idx ? (
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                              ) : speakingIdx === idx ? (
+                                <Square className="w-4 h-4" />
+                              ) : (
+                                <Volume2 className="w-4 h-4" />
+                              )}
+                              {speakingIdx === idx
+                                ? language === "en" ? "Stop" : "停止"
+                                : language === "en" ? "Read aloud" : "读给我听"}
+                            </button>
+                            {msg.poemRef && (
+                              <button
+                                type="button"
+                                onClick={() => updateMemory(toggleFavorite(memoryRef.current, msg.poemRef!))}
+                                className="flex items-center gap-1 text-xs opacity-75 hover:opacity-100 transition-opacity min-h-8"
+                              >
+                                {isFav(msg.poemRef.id) ? t.favDone : t.favAdd(msg.poemRef.title)}
+                              </button>
+                            )}
+                          </div>
                         )}
                       </div>
                     </div>
@@ -493,7 +613,7 @@ export default function CultureAgentPage() {
               </ScrollArea>
 
               <div className="p-3 border-t border-border">
-                <div className="flex gap-2">
+                <div className="flex gap-2 items-end">
                   <Textarea
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
@@ -504,16 +624,16 @@ export default function CultureAgentPage() {
                       }
                     }}
                     placeholder={t.placeholder}
-                    className="min-h-[40px] max-h-[100px] resize-none text-sm"
+                    className="min-h-[48px] max-h-[110px] resize-none text-[15px] rounded-2xl px-4 py-3"
                     rows={1}
                   />
                   <Button
                     onClick={() => handleSend()}
-                    disabled={!input.trim() || isLoading}
+                    disabled={!input.trim() || isLoading || !memoryReady}
                     size="icon"
-                    className="shrink-0"
+                    className="shrink-0 h-12 w-12 rounded-full"
                   >
-                    <Send className="w-4 h-4" />
+                    <Send className="w-5 h-5" />
                   </Button>
                 </div>
                 <p className="text-[10px] text-muted-foreground mt-1.5 text-center">{t.footer}</p>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import IntersectObserver from '@/components/common/IntersectObserver';
 import { Toaster } from '@/components/ui/sonner';
 import MainLayout from '@/components/layouts/MainLayout';
@@ -11,11 +11,15 @@ import LoginPage from '@/pages/LoginPage';
 
 import { routes } from './routes';
 
+// 路由模式：默认 BrowserRouter；静态对象存储托管（无 SPA 回写规则）时用 hash 模式
+const ROUTER_MODE = import.meta.env.VITE_ROUTER_MODE as string | undefined;
+const Router = ROUTER_MODE === 'hash' ? HashRouter : BrowserRouter;
+
 const App: React.FC = () => {
   return (
     <AuthProvider>
       <AchievementProvider>
-        <Router basename={import.meta.env.BASE_URL}>
+        <Router basename={ROUTER_MODE === 'hash' ? undefined : import.meta.env.BASE_URL}>
           <IntersectObserver />
           <Routes>
             {/* 登录页独立渲染，不套 MainLayout */}

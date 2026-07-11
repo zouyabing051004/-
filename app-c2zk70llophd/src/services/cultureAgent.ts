@@ -21,57 +21,6 @@ export interface ChatTurn {
 
 export type AgentLanguage = "zh" | "en" | "bilingual";
 
-// ---------- 轻量用户画像（延时记忆第一步，仅存本地，不采集个人数据） ----------
-
-export interface UserProfile {
-  nickname?: string; // 孩子自己告诉智能体的称呼
-  language: AgentLanguage;
-  recentTopics: string[]; // 最近聊过的节气/诗词，用于"因人而异"的开场和推荐
-}
-
-const PROFILE_KEY = "culture-agent-profile";
-
-export function loadProfile(): UserProfile {
-  try {
-    const raw = localStorage.getItem(PROFILE_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw) as UserProfile;
-      return {
-        nickname: typeof parsed.nickname === "string" ? parsed.nickname : undefined,
-        language: parsed.language === "en" || parsed.language === "bilingual" ? parsed.language : "zh",
-        recentTopics: Array.isArray(parsed.recentTopics) ? parsed.recentTopics.slice(0, 5) : [],
-      };
-    }
-  } catch {
-    // 解析失败则重置
-  }
-  return { language: "zh", recentTopics: [] };
-}
-
-export function saveProfile(profile: UserProfile): void {
-  try {
-    localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
-  } catch {
-    // 隐私模式等场景忽略
-  }
-}
-
-// 从用户消息中沉淀话题记忆（命中的节气名/诗名）
-export function rememberTopics(profile: UserProfile, query: string): UserProfile {
-  const topics: string[] = [];
-  for (const t of solarTerms) {
-    if (query.includes(t.name)) topics.push(t.name);
-  }
-  for (const p of searchPoems(query, 2)) {
-    topics.push(`《${p.title}》`);
-  }
-  if (topics.length === 0) return profile;
-  const merged = [...topics, ...profile.recentTopics.filter((t) => !topics.includes(t))];
-  const next = { ...profile, recentTopics: merged.slice(0, 5) };
-  saveProfile(next);
-  return next;
-}
-
 // ---------- 知识检索（两层锚定：精选层三重校准 + 底层库约480首原文） ----------
 
 async function retrieveKnowledge(query: string): Promise<string> {
@@ -125,7 +74,7 @@ const LANGUAGE_RULES: Record<AgentLanguage, string> = {
 async function buildSystemPrompt(
   query: string,
   language: AgentLanguage,
-  profile: UserProfile
+  memoryText: string
 ): Promise<string> {
   const docs = await retrieveKnowledge(query);
   const today = new Date().toLocaleDateString("zh-CN", {
@@ -133,11 +82,7 @@ async function buildSystemPrompt(
     month: "long",
     day: "numeric",
   });
-  const memory =
-    (profile.nickname ? `用户希望被称呼为"${profile.nickname}"。` : "") +
-    (profile.recentTopics.length > 0
-      ? `用户最近聊过：${profile.recentTopics.join("、")}。可以自然地衔接或推荐相关内容，但不要每句都提。`
-      : "");
+  const memory = memoryText;
 
   return `你是"知节"（英文名 Zhijie），一位温润博学的中国传统文化向导，服务于一个面向全世界儿童传播中华传统文化的网站。用户主要是5-10岁的外国小朋友和他们的家长，多数不以中文为母语。
 
@@ -177,7 +122,7 @@ export async function streamCultureChat(
   userMessage: string,
   history: ChatTurn[],
   language: AgentLanguage,
-  profile: UserProfile,
+  memoryText: string,
   onChunk: (chunk: string) => void,
   onDone: () => void,
   onError: (error: Error) => void,
@@ -189,7 +134,7 @@ export async function streamCultureChat(
     return;
   }
 
-  const systemPrompt = await buildSystemPrompt(userMessage, language, profile);
+  const systemPrompt = await buildSystemPrompt(userMessage, language, memoryText);
   const handleData = (rawData: string) => {
     try {
       if (rawData === "[DONE]") return;

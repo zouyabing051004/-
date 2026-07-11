@@ -51,3 +51,44 @@ jobs:
           git push -f "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" gh-pages
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # ── 大陆直连版：hash 路由构建 → 上传到站点自己的 Supabase 公开存储桶（百度云，大陆可直接访问）──
+      # 桶策略为"匿名可新增、不可覆盖"，故每次部署用带 run_number 的新目录，文件不可被篡改
+      - name: Build (China mirror, hash router)
+        run: npx vite build --base=./ --outDir dist-cn
+        env:
+          VITE_SUPABASE_URL: https://backend.appmiaoda.com/projects/supabase320478069733244928
+          VITE_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoyMDk1ODM1MTI2LCJpc3MiOiJzdXBhYmFzZSIsInJvbGUiOiJhbm9uIiwic3ViIjoiYW5vbiJ9.iKorflFSe7jdx_50T14hKpAZ1oSn0JQb8W_pduqpLOs
+          VITE_APP_ID: app-c2zk70llophd
+          VITE_ROUTER_MODE: hash
+      - name: Upload China mirror to Supabase Storage
+        run: |
+          SUPABASE_URL="https://backend.appmiaoda.com/projects/supabase320478069733244928"
+          ANON="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoyMDk1ODM1MTI2LCJpc3MiOiJzdXBhYmFzZSIsInJvbGUiOiJhbm9uIiwic3ViIjoiYW5vbiJ9.iKorflFSe7jdx_50T14hKpAZ1oSn0JQb8W_pduqpLOs"
+          DEST="site-r${{ github.run_number }}"
+          cd dist-cn
+          fail=0
+          while IFS= read -r -d '' f; do
+            rel="${f#./}"
+            case "$rel" in
+              *.html) ct="text/html; charset=utf-8" ;;
+              *.js)   ct="text/javascript; charset=utf-8" ;;
+              *.css)  ct="text/css; charset=utf-8" ;;
+              *.svg)  ct="image/svg+xml" ;;
+              *.png)  ct="image/png" ;;
+              *.ico)  ct="image/x-icon" ;;
+              *.json) ct="application/json" ;;
+              *)      ct="application/octet-stream" ;;
+            esac
+            code=$(curl -sS -o /dev/null -w "%{http_code}" -X POST \
+              "$SUPABASE_URL/storage/v1/object/generated-audio/$DEST/$rel" \
+              -H "Authorization: Bearer $ANON" -H "apikey: $ANON" \
+              -H "Content-Type: $ct" --data-binary "@$f")
+            echo "$code  $rel"
+            [ "$code" = "200" ] || fail=1
+          done < <(find . -type f -print0)
+          URL="$SUPABASE_URL/storage/v1/object/public/generated-audio/$DEST/index.html"
+          echo "## 🇨🇳 大陆直连网址" >> $GITHUB_STEP_SUMMARY
+          echo "$URL" >> $GITHUB_STEP_SUMMARY
+          echo "CHINA_URL=$URL"
+          exit $fail
