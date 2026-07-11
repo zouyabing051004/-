@@ -11,8 +11,11 @@
 | [prompts/](./prompts/) | 智能体系统提示词 + 场景风格模板（设计参考） |
 | [examples/](./examples/) | 独立部署备选方案（FastAPI 代理 + iframe 挂件），已被站内实现取代 |
 
-**🌐 效果演示（可直接打开）**：https://claude.ai/code/artifact/40dc9fec-5221-4fe5-b439-b5c089bc63d9
-（离线演示版：双语对话、500 首诗词知识库浏览与检索、朗读示意；生产版按下方步骤部署）
+**🌐 正式站点（面向用户，自动部署）**：https://zouyabing051004.github.io/-/
+（完整网站 + AI伙伴智能体，连接真实 Supabase 后端；每次推送本分支代码即自动重新部署）
+
+**🧪 离线效果演示**：https://claude.ai/code/artifact/40dc9fec-5221-4fe5-b439-b5c089bc63d9
+（不联网的交互演示：双语对话、500 首诗词知识库浏览与检索、朗读示意）
 
 ## 智能体已实现的部分（在 `app-c2zk70llophd/` 中）
 
