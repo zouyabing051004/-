@@ -205,6 +205,12 @@ const IDLE_PHRASES: Record<string, string[]> = {
   秋: ["落叶好美哦🍂", "今天想探索哪个节气？", "我闻到麦穗香～"],
   冬: ["Zzz...💤", "轻轻叫醒我～", "冬眠中，点我！❄️"],
 };
+const IDLE_PHRASES_EN: Record<string, string[]> = {
+  春: ["Hi hi hi! 👋", "Learned a solar term today?", "My antlers are blooming 🌸"],
+  夏: ["So hot today ☀️!", "Ask me a summer secret!", "The fireflies are out 🌿"],
+  秋: ["Falling leaves are pretty 🍂", "Which term shall we explore?", "I smell ripe wheat~"],
+  冬: ["Zzz... 💤", "Wake me up gently~", "Napping — tap me! ❄️"],
+};
 
 /* ══════════════════════════════════════════
    浮动按钮组件 v2 — 全身大展示 + 精细动效
@@ -224,7 +230,7 @@ function FloatingBtn({ season, onClick, lang }: { season: keyof typeof SEASON_CO
 
   /* 随机台词气泡 */
   useEffect(() => {
-    const phrases = IDLE_PHRASES[season] ?? IDLE_PHRASES["春"];
+    const phrases = (lang === "en" ? IDLE_PHRASES_EN : IDLE_PHRASES)[season] ?? (lang === "en" ? IDLE_PHRASES_EN : IDLE_PHRASES)["春"];
     const schedule = () => {
       const delay = isSleepy ? 5000 : 8000 + Math.random() * 7000;
       const timer = setTimeout(() => {
@@ -237,7 +243,7 @@ function FloatingBtn({ season, onClick, lang }: { season: keyof typeof SEASON_CO
     };
     const t = schedule();
     return () => clearTimeout(t);
-  }, [season, isSleepy]);
+  }, [season, isSleepy, lang]);
 
   /* GSAP 待机动效（四季专属身体语言）*/
   useGSAP(() => {

@@ -221,7 +221,7 @@ export default function SolarTermDetailPage() {
                 )}
 
                 <div className="mt-4">
-                  <PoetryReader text={term.poem.content} title={term.poem.title} />
+                  <PoetryReader text={term.poem.content} title={lt.poem.title} />
                 </div>
               </div>
             </div>

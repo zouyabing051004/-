@@ -3,6 +3,7 @@ import { Play, Pause, Volume2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { generateSpeech } from "@/services/ai";
 import { toast } from "sonner";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface PoetryReaderProps {
   text: string;
@@ -10,6 +11,7 @@ interface PoetryReaderProps {
 }
 
 export default function PoetryReader({ text, title }: PoetryReaderProps) {
+  const { lang } = useLanguage();
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -74,14 +76,14 @@ export default function PoetryReader({ text, title }: PoetryReaderProps) {
       audio.onpause = () => setIsPlaying(false);
       audio.onended = () => setIsPlaying(false);
       audio.onerror = () => {
-        toast.error('语音播放失败，请重试');
+        toast.error(lang === 'en' ? 'Playback failed, please try again' : '语音播放失败，请重试');
         setIsPlaying(false);
       };
 
       audio.play();
     } catch (err) {
       console.error('语音合成失败:', err);
-      toast.error('语音生成失败，请重试');
+      toast.error(lang === 'en' ? 'Could not generate audio, please try again' : '语音生成失败，请重试');
     } finally {
       setIsLoading(false);
     }
@@ -106,11 +108,11 @@ export default function PoetryReader({ text, title }: PoetryReaderProps) {
       </Button>
       <div className="min-w-0">
         <p className="text-sm font-medium text-foreground">
-          {title ? `朗读：${title}` : '点击播放朗读'}
+          {title ? (lang === 'en' ? `Read aloud: ${title}` : `朗读：${title}`) : (lang === 'en' ? 'Tap to play' : '点击播放朗读')}
         </p>
         <p className="text-xs text-muted-foreground flex items-center gap-1">
           <Volume2 className="w-3 h-3" />
-          {isPlaying ? '正在朗读...' : 'AI语音合成'}
+          {isPlaying ? (lang === 'en' ? 'Reading aloud...' : '正在朗读...') : (lang === 'en' ? 'AI voice' : 'AI语音合成')}
         </p>
       </div>
     </div>

@@ -2,6 +2,8 @@ import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useEffect, useState } from "react";
 import { getCurrentSolarTerm, getNextSolarTerm } from "@/data/solarTerms";
+import { termNameEn, SEASON_EN } from "@/data/solarTermsEn";
+import { localizeTerm } from "@/data/localizeTerm";
 import { fetchCityWeather, getWeatherEmoji, type WeatherNow } from "@/services/weatherService";
 
 const MASCOT_IMG = "https://miaoda-conversation-file.cdn.bcebos.com/user-bp1ypf4gx3i8/app-c2zk70llophd/20260614/%E5%90%89%E7%A5%A5%E7%89%A9.png";
@@ -22,6 +24,21 @@ const mascotLines: Record<string, string[]> = {
   夏: ["今天芒果香香甜甜，我们来听故事吧！", "夏天到啦，节气真有趣！", "荷花开了，四四带你游！"],
   秋: ["秋天金灿灿的，一起探索吧！", "麦子成熟啦，快来学习！", "枫叶红了，节气奥秘等你！"],
   冬: ["冬天来了，一起探索节气吧！", "下雪啦，跟四四学节气！", "冬日暖暖，节气知识满满！"],
+};
+
+const mascotLinesEn: Record<string, string[]> = {
+  春: ["The spring breeze is warm today — let's hear a story!", "Everything's waking up — let's learn the solar terms!", "Pitter-patter spring rain — Sisi is waiting for you!"],
+  夏: ["The lotus flowers are blooming — Sisi will take you along!", "Summer's here — the solar terms are so much fun!", "What a sunny day — let's explore the solar terms!"],
+  秋: ["Autumn is golden — let's explore together!", "The wheat is ripe — come and learn!", "The maple leaves are red — solar-term secrets await!"],
+  冬: ["Winter's here — let's explore the solar terms!", "It's snowing — learn the solar terms with Sisi!", "Cozy winter days, full of solar-term facts!"],
+};
+
+// 常见天气中文→英文
+const WEATHER_EN: Record<string, string> = {
+  "晴": "Sunny", "多云": "Cloudy", "阴": "Overcast", "小雨": "Light rain",
+  "中雨": "Rain", "大雨": "Heavy rain", "暴雨": "Storm", "雷阵雨": "Thunderstorm",
+  "阵雨": "Showers", "小雪": "Light snow", "中雪": "Snow", "大雪": "Heavy snow",
+  "雪": "Snow", "雾": "Foggy", "霾": "Hazy", "沙尘": "Dusty",
 };
 
 const quickCards = [
@@ -112,7 +129,10 @@ function getLunarDate() {
   const d = getChinaDate();
   const lunarMonths = ["正月","二月","三月","四月","五月","六月","七月","八月","九月","十月","冬月","腊月"];
   const lunarDays   = ["初一","初二","初三","初四","初五","初六","初七","初八","初九","初十","十一","十二","十三","十四","十五","十六","十七","十八","十九","二十","廿一","廿二","廿三","廿四","廿五","廿六","廿七","廿八","廿九","三十"];
-  return { month: lunarMonths[(d.getMonth() + 1) % 12], day: lunarDays[(d.getDate() - 1) % 30] };
+  return {
+    month: lunarMonths[(d.getMonth() + 1) % 12], day: lunarDays[(d.getDate() - 1) % 30],
+    monthNum: ((d.getMonth() + 1) % 12) + 1, dayNum: ((d.getDate() - 1) % 30) + 1,
+  };
 }
 
 /* 麦穗 SVG */
@@ -136,7 +156,7 @@ export default function HomePage() {
   const currentTerm = getCurrentSolarTerm();
   const nextTerm    = getNextSolarTerm();
   const d           = getChinaDate();
-  const { month: lunarMonth, day: lunarDay } = getLunarDate();
+  const { month: lunarMonth, day: lunarDay, monthNum: lunarMonthNum, dayNum: lunarDayNum } = getLunarDate();
 
   const [weather, setWeather] = useState<WeatherNow | null>(null);
   const [lineIdx]             = useState(() => Math.floor(Math.random() * 3));
@@ -148,9 +168,15 @@ export default function HomePage() {
   }, []);
 
   const theme = seasonTheme[currentTerm.season] ?? seasonTheme["夏"];
-  const lines = mascotLines[currentTerm.season] ?? mascotLines["夏"];
-  const nextDate = new Date(d.getFullYear(), nextTerm.month - 1, nextTerm.day);
-  const todayStr = `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`;
+  const lines = (lang === "en" ? mascotLinesEn : mascotLines)[currentTerm.season] ?? (lang === "en" ? mascotLinesEn : mascotLines)["夏"];
+  let nextDate = new Date(d.getFullYear(), nextTerm.month - 1, nextTerm.day);
+  if (nextDate.getTime() < d.getTime()) nextDate = new Date(d.getFullYear() + 1, nextTerm.month - 1, nextTerm.day);
+  const daysToNext = Math.max(0, Math.ceil((nextDate.getTime() - d.getTime()) / 86400000));
+  const lt = localizeTerm(currentTerm, lang);
+  const heroName = lang === "en" ? termNameEn(currentTerm.id) : currentTerm.name;
+  const seasonLabel = lang === "en" ? SEASON_EN[currentTerm.season] : `${currentTerm.season}季`;
+  const enDate = d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  const termFoodName = lang === "en" ? termNameEn(currentTerm.id) : currentTerm.name;
 
   return (
     <div className="overflow-y-auto relative z-10" style={{ background: "#dcf0e8", minHeight: "100%" }}>
@@ -448,7 +474,7 @@ export default function HomePage() {
                 <span className="text-base">{theme.emoji}</span>
                 <span className="text-sm font-bold px-3 py-1 rounded-full"
                   style={{ background: "#D4EDBC", color: "#2d6b4a" }}>
-                  当前节气 · {currentTerm.season}季
+                  {lang === "en" ? `Current term · ${seasonLabel}` : `当前节气 · ${currentTerm.season}季`}
                 </span>
               </div>
 
@@ -462,12 +488,12 @@ export default function HomePage() {
                   WebkitTextStroke: "0.5px rgba(27,122,106,0.2)",
                 }}
               >
-                {currentTerm.name}
+                {heroName}
               </h1>
 
               {/* 日期 — 居中 */}
               <p className="text-sm font-semibold text-center" style={{ color: "#2a7060" }}>
-                约 {currentTerm.date}「{currentTerm.season}季」
+                {lang === "en" ? `Around ${lt.date} · ${seasonLabel}` : `约 ${currentTerm.date}「${currentTerm.season}季」`}
               </p>
             </div>
 
@@ -487,7 +513,7 @@ export default function HomePage() {
                   boxShadow: "0 2px 10px rgba(0,0,0,0.07)",
                 }}
               >
-              小鹿说：{lines[lineIdx]}
+              {lang === "en" ? "Sisi says: " : "小鹿说："}{lines[lineIdx]}
                 <span className="absolute -bottom-[8px] left-6"
                   style={{ width: 0, height: 0, borderLeft: "7px solid transparent", borderRight: "7px solid transparent", borderTop: "8px solid #c4922a" }} />
               </div>
@@ -495,7 +521,7 @@ export default function HomePage() {
               {/* 吉祥物立绘 */}
               <img
                 src={MASCOT_IMG}
-                alt="四四小鹿"
+                alt="Sisi the deer"
                 className="animate-float"
                 style={{
                   width: "clamp(80px, 22vw, 160px)",
@@ -512,7 +538,9 @@ export default function HomePage() {
 
               {/* 距下节气 */}
               <p className="text-xs font-semibold text-center" style={{ color: "#3d7a68" }}>
-                {lang === "en" ? <>Next solar term in {nextTerm.season} days</> : <>距下节气「{nextTerm.season}天」</>}
+                {lang === "en"
+                  ? <>Next: {termNameEn(nextTerm.id)} · in {daysToNext} day{daysToNext === 1 ? "" : "s"}</>
+                  : <>距下个节气「{nextTerm.name}」还有 {daysToNext} 天</>}
               </p>
 
               {/* 两个大 CTA */}
@@ -567,12 +595,14 @@ export default function HomePage() {
               <ellipse cx="31" cy="31" rx="8" ry="3" fill="#fff" opacity="0.4"/>
             </svg>
             <div className="flex flex-col gap-0.5 min-w-0">
-              <p className="text-xs text-muted-foreground font-medium leading-none">今日天气</p>
+              <p className="text-xs text-muted-foreground font-medium leading-none">{lang === "en" ? "Today\u2019s Weather" : "今日天气"}</p>
               <p className="font-black leading-tight" style={{ fontSize: 20, color: "#1B7A6A" }}>
                 {weather ? `${weather.temp}°` : "--°"}
               </p>
               <p className="text-xs font-semibold leading-none truncate" style={{ color: "#5a9c82" }}>
-                {weather ? `${getWeatherEmoji(weather.text)} ${weather.text}` : "⛅ 加载中"} 东风
+                {weather
+                  ? `${getWeatherEmoji(weather.text)} ${lang === "en" ? (WEATHER_EN[weather.text] ?? weather.text) : weather.text}`
+                  : (lang === "en" ? "⛅ Loading" : "⛅ 加载中")}
               </p>
             </div>
           </div>
@@ -607,11 +637,11 @@ export default function HomePage() {
               ))}
             </svg>
             <div className="flex flex-col gap-0.5 min-w-0">
-              <p className="text-xs text-muted-foreground font-medium leading-none">月日农历</p>
+              <p className="text-xs text-muted-foreground font-medium leading-none">{lang === "en" ? "Lunar Calendar" : "月日农历"}</p>
               <p className="font-black leading-tight text-center" style={{ fontSize: 17, color: "#1B7A6A" }}>
-                {lunarMonth}{lunarDay}
+                {lang === "en" ? `Month ${lunarMonthNum} · Day ${lunarDayNum}` : `${lunarMonth}${lunarDay}`}
               </p>
-              <p className="text-xs font-semibold leading-none truncate" style={{ color: "#5a9c82" }}>{todayStr.slice(5)}</p>
+              <p className="text-xs font-semibold leading-none truncate" style={{ color: "#5a9c82" }}>{lang === "en" ? enDate : `${d.getMonth() + 1}月${d.getDate()}日`}</p>
             </div>
           </div>
 
@@ -631,8 +661,8 @@ export default function HomePage() {
               <ellipse cx="28" cy="3" rx="5" ry="2.5" fill="#7bc97a" opacity="0.85"/>
             </svg>
             <div className="flex flex-col gap-0.5 min-w-0">
-              <p className="text-xs text-muted-foreground font-medium leading-none">民间饮食</p>
-              <p className="text-sm font-black leading-tight" style={{ color: "#1B7A6A" }}>芒种饮食</p>
+              <p className="text-xs text-muted-foreground font-medium leading-none">{lang === "en" ? "Folk Food" : "民间饮食"}</p>
+              <p className="text-sm font-black leading-tight" style={{ color: "#1B7A6A" }}>{lang === "en" ? `${termFoodName} Foods` : `${currentTerm.name}饮食`}</p>
             </div>
           </Link>
 
@@ -663,8 +693,8 @@ export default function HomePage() {
               <line x1="32" y1="45" x2="34" y2="53" stroke="#2d5f7a" strokeWidth="2.5" strokeLinecap="round"/>
             </svg>
             <div className="flex flex-col gap-0.5 min-w-0">
-              <p className="text-xs text-muted-foreground font-medium leading-none">夏日穿搭</p>
-              <p className="text-sm font-black leading-tight" style={{ color: "#1B7A6A" }}>芒种着装</p>
+              <p className="text-xs text-muted-foreground font-medium leading-none">{lang === "en" ? "What to Wear" : "夏日穿搭"}</p>
+              <p className="text-sm font-black leading-tight" style={{ color: "#1B7A6A" }}>{lang === "en" ? `${termFoodName} Outfits` : `${currentTerm.name}着装`}</p>
             </div>
           </Link>
         </div>
@@ -693,8 +723,8 @@ export default function HomePage() {
               <line x1="39" y1="32" x2="44" y2="36" stroke="#60a5fa" strokeWidth="2.5" strokeLinecap="round"/>
             </svg>
             <div className="flex flex-col gap-0.5 min-w-0">
-              <p className="text-xs font-medium leading-none" style={{ color: "#5a9c82" }}>节气故事</p>
-              <p className="text-sm font-black leading-tight" style={{ color: "#1B7A6A" }}>芒种故事</p>
+              <p className="text-xs font-medium leading-none" style={{ color: "#5a9c82" }}>{lang === "en" ? "Solar-Term Story" : "节气故事"}</p>
+              <p className="text-sm font-black leading-tight" style={{ color: "#1B7A6A" }}>{lang === "en" ? `${termFoodName} Story` : `${currentTerm.name}故事`}</p>
             </div>
           </Link>
 
@@ -724,8 +754,8 @@ export default function HomePage() {
               <circle cx="28" cy="17" r="3.5" fill="#4aba58" opacity="0.9"/>
             </svg>
             <div className="flex flex-col gap-0.5 min-w-0">
-              <p className="text-xs font-medium leading-none" style={{ color: "#5a9c82" }}>传统习俗</p>
-              <p className="text-sm font-black leading-tight" style={{ color: "#1B7A6A" }}>芒种习俗</p>
+              <p className="text-xs font-medium leading-none" style={{ color: "#5a9c82" }}>{lang === "en" ? "Traditions" : "传统习俗"}</p>
+              <p className="text-sm font-black leading-tight" style={{ color: "#1B7A6A" }}>{lang === "en" ? `${termFoodName} Customs` : `${currentTerm.name}习俗`}</p>
             </div>
           </Link>
 
@@ -752,8 +782,8 @@ export default function HomePage() {
               <line x1="30" y1="26" x2="34" y2="26" stroke="#fff" strokeWidth="1" opacity="0.8"/>
             </svg>
             <div className="flex flex-col gap-0.5 min-w-0">
-              <p className="text-xs font-medium leading-none" style={{ color: "#5a9c82" }}>古典诗词</p>
-              <p className="text-sm font-black leading-tight" style={{ color: "#1B7A6A" }}>芒种古诗词</p>
+              <p className="text-xs font-medium leading-none" style={{ color: "#5a9c82" }}>{lang === "en" ? "Classic Poems" : "古典诗词"}</p>
+              <p className="text-sm font-black leading-tight" style={{ color: "#1B7A6A" }}>{lang === "en" ? `${termFoodName} Poems` : `${currentTerm.name}古诗词`}</p>
             </div>
           </Link>
 
@@ -766,7 +796,7 @@ export default function HomePage() {
               <line x1="24" y1="14" x2="24" y2="34" stroke="#5BA883" strokeWidth="2.5" strokeLinecap="round"/>
               <line x1="14" y1="24" x2="34" y2="24" stroke="#5BA883" strokeWidth="2.5" strokeLinecap="round"/>
             </svg>
-            <p className="text-xs font-semibold" style={{ color: "#8BBFA8" }}>更多内容</p>
+            <p className="text-xs font-semibold" style={{ color: "#8BBFA8" }}>{lang === "en" ? "More coming" : "更多内容"}</p>
           </div>
         </div>
 
