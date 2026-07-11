@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import {
-  Bot, Globe, Heart, Loader2, Palette, Send, Sparkles, Square, Star, User, Volume2,
+  Globe, Heart, Loader2, Palette, Send, Sparkles, Square, Star, User, Volume2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,6 +8,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/contexts/AuthContext";
 import {
+  AGENT_AVATAR,
   type AgentLanguage,
   type ChatTurn,
   SCENE_STYLES,
@@ -29,6 +30,7 @@ import {
 } from "@/services/userMemory";
 import { generateSpeech } from "@/services/ai";
 import { searchPoems } from "@/data/poetryLibrary";
+import { PENDING_MESSAGE_KEY } from "@/components/FloatingAvatarChat";
 
 interface AgentMessage {
   role: "user" | "assistant";
@@ -66,15 +68,15 @@ const UI_TEXT: Record<AgentLanguage, {
 }> = {
   zh: {
     greeting: (n) =>
-      `${n ? `${n}，欢迎回来！` : "你好呀！"}我是知节 🌾 你的传统文化小伙伴～\n我会讲节气故事、教你读古诗，还能为诗句画画、做小视频！`,
-    banner: "知节 · AI文化伙伴",
+      `${n ? `${n}，欢迎回来！` : "你好呀！"}我是四四 🦌 欢迎来到我的家～\n我会讲节气故事、教你读古诗，还能为诗句画画、做小视频！`,
+    banner: "四四的家 · AI文化伙伴",
     bannerSub: "讲节气 · 教古诗 · 会画画 · 记得你的每一个喜好",
     styleTitle: "画风选择",
     styleHint: "画画和做视频时用这个风格",
     promptsTitle: "试试这样问",
-    memoryTitle: "知节记得你",
-    memoryLogin: "登录后，知节会永远记住你学过的诗和喜好，换手机也不会忘哦 🌱",
-    memoryEmpty: "多和知节聊聊，我会慢慢了解你喜欢什么～",
+    memoryTitle: "四四记得你",
+    memoryLogin: "登录后，四四会永远记住你学过的诗和喜好，换手机也不会忘哦 🌱",
+    memoryEmpty: "多和四四聊聊，我会慢慢了解你喜欢什么～",
     memoryLearned: (n) => `已经一起读过 ${n} 首诗啦`,
     memoryFav: "我收藏的诗",
     placeholder: "问我节气诗词，或说：画一幅…",
@@ -86,14 +88,14 @@ const UI_TEXT: Record<AgentLanguage, {
   },
   en: {
     greeting: (n) =>
-      `${n ? `Welcome back, ${n}!` : "Hi there!"} I'm Zhijie 🌾 your Chinese culture buddy!\nI teach poems with pinyin, tell festival stories, and can paint or animate them!`,
-    banner: "Zhijie · AI Culture Buddy",
+      `${n ? `Welcome back, ${n}!` : "Hi there!"} I'm Sisi the little deer 🦌 welcome to my home!\nI teach poems with pinyin, tell festival stories, and can paint or animate them!`,
+    banner: "Sisi's Home · AI Culture Buddy",
     bannerSub: "Solar terms · Poems with pinyin · AI art · Remembers what you love",
     styleTitle: "Art Style",
     styleHint: "Used when painting & making videos",
     promptsTitle: "Try asking",
-    memoryTitle: "Zhijie remembers you",
-    memoryLogin: "Log in and Zhijie will remember your poems & interests on any device 🌱",
+    memoryTitle: "Sisi remembers you",
+    memoryLogin: "Log in and Sisi will remember your poems & interests on any device 🌱",
     memoryEmpty: "Chat with me and I'll learn what you like!",
     memoryLearned: (n) => `We've read ${n} poems together`,
     memoryFav: "My favorite poems",
@@ -106,13 +108,13 @@ const UI_TEXT: Record<AgentLanguage, {
   },
   bilingual: {
     greeting: (n) =>
-      `${n ? `${n}，欢迎回来！Welcome back!` : "你好呀！Hi!"} 我是知节 Zhijie 🌾\n双语教古诗（带拼音）、讲节气，还会画画、做视频！`,
-    banner: "知节 Zhijie · AI文化伙伴",
+      `${n ? `${n}，欢迎回来！Welcome back!` : "你好呀！Hi!"} 我是四四 Sisi 🦌\n双语教古诗（带拼音）、讲节气，还会画画、做视频！`,
+    banner: "四四的家 Sisi's Home",
     bannerSub: "双语教诗 · 会画画 · 记得你 | Bilingual poems · AI art · Remembers you",
     styleTitle: "画风 Art Style",
     styleHint: "画画和视频用这个风格 / Used for art & videos",
     promptsTitle: "试试 Try asking",
-    memoryTitle: "知节记得你 Zhijie remembers",
+    memoryTitle: "四四记得你 Sisi remembers",
     memoryLogin: "登录后跨设备记住你 Log in to be remembered on any device 🌱",
     memoryEmpty: "多聊聊，我会了解你 Chat and I'll learn what you like!",
     memoryLearned: (n) => `一起读过 ${n} 首诗 poems read together`,
@@ -165,6 +167,22 @@ export default function CultureAgentPage() {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages]);
+
+  // 悬浮四四带来的未完成请求（如"画一幅梅花"）：到家后自动继续
+  const pendingHandled = useRef(false);
+  useEffect(() => {
+    if (!memoryReady || pendingHandled.current) return;
+    let pending: string | null = null;
+    try {
+      pending = sessionStorage.getItem(PENDING_MESSAGE_KEY);
+      if (pending) sessionStorage.removeItem(PENDING_MESSAGE_KEY);
+    } catch { /* ignore */ }
+    if (pending) {
+      pendingHandled.current = true;
+      void handleSend(pending);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [memoryReady]);
 
   useEffect(() => {
     return () => {
@@ -505,12 +523,12 @@ export default function CultureAgentPage() {
           <div className="lg:col-span-2">
             <div className="flex flex-col h-[600px] bg-card rounded-2xl border border-border shadow-card">
               <div className="flex items-center gap-3 p-4 border-b border-border">
-                <div className={`w-10 h-10 rounded-full bg-secondary flex items-center justify-center ${isLoading ? "animate-bounce" : ""}`}>
-                  <Bot className="w-5 h-5 text-secondary-foreground" />
+                <div className={`w-11 h-12 rounded-2xl overflow-hidden border border-border/60 shadow-sm ${isLoading ? "animate-bounce" : ""}`}>
+                  <img src={AGENT_AVATAR} alt="四四" className="w-full h-full object-cover object-top" style={{ mixBlendMode: "multiply" }} />
                 </div>
                 <div>
                   <h3 className="text-base font-semibold text-foreground">
-                    {language === "en" ? "Zhijie" : "知节"}
+                    {language === "en" ? "Sisi" : "四四"}
                     {memory.nickname && (
                       <span className="ml-2 text-xs font-normal text-muted-foreground">
                         {language === "en" ? `with ${memory.nickname}` : `和${memory.nickname}在一起`}
@@ -540,7 +558,7 @@ export default function CultureAgentPage() {
                         {msg.role === "user" ? (
                           <User className="w-4 h-4 text-primary-foreground" />
                         ) : (
-                          <Bot className="w-4 h-4 text-secondary-foreground" />
+                          <img src={AGENT_AVATAR} alt="四四" className="w-full h-full object-cover object-top rounded-full" style={{ mixBlendMode: "multiply" }} />
                         )}
                       </div>
                       <div

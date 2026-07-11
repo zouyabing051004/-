@@ -199,7 +199,7 @@ const TabIconAgent = ({ active }: { active: boolean }) => (
 const bottomTabs = [
   { name: "首页",  path: "/",                    Icon: TabIconHome,    activeKey: "/" },
   { name: "节气",  path: "/solar-term/lichun",   Icon: TabIconSolar,   activeKey: "/solar-term" },
-  { name: "AI伙伴", path: "/culture",            Icon: TabIconAgent,   activeKey: "/culture" },
+  { name: "四四",   path: "/culture",            Icon: TabIconAgent,   activeKey: "/culture" },
   { name: "诗词",  path: "/poetry",              Icon: TabIconPoetry,  activeKey: "/poetry" },
   { name: "成就",  path: "/achievement",         Icon: TabIconAchieve, activeKey: "/achievement" },
 ];
@@ -363,7 +363,7 @@ function SolarTermDropdown() {
 /* ── 顶部横向导航（桌面）── */
 const navItems = [
   { name: "首页",     path: "/" },
-  { name: "AI伙伴",   path: "/culture" },
+  { name: "四四的家", path: "/culture" },
   { name: "民间饮食", path: "/folk-food" },
   { name: "传统习俗", path: "/customs" },
   { name: "实景社区", path: "/community" },

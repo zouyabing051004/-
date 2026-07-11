@@ -1,13 +1,26 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { X, Send, Sparkles } from "lucide-react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Home, X, Send, Sparkles } from "lucide-react";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import { streamAIChat } from "@/services/ai";
+import { detectMediaIntent, streamCultureChat } from "@/services/cultureAgent";
+import {
+  type AgentMemory,
+  EMPTY_MEMORY,
+  absorbMessage,
+  loadMemory,
+  memoryForPrompt,
+  saveMemory,
+} from "@/services/userMemory";
+import { useAuth } from "@/contexts/AuthContext";
 import { getCurrentSolarTerm } from "@/data/solarTerms";
 import { toast } from "sonner";
+
+// 悬浮四四与「AI伙伴」页（四四的家）之间的接力：带着未完成的请求跳转
+export const PENDING_MESSAGE_KEY = "sisi-pending-message";
 
 gsap.registerPlugin(useGSAP);
 
@@ -397,7 +410,7 @@ function FloatingBtn({ season, onClick }: { season: keyof typeof SEASON_CONFIG; 
 ══════════════════════════════════════════ */
 function ChatPanel({
   isOpen, onClose, season, messages, isStreaming,
-  onSend, input, setInput, scrollRef,
+  onSend, input, setInput, scrollRef, onGoHome,
 }: {
   isOpen: boolean; onClose: () => void;
   season: keyof typeof SEASON_CONFIG;
@@ -405,6 +418,7 @@ function ChatPanel({
   onSend: (text: string) => void;
   input: string; setInput: (v: string) => void;
   scrollRef: React.RefObject<HTMLDivElement | null>;
+  onGoHome: () => void;
 }) {
   const panelRef     = useRef<HTMLDivElement>(null);
   const mascotRef    = useRef<HTMLDivElement>(null);  // 面板大吉祥物
@@ -657,6 +671,16 @@ function ChatPanel({
 
       {/* 输入区 */}
       <div className="px-4 py-3 border-t border-border shrink-0 bg-background/80">
+        {/* 去四四的家：画画/做视频/收藏诗词的完整乐园 */}
+        <button
+          type="button"
+          onClick={onGoHome}
+          className="w-full mb-2 flex items-center justify-center gap-1.5 text-xs font-semibold py-2 rounded-2xl border transition-all active:scale-95"
+          style={{ color: cfg.glow, borderColor: `rgba(${cfg.glowRgb},0.4)`, background: `rgba(${cfg.glowRgb},0.08)` }}
+        >
+          <Home className="w-3.5 h-3.5" />
+          去四四的家 🎨 画画 · 做视频 · 我的诗集
+        </button>
         <form
           onSubmit={e => { e.preventDefault(); onSend(input); }}
           className="flex gap-2 items-center"
@@ -694,6 +718,17 @@ export default function FloatingAvatarChat() {
   const [isStreaming, setIsStreaming] = useState(false);
   const abortRef  = useRef<AbortController | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const navigate  = useNavigate();
+  const location  = useLocation();
+  const { user }  = useAuth();
+
+  /* 长期记忆：与「AI伙伴」页共用同一份（登录=云端，游客=本地） */
+  const memoryRef = useRef<AgentMemory>(EMPTY_MEMORY);
+  useEffect(() => {
+    loadMemory(user?.id ?? null).then((m) => {
+      memoryRef.current = m;
+    });
+  }, [user?.id]);
 
   /* 当前季节 */
   const currentTerm = getCurrentSolarTerm();
@@ -705,11 +740,32 @@ export default function FloatingAvatarChat() {
   const [messages, setMessages] = useState<Message[]>(() => [{
     role: "assistant",
     id: "welcome",
-    content: `你好呀小朋友！${cfg.emoji}\n\n${cfg.greetings[Math.floor(Math.random() * cfg.greetings.length)]}\n\n你可以问我任何关于二十四节气的问题，我会用有趣的方式回答你哦～`,
+    content: `你好呀小朋友！${cfg.emoji}\n\n${cfg.greetings[Math.floor(Math.random() * cfg.greetings.length)]}\n\n节气、古诗、传统节日都可以问我；想画画或做小视频，就到"四四的家"来～`,
   }]);
+
+  /* 去四四的家（AI伙伴页），可携带未完成的请求 */
+  const goHome = useCallback((pendingText?: string) => {
+    if (pendingText) {
+      try { sessionStorage.setItem(PENDING_MESSAGE_KEY, pendingText); } catch { /* ignore */ }
+    }
+    setIsOpen(false);
+    navigate("/culture");
+  }, [navigate]);
 
   async function sendMessage(text: string) {
     if (!text.trim() || isStreaming) return;
+
+    /* 画画/视频请求 → 带着请求去四四的家（那里有画板和放映厅） */
+    if (detectMediaIntent(text)) {
+      setMessages(prev => [...prev,
+        { role: "user", content: text, id: Date.now().toString() },
+        { role: "assistant", content: "画画要用我家里的大画板哦！🎨 这就带你去，马上开始画～", id: (Date.now() + 1).toString() },
+      ]);
+      setInput("");
+      setTimeout(() => goHome(text), 900);
+      return;
+    }
+
     const userMsg: Message     = { role: "user",      content: text, id: Date.now().toString() };
     const assistantMsg: Message = { role: "assistant", content: "",   id: (Date.now() + 1).toString() };
     setMessages(prev => [...prev, userMsg, assistantMsg]);
@@ -717,9 +773,23 @@ export default function FloatingAvatarChat() {
     setIsStreaming(true);
     const controller = new AbortController();
     abortRef.current = controller;
+
+    /* 沉淀长期记忆（与AI伙伴页同一份） */
+    const nextMemory = absorbMessage(memoryRef.current, text);
+    memoryRef.current = nextMemory;
+    void saveMemory(user?.id ?? null, nextMemory);
+
+    const history = messages
+      .filter(m => m.content && m.id !== "welcome")
+      .slice(-8)
+      .map(m => ({ role: m.role, content: m.content }));
+
     try {
-      await streamAIChat(
+      await streamCultureChat(
         text,
+        history,
+        nextMemory.language,
+        memoryForPrompt(nextMemory),
         (chunk) => setMessages(prev => prev.map(m =>
           m.id === assistantMsg.id ? { ...m, content: m.content + chunk } : m
         )),
@@ -739,6 +809,9 @@ export default function FloatingAvatarChat() {
     setIsOpen(false);
   };
 
+  /* 在四四的家（AI伙伴页）不重复出现，避免一屏两个四四 */
+  if (location.pathname.startsWith("/culture")) return null;
+
   return (
     <>
       <FloatingBtn season={season} onClick={() => setIsOpen(true)} />
@@ -752,6 +825,7 @@ export default function FloatingAvatarChat() {
         input={input}
         setInput={setInput}
         scrollRef={scrollRef}
+        onGoHome={() => goHome()}
       />
       {/* 面板背景遮罩 */}
       {isOpen && (

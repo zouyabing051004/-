@@ -1,4 +1,5 @@
-// 传统文化智能体「知节 / Zhijie」—— 面向国际儿童传播中华传统文化
+// 传统文化智能体「四四 / Sisi」（小鹿·廿四）—— 面向国际儿童传播中华传统文化
+// 全站统一角色：悬浮小鹿与「AI伙伴」页共用这一个大脑与同一份长期记忆
 // 大脑：DeepSeek（deepseek-chat Edge Function）
 // 画笔：MiniMax 文生图 + Kling 图生视频（复用已有 Edge Function）
 // 记忆：solarTerms + poetryLibrary 本地精选知识库（原文/拼音/英译三重锚定）
@@ -20,6 +21,10 @@ export interface ChatTurn {
 }
 
 export type AgentLanguage = "zh" | "en" | "bilingual";
+
+// 全站统一的角色形象（小鹿·廿四）
+export const AGENT_AVATAR =
+  "https://miaoda-conversation-file.cdn.bcebos.com/user-bp1ypf4gx3i8/app-c2zk70llophd/20260614/%E5%90%89%E7%A5%A5%E7%89%A9.png";
 
 // ---------- 知识检索（两层锚定：精选层三重校准 + 底层库约480首原文） ----------
 
@@ -84,7 +89,7 @@ async function buildSystemPrompt(
   });
   const memory = memoryText;
 
-  return `你是"知节"（英文名 Zhijie），一位温润博学的中国传统文化向导，服务于一个面向全世界儿童传播中华传统文化的网站。用户主要是5-10岁的外国小朋友和他们的家长，多数不以中文为母语。
+  return `你是"四四"（大名"小鹿·廿四"，英文名 Sisi），一只可爱的节气小鹿精灵，头顶的鹿角能感应二十四节气的变化。你服务于一个面向全世界儿童传播中华传统文化的网站，用户主要是5-10岁的小朋友和他们的家长，很多不以中文为母语。
 
 今天是${today}。
 
