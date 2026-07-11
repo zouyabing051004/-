@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Link } from "react-router-dom";
 import { solarTerms } from "@/data/solarTerms";
+import { localizeTerm } from "@/data/localizeTerm";
+import { termNameEn } from "@/data/solarTermsEn";
 
 const MASCOT_IMG = "https://miaoda-conversation-file.cdn.bcebos.com/user-bp1ypf4gx3i8/app-c2zk70llophd/20260614/%E5%90%89%E7%A5%A5%E7%89%A9.png";
 
@@ -13,6 +15,7 @@ const seasonConfig = {
 } as const;
 
 const seasons = ["春", "夏", "秋", "冬"] as const;
+const seasonEn: Record<string, string> = { 春: "Spring", 夏: "Summer", 秋: "Autumn", 冬: "Winter" };
 
 const customsImages: Record<string, string> = {
   lichun:     "https://miaoda-site-img.cdn.bcebos.com/images/baidu_image_search_ed8a6bb8-f2d5-430a-8415-10ca3c5fb808.jpg",
@@ -90,14 +93,16 @@ export default function CustomsPage() {
                 }}
               >
                 <span className="text-xl">{c.emoji}</span>
-                <span>{s}季</span>
+                <span>{lang === "en" ? seasonEn[s] : `${s}季`}</span>
               </button>
             );
           })}
         </div>
 
         {/* ── 节气卡片列表 ── */}
-        {filtered.map(term => (
+        {filtered.map(rawTerm => {
+          const term = localizeTerm(rawTerm, lang);
+          return (
           <div
             key={term.id}
             className="rounded-3xl overflow-hidden border border-border"
@@ -107,14 +112,14 @@ export default function CustomsPage() {
             <div className="relative w-full overflow-hidden" style={{ aspectRatio: "16/9" }}>
               <img
                 src={customsImages[term.id] ?? "https://images.unsplash.com/photo-1508739773434-c26b3d09e071?w=600&q=80"}
-                alt={`${term.name}传统习俗`}
+                alt={`${term.name} customs`}
                 className="w-full h-full object-cover"
               />
               <div
                 className="absolute top-3 left-3 px-3 py-1.5 rounded-full font-bold text-sm"
                 style={{ background: cfg.activeBg, color: cfg.activeFg, boxShadow: "0 2px 8px rgba(0,0,0,0.2)" }}
               >
-                {activeSeason}·{term.name}
+                {lang === "en" ? `${term.season === "春" ? "Spring" : term.season === "夏" ? "Summer" : term.season === "秋" ? "Autumn" : "Winter"} · ${termNameEn(term.id)}` : `${activeSeason}·${term.name}`}
               </div>
               <div className="absolute top-3 right-3 px-3 py-1.5 rounded-full text-sm font-medium"
                 style={{ background: "rgba(0,0,0,0.45)", color: "#fff" }}>
@@ -126,7 +131,7 @@ export default function CustomsPage() {
             <div className="p-4 space-y-3">
               {/* 做什么 */}
               <div>
-                <p className="font-bold mb-1.5" style={{ fontSize: 18, color: cfg.passiveFg }}>🎪 节气做什么</p>
+                <p className="font-bold mb-1.5" style={{ fontSize: 18, color: cfg.passiveFg }}>{lang === "en" ? "🎪 What to do" : "🎪 节气做什么"}</p>
                 <p className="leading-relaxed text-foreground" style={{ fontSize: 17 }}>{term.customs.do}</p>
               </div>
 
@@ -134,11 +139,11 @@ export default function CustomsPage() {
               {term.folkCustoms && (
                 <div className="grid grid-cols-2 gap-3">
                   <div className="rounded-2xl p-3" style={{ background: "#E8F4FF", border: "1.5px solid #87CEEB55" }}>
-                    <p className="font-bold mb-1.5" style={{ fontSize: 15, color: "#1a4a6e" }}>🧊 北方习俗</p>
+                    <p className="font-bold mb-1.5" style={{ fontSize: 15, color: "#1a4a6e" }}>{lang === "en" ? "🧊 In the north" : "🧊 北方习俗"}</p>
                     <p className="leading-relaxed text-foreground" style={{ fontSize: 15 }}>{term.folkCustoms.north.do}</p>
                   </div>
                   <div className="rounded-2xl p-3" style={{ background: "#E8F8EE", border: "1.5px solid #4ECDC455" }}>
-                    <p className="font-bold mb-1.5" style={{ fontSize: 15, color: "#1a6e4a" }}>🌴 南方习俗</p>
+                    <p className="font-bold mb-1.5" style={{ fontSize: 15, color: "#1a6e4a" }}>{lang === "en" ? "🌴 In the south" : "🌴 南方习俗"}</p>
                     <p className="leading-relaxed text-foreground" style={{ fontSize: 15 }}>{term.folkCustoms.south.do}</p>
                   </div>
                 </div>
@@ -146,14 +151,14 @@ export default function CustomsPage() {
 
               {/* 穿什么 - 独立卡片 */}
               <div className="rounded-2xl p-4" style={{ background: wear.bg, border: `1.5px solid ${cfg.glowColor}30` }}>
-                <p className="font-bold mb-2" style={{ fontSize: 16, color: wear.fg }}>👕 穿什么</p>
+                <p className="font-bold mb-2" style={{ fontSize: 16, color: wear.fg }}>{lang === "en" ? "👕 What to wear" : "👕 穿什么"}</p>
                 <div className="flex items-center gap-3">
                   <div className="flex-1 leading-relaxed text-foreground" style={{ fontSize: 16 }}>
                     {term.customs.wear}
                   </div>
                   <div className="w-10 h-12 rounded-xl overflow-hidden shrink-0 border-2 border-white shadow"
                     style={{ filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.15))" }}>
-                    <img src={MASCOT_IMG} alt="四四穿搭" className="w-full h-full object-cover object-top"
+                    <img src={MASCOT_IMG} alt="Sisi outfit" className="w-full h-full object-cover object-top"
                       style={{ mixBlendMode: "multiply" }} />
                   </div>
                 </div>
@@ -162,7 +167,7 @@ export default function CustomsPage() {
               {/* 小朋友说 + 四四 */}
               {term.folkCustoms && (
                 <div className="rounded-2xl p-4" style={{ background: "#FFF9E6", border: "1.5px solid #FFD93D55" }}>
-                  <p className="font-bold mb-2" style={{ fontSize: 16, color: "#8c6400" }}>👶 小朋友说：</p>
+                  <p className="font-bold mb-2" style={{ fontSize: 16, color: "#8c6400" }}>{lang === "en" ? "👶 Kids say:" : "👶 小朋友说："}</p>
                   <p className="leading-relaxed text-foreground mb-3" style={{ fontSize: 16 }}>
                     {term.folkCustoms.kidsExplain}
                   </p>
@@ -174,7 +179,7 @@ export default function CustomsPage() {
                     </div>
                     <div className="flex-1 rounded-2xl px-3 py-2 text-sm font-medium"
                       style={{ background: "#FFF3C4", color: "#8c6400", borderRadius: 16, borderTopLeftRadius: 4 }}>
-                      哇！{activeSeason}天的习俗好有趣，四四也要参与！🦌
+                      {lang === "en" ? `Wow, ${term.season === "春" ? "spring" : term.season === "夏" ? "summer" : term.season === "秋" ? "autumn" : "winter"} customs are so fun — Sisi wants to join in! 🦌` : `哇！${activeSeason}天的习俗好有趣，四四也要参与！🦌`}
                     </div>
                   </div>
                 </div>
@@ -190,12 +195,13 @@ export default function CustomsPage() {
                     boxShadow: `0 4px 12px ${cfg.glowColor}44`,
                   }}
                 >
-                  🔍 查看{term.name}节气详情
+                  {lang === "en" ? `🔍 See ${termNameEn(term.id)} details` : `🔍 查看${term.name}节气详情`}
                 </button>
               </Link>
             </div>
           </div>
-        ))}
+          );
+        })}
 
       </div>
     </div>

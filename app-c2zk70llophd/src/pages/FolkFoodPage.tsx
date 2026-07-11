@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Link } from "react-router-dom";
 import { solarTerms } from "@/data/solarTerms";
+import { localizeTerm } from "@/data/localizeTerm";
+import { termNameEn } from "@/data/solarTermsEn";
 
 const MASCOT_IMG = "https://miaoda-conversation-file.cdn.bcebos.com/user-bp1ypf4gx3i8/app-c2zk70llophd/20260614/%E5%90%89%E7%A5%A5%E7%89%A9.png";
 
@@ -13,6 +15,7 @@ const seasonConfig = {
 } as const;
 
 const seasons = ["春", "夏", "秋", "冬"] as const;
+const seasonEn: Record<string, string> = { 春: "Spring", 夏: "Summer", 秋: "Autumn", 冬: "Winter" };
 
 const foodImages: Record<string, string> = {
   lichun:     "https://miaoda-site-img.cdn.bcebos.com/images/baidu_image_search_cbcc945a-98fb-4d27-b8f5-3c93ad80a5ac.jpg",
@@ -82,14 +85,16 @@ export default function FolkFoodPage() {
                 }}
               >
                 <span className="text-xl">{c.emoji}</span>
-                <span>{s}季</span>
+                <span>{lang === "en" ? seasonEn[s] : `${s}季`}</span>
               </button>
             );
           })}
         </div>
 
         {/* ── 节气卡片列表 ── */}
-        {filtered.map(term => (
+        {filtered.map(rawTerm => {
+          const term = localizeTerm(rawTerm, lang);
+          return (
           <div
             key={term.id}
             className="rounded-3xl overflow-hidden border border-border"
@@ -99,7 +104,7 @@ export default function FolkFoodPage() {
             <div className="relative w-full overflow-hidden" style={{ aspectRatio: "16/9" }}>
               <img
                 src={foodImages[term.id] ?? "https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=600&q=80"}
-                alt={`${term.name}特色食物`}
+                alt={`${term.name} food`}
                 className="w-full h-full object-cover"
               />
               {/* 季节·节气标签 - 左上 */}
@@ -107,7 +112,7 @@ export default function FolkFoodPage() {
                 className="absolute top-3 left-3 px-3 py-1.5 rounded-full font-bold text-sm"
                 style={{ background: cfg.activeBg, color: cfg.activeFg, boxShadow: "0 2px 8px rgba(0,0,0,0.2)" }}
               >
-                {activeSeason}·{term.name}
+                {lang === "en" ? `${term.season === "春" ? "Spring" : term.season === "夏" ? "Summer" : term.season === "秋" ? "Autumn" : "Winter"} · ${termNameEn(term.id)}` : `${activeSeason}·${term.name}`}
               </div>
               {/* 日期 - 右上 */}
               <div className="absolute top-3 right-3 px-3 py-1.5 rounded-full text-sm font-medium"
@@ -120,7 +125,7 @@ export default function FolkFoodPage() {
             <div className="p-4 space-y-3">
               {/* 吃什么 - 大标题 */}
               <div>
-                <p className="font-bold mb-1.5" style={{ fontSize: 18, color: cfg.passiveFg }}>🍽️ 节气吃什么</p>
+                <p className="font-bold mb-1.5" style={{ fontSize: 18, color: cfg.passiveFg }}>{lang === "en" ? "🍽️ What to eat" : "🍽️ 节气吃什么"}</p>
                 <p className="leading-relaxed text-foreground" style={{ fontSize: 17 }}>{term.customs.eat}</p>
               </div>
 
@@ -128,11 +133,11 @@ export default function FolkFoodPage() {
               {term.folkCustoms && (
                 <div className="grid grid-cols-2 gap-3">
                   <div className="rounded-2xl p-3" style={{ background: "#E8F4FF", border: "1.5px solid #87CEEB55" }}>
-                    <p className="font-bold mb-1.5" style={{ fontSize: 15, color: "#1a4a6e" }}>🧊 北方吃</p>
+                    <p className="font-bold mb-1.5" style={{ fontSize: 15, color: "#1a4a6e" }}>{lang === "en" ? "🧊 In the north" : "🧊 北方吃"}</p>
                     <p className="leading-relaxed text-foreground" style={{ fontSize: 15 }}>{term.folkCustoms.north.eat}</p>
                   </div>
                   <div className="rounded-2xl p-3" style={{ background: "#E8F8EE", border: "1.5px solid #4ECDC455" }}>
-                    <p className="font-bold mb-1.5" style={{ fontSize: 15, color: "#1a6e4a" }}>🌴 南方吃</p>
+                    <p className="font-bold mb-1.5" style={{ fontSize: 15, color: "#1a6e4a" }}>{lang === "en" ? "🌴 In the south" : "🌴 南方吃"}</p>
                     <p className="leading-relaxed text-foreground" style={{ fontSize: 15 }}>{term.folkCustoms.south.eat}</p>
                   </div>
                 </div>
@@ -141,7 +146,7 @@ export default function FolkFoodPage() {
               {/* 小朋友说 - 独立大卡片 + 四四 */}
               {term.folkCustoms && (
                 <div className="rounded-2xl p-4" style={{ background: "#FFF9E6", border: "1.5px solid #FFD93D55" }}>
-                  <p className="font-bold mb-2" style={{ fontSize: 16, color: "#8c6400" }}>👶 小朋友说：</p>
+                  <p className="font-bold mb-2" style={{ fontSize: 16, color: "#8c6400" }}>{lang === "en" ? "👶 Kids say:" : "👶 小朋友说："}</p>
                   <p className="leading-relaxed text-foreground mb-3" style={{ fontSize: 16 }}>
                     {term.folkCustoms.kidsExplain}
                   </p>
@@ -153,7 +158,7 @@ export default function FolkFoodPage() {
                     </div>
                     <div className="flex-1 rounded-2xl px-3 py-2 text-sm font-medium"
                       style={{ background: "#FFF3C4", color: "#8c6400", borderRadius: 16, borderTopLeftRadius: 4 }}>
-                      我也想吃！四四最喜欢{activeSeason}天的美食了～🦌
+                      {lang === "en" ? `Yum, I want some too! Sisi loves ${term.season === "春" ? "spring" : term.season === "夏" ? "summer" : term.season === "秋" ? "autumn" : "winter"} treats! 🦌` : `我也想吃！四四最喜欢${activeSeason}天的美食了～🦌`}
                     </div>
                   </div>
                 </div>
@@ -169,12 +174,13 @@ export default function FolkFoodPage() {
                     boxShadow: `0 4px 12px ${cfg.glowColor}44`,
                   }}
                 >
-                  🔍 看看更多关于{term.name}的内容
+                  {lang === "en" ? `🔍 More about ${termNameEn(term.id)}` : `🔍 看看更多关于${term.name}的内容`}
                 </button>
               </Link>
             </div>
           </div>
-        ))}
+          );
+        })}
 
       </div>
     </div>

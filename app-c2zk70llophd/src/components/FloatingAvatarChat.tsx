@@ -209,7 +209,7 @@ const IDLE_PHRASES: Record<string, string[]> = {
 /* ══════════════════════════════════════════
    浮动按钮组件 v2 — 全身大展示 + 精细动效
 ══════════════════════════════════════════ */
-function FloatingBtn({ season, onClick }: { season: keyof typeof SEASON_CONFIG; onClick: () => void }) {
+function FloatingBtn({ season, onClick, lang }: { season: keyof typeof SEASON_CONFIG; onClick: () => void; lang: "zh" | "en" }) {
   const wrapRef    = useRef<HTMLDivElement>(null);
   const cardRef    = useRef<HTMLButtonElement>(null);
   const bodyRef    = useRef<HTMLDivElement>(null);       // 主体图片容器（做身体运动）
@@ -349,7 +349,7 @@ function FloatingBtn({ season, onClick }: { season: keyof typeof SEASON_CONFIG; 
       <button
         ref={cardRef}
         onClick={handleClick}
-        aria-label="打开四四小助手"
+        aria-label={lang === "en" ? "Open Sisi" : "打开四四小助手"}
         className="group relative flex flex-col items-center"
         style={{ width: 80 }}
       >
@@ -426,7 +426,7 @@ function FloatingBtn({ season, onClick }: { season: keyof typeof SEASON_CONFIG; 
           className="relative z-10 mt-1 px-3 py-1 rounded-full text-white text-xs font-bold whitespace-nowrap shadow"
           style={{ background: cfg.glow, fontSize: 11 }}
         >
-          四四 {cfg.emoji}
+          {lang === "en" ? "Sisi" : "四四"} {cfg.emoji}
         </div>
       </button>
     </div>
@@ -607,8 +607,8 @@ function ChatPanel({
           {/* 文字区 */}
           <div className="flex-1 min-w-0 pb-2">
             <div className="flex items-center gap-1.5 mb-0.5">
-              <span className="font-bold text-white text-lg font-serif leading-none">小鹿·廿四</span>
-              <span className="text-white/75 text-xs">四四</span>
+              <span className="font-bold text-white text-lg font-serif leading-none">{lang === "en" ? "Sisi the Deer" : "小鹿·廿四"}</span>
+              <span className="text-white/75 text-xs">{lang === "en" ? "Sisi" : "四四"}</span>
             </div>
             <p className="text-white/80 text-sm font-medium">{cfg.mood} · 节气小精灵</p>
             <div
@@ -862,7 +862,7 @@ export default function FloatingAvatarChat() {
 
   return (
     <>
-      <FloatingBtn season={season} onClick={() => setIsOpen(true)} />
+      <FloatingBtn season={season} onClick={() => setIsOpen(true)} lang={lang} />
       <ChatPanel
         isOpen={isOpen}
         onClose={handleClose}

@@ -1,6 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { termNameEn } from "@/data/solarTermsEn";
+import { localizeTerm } from "@/data/localizeTerm";
 import { useEffect } from "react";
 import { ArrowLeft, Sprout } from "lucide-react";
 import { getTermById } from "@/data/solarTerms";
@@ -89,12 +90,13 @@ export default function SolarTermDetailPage() {
   if (!term) {
     return (
       <div className="p-6 text-center">
-        <p className="text-muted-foreground">未找到该节气信息</p>
-        <Link to="/" className="inline-flex items-center justify-center mt-4 px-4 py-2 rounded-full border border-border text-sm font-medium hover:bg-muted transition-colors">返回首页</Link>
+        <p className="text-muted-foreground">{lang === "en" ? "Solar term not found" : "未找到该节气信息"}</p>
+        <Link to="/" className="inline-flex items-center justify-center mt-4 px-4 py-2 rounded-full border border-border text-sm font-medium hover:bg-muted transition-colors">{lang === "en" ? "Back to home" : "返回首页"}</Link>
       </div>
     );
   }
 
+  const lt = localizeTerm(term, lang);
   const style = seasonStyle[term.season] ?? seasonStyle["春"];
 
   return (
@@ -117,7 +119,7 @@ export default function SolarTermDetailPage() {
                 className="flex items-center gap-1 rounded-full px-3 py-1.5 text-sm font-semibold transition-all btn-child-press"
                 style={{ background: "rgba(255,255,255,0.7)", color: style.badgeFg, border: `1px solid ${style.badgeBg}` }}
               >
-                <ArrowLeft className="w-3.5 h-3.5" />返回
+                <ArrowLeft className="w-3.5 h-3.5" />{lang === "en" ? "Back" : "返回"}
               </button>
             </Link>
           </div>
@@ -125,7 +127,7 @@ export default function SolarTermDetailPage() {
             className="inline-block text-xs font-bold px-3 py-1 rounded-full mb-2 border"
             style={{ background: style.badgeBg, color: style.badgeFg, borderColor: style.badgeBg }}
           >
-            {term.season}季
+            {lang === "en" ? `${term.season === "春" ? "Spring" : term.season === "夏" ? "Summer" : term.season === "秋" ? "Autumn" : "Winter"}` : `${term.season}季`}
           </span>
           <h1
             className="font-bold leading-none"
@@ -133,7 +135,7 @@ export default function SolarTermDetailPage() {
           >
             {term.name}{lang === "en" && term.id ? ` · ${termNameEn(term.id)}` : ""}
           </h1>
-          <p className="mt-2 text-sm font-medium" style={{ color: `${style.badgeFg}aa` }}>{term.date}</p>
+          <p className="mt-2 text-sm font-medium" style={{ color: `${style.badgeFg}aa` }}>{lt.date}</p>
         </div>
       </div>
 
@@ -144,23 +146,23 @@ export default function SolarTermDetailPage() {
           className="rounded-[1.5rem] p-5"
           style={{ background: "#FFF9F0", border: "1.5px solid rgba(255,255,255,0.9)", boxShadow: "var(--shadow-card)" }}
         >
-          <p className="text-foreground leading-relaxed text-base md:text-lg text-pretty">{term.climate}</p>
+          <p className="text-foreground leading-relaxed text-base md:text-lg text-pretty">{lt.climate}</p>
         </div>
 
         {/* ── 三候儿童解说 ── */}
-        {term.phenologyKids && (
+        {lt.phenologyKids && (
           <div>
             <div className="flex items-center gap-2 mb-4">
               <Sprout className="w-5 h-5 text-primary" />
-              <h2 className="font-bold text-foreground text-lg">节气三候</h2>
+              <h2 className="font-bold text-foreground text-lg">{lang === "en" ? "The Three Pentads" : "节气三候"}</h2>
               <span
                 className="text-xs font-semibold px-3 py-1 rounded-full"
                 style={{ background: style.badgeBg, color: style.badgeFg }}
-              >物候现象</span>
+              >{lang === "en" ? "Nature signs" : "物候现象"}</span>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {term.phenologyKids.map((p, i) => {
-                const img = getPhenologyImage(p.raw);
+              {lt.phenologyKids.map((p, i) => {
+                const img = getPhenologyImage(term.phenologyKids![i].raw);
                 return (
                   <div
                     key={i}
@@ -192,7 +194,7 @@ export default function SolarTermDetailPage() {
           className="rounded-[1.5rem] p-5 md:p-6"
           style={{ background: "#FFF9F0", border: "1.5px solid rgba(255,255,255,0.9)", boxShadow: "var(--shadow-card)" }}
         >
-          <MindMapSection term={term} ageMode={ageMode} />
+          <MindMapSection term={lt} ageMode={ageMode} />
         </div>
 
         {/* ── 古诗词 + 注解 + 朗读 ── */}
@@ -203,15 +205,18 @@ export default function SolarTermDetailPage() {
             <div className="flex items-start gap-4">
               <div className="w-1.5 bg-primary rounded-full self-stretch shrink-0" />
               <div className="flex-1 min-w-0">
-                <h3 className="font-bold text-foreground text-xl font-serif text-balance">{term.poem.title}</h3>
-                <p className="text-xs text-muted-foreground mb-4 mt-0.5">—— {term.poem.author}</p>
+                <h3 className="font-bold text-foreground text-xl font-serif text-balance">{lt.poem.title}</h3>
+                <p className="text-xs text-muted-foreground mb-4 mt-0.5">—— {lt.poem.author}</p>
                 <p className="text-primary text-2xl leading-loose font-serif italic whitespace-pre-line">{term.poem.content}</p>
+                {lang === "en" && lt.poemEn && (
+                  <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{lt.poemEn}</p>
+                )}
 
                 {/* 朗读提示 */}
-                {term.poem.readingTip && (
+                {lt.poem.readingTip && (
                   <div className="mt-3 rounded-2xl p-4" style={{ background: "#D8F2ED" }}>
-                    <p className="text-sm font-bold mb-1" style={{ color: "#1A4D45" }}>🎤 朗读小提示</p>
-                    <p className="text-sm leading-relaxed" style={{ color: "#1A4D45cc" }}>{term.poem.readingTip}</p>
+                    <p className="text-sm font-bold mb-1" style={{ color: "#1A4D45" }}>{lang === "en" ? "🎤 Reading tip" : "🎤 朗读小提示"}</p>
+                    <p className="text-sm leading-relaxed" style={{ color: "#1A4D45cc" }}>{lt.poem.readingTip}</p>
                   </div>
                 )}
 
@@ -224,7 +229,7 @@ export default function SolarTermDetailPage() {
 
         {/* ── 关键词标签 ── */}
         <div className="flex flex-wrap gap-2 pb-2">
-          {term.keywords.map(kw => (
+          {lt.keywords.map(kw => (
             <span
               key={kw}
               className="text-sm px-4 py-1.5 rounded-full font-medium"

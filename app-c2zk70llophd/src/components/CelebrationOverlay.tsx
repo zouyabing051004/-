@@ -2,6 +2,7 @@ import { useEffect, useRef, useCallback } from "react";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
 import { useAchievement, type Badge } from "@/contexts/AchievementContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 gsap.registerPlugin(useGSAP);
 
@@ -96,6 +97,7 @@ function BadgeCard({ badge }: { badge: Badge }) {
    主覆盖层组件
 ══════════════════════════════════════════ */
 export default function CelebrationOverlay() {
+  const { lang } = useLanguage();
   const { celebration, dismissCelebration } = useAchievement();
   const overlayRef  = useRef<HTMLDivElement>(null);
   const cardRef     = useRef<HTMLDivElement>(null);
@@ -213,12 +215,14 @@ export default function CelebrationOverlay() {
           className="inline-block px-5 py-2 rounded-2xl mb-3 text-sm font-bold text-white"
           style={{ background: "rgba(255,255,255,0.18)", backdropFilter: "blur(8px)" }}
         >
-          🏅 解锁新徽章！
+          {lang === "en" ? "🏅 New badge unlocked!" : "🏅 解锁新徽章！"}
         </div>
         <p className="text-white/75 text-sm">
-          {badge.type === "streak" ? `坚持学习，四四为你骄傲！🦌` : `你已探索了节气的奥秘！继续加油～`}
+          {lang === "en"
+            ? (badge.type === "streak" ? "Keep it up — Sisi is so proud of you! 🦌" : "You've explored a solar term! Keep going~")
+            : (badge.type === "streak" ? "坚持学习，四四为你骄傲！🦌" : "你已探索了节气的奥秘！继续加油～")}
         </p>
-        <p className="text-white/45 text-xs mt-3">轻触任意位置继续</p>
+        <p className="text-white/45 text-xs mt-3">{lang === "en" ? "Tap anywhere to continue" : "轻触任意位置继续"}</p>
       </div>
     </div>
   );

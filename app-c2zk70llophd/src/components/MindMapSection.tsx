@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { termNameEn } from "@/data/solarTermsEn";
 import type { SolarTerm } from "@/data/solarTerms";
 
 interface MindMapSectionProps {
@@ -18,12 +20,13 @@ interface BranchNode {
 }
 
 export default function MindMapSection({ term, ageMode }: MindMapSectionProps) {
+  const { lang } = useLanguage();
   const [activeId, setActiveId] = useState<string | null>(null);
 
   const branches: BranchNode[] = [
     {
       id: "food",
-      label: "民俗饮食",
+      label: lang === "en" ? "Festive Foods" : "民俗饮食",
       emoji: "🍜",
       color: "text-amber-700 dark:text-amber-300",
       bgColor: "bg-amber-50 dark:bg-amber-950/30",
@@ -32,7 +35,7 @@ export default function MindMapSection({ term, ageMode }: MindMapSectionProps) {
     },
     {
       id: "wear",
-      label: "节气穿什么",
+      label: lang === "en" ? "What to Wear" : "节气穿什么",
       emoji: "👕",
       color: "text-purple-700 dark:text-purple-300",
       bgColor: "bg-purple-50 dark:bg-purple-950/30",
@@ -41,7 +44,7 @@ export default function MindMapSection({ term, ageMode }: MindMapSectionProps) {
     },
     {
       id: "story",
-      label: "节气由来",
+      label: lang === "en" ? "The Origin Story" : "节气由来",
       emoji: "📖",
       color: "text-emerald-700 dark:text-emerald-300",
       bgColor: "bg-emerald-50 dark:bg-emerald-950/30",
@@ -58,8 +61,8 @@ export default function MindMapSection({ term, ageMode }: MindMapSectionProps) {
       {/* 标题 */}
       <div className="flex items-center gap-2.5">
         <span className="text-xl">🗺️</span>
-        <h2 className="font-bold text-foreground text-lg font-serif">节气探索地图</h2>
-        <span className="text-sm text-muted-foreground">点击分支探索更多</span>
+        <h2 className="font-bold text-foreground text-lg font-serif">{lang === "en" ? "Explore This Solar Term" : "节气探索地图"}</h2>
+        <span className="text-sm text-muted-foreground">{lang === "en" ? "Tap a branch to explore" : "点击分支探索更多"}</span>
       </div>
 
       {/* 思维导图主体 */}
@@ -107,6 +110,8 @@ function DesktopMindMap({
   activeId: string | null;
   onToggle: (id: string) => void;
 }) {
+  const { lang } = useLanguage();
+  const enName = lang === "en" ? termNameEn(term.id) : "";
   return (
     <div className="relative flex items-center" style={{ minHeight: 280 }}>
       {/* SVG 连线 */}
@@ -136,8 +141,8 @@ function DesktopMindMap({
       {/* 中心节点 */}
       <div className="relative z-10 shrink-0" style={{ marginLeft: 84 }}>
         <div className="w-32 h-32 rounded-full bg-primary flex flex-col items-center justify-center shadow-xl text-primary-foreground text-center">
-          <span className="text-3xl font-bold font-serif leading-none">{term.name}</span>
-          <span className="text-xs mt-1 opacity-80 font-medium">节气</span>
+          <span className={cn("font-bold font-serif leading-tight text-center", enName ? "text-lg" : "text-3xl")}>{enName || term.name}</span>
+          <span className="text-xs mt-1 opacity-80 font-medium">{enName ? "Solar Term" : "节气"}</span>
         </div>
       </div>
 
@@ -160,7 +165,7 @@ function DesktopMindMap({
               <span className="text-2xl shrink-0">{b.emoji}</span>
               <div className="min-w-0">
                 <p className="font-bold text-base truncate">{b.label}</p>
-                <p className="text-xs text-muted-foreground mt-0.5">{isActive ? "点击收起" : "点击探索"}</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{lang === "en" ? (isActive ? "Tap to close" : "Tap to open") : (isActive ? "点击收起" : "点击探索")}</p>
               </div>
             </button>
           );
@@ -182,12 +187,14 @@ function MobileMindMap({
   activeId: string | null;
   onToggle: (id: string) => void;
 }) {
+  const { lang } = useLanguage();
+  const enName = lang === "en" ? termNameEn(term.id) : "";
   return (
     <div className="flex flex-col items-center gap-4">
       {/* 中心节点 */}
       <div className="w-28 h-28 rounded-full bg-primary flex flex-col items-center justify-center shadow-xl text-primary-foreground text-center">
-        <span className="text-2xl font-bold font-serif leading-none">{term.name}</span>
-        <span className="text-xs mt-0.5 opacity-80 font-medium">节气</span>
+        <span className={cn("font-bold font-serif leading-tight text-center", enName ? "text-base px-1" : "text-2xl")}>{enName || term.name}</span>
+        <span className="text-xs mt-0.5 opacity-80 font-medium">{enName ? "Solar Term" : "节气"}</span>
       </div>
 
       {/* 竖线 */}
@@ -221,6 +228,7 @@ function MobileMindMap({
 
 /* ── 民俗饮食内容 ── */
 function FoodContent({ term, ageMode }: { term: SolarTerm; ageMode: "young" }) {
+  const { lang } = useLanguage();
   const [tab, setTab] = useState<"north" | "south">("north");
   const fc = term.folkCustoms;
 
@@ -228,11 +236,11 @@ function FoodContent({ term, ageMode }: { term: SolarTerm; ageMode: "young" }) {
     return (
       <div className="space-y-3">
         <div className="text-foreground leading-relaxed text-base">
-          <p className="font-bold mb-1.5">🍽️ 吃什么</p>
+          <p className="font-bold mb-1.5">{lang === "en" ? "🍽️ What to eat" : "🍽️ 吃什么"}</p>
           <p>{term.customs.eat}</p>
         </div>
         <div className="text-foreground leading-relaxed text-base">
-          <p className="font-bold mb-1.5">🎋 做什么</p>
+          <p className="font-bold mb-1.5">{lang === "en" ? "🎋 What to do" : "🎋 做什么"}</p>
           <p>{term.customs.do}</p>
         </div>
       </div>
@@ -252,26 +260,26 @@ function FoodContent({ term, ageMode }: { term: SolarTerm; ageMode: "young" }) {
             "flex items-center gap-1.5 px-5 py-2 rounded-full text-sm font-bold border-2 transition-colors",
             tab === "north" ? "bg-sky-100 text-sky-700 border-sky-300" : "border-border text-muted-foreground hover:bg-accent"
           )}
-        >🧊 北方</button>
+        >{lang === "en" ? "🧊 North" : "🧊 北方"}</button>
         <button
           onClick={() => setTab("south")}
           className={cn(
             "flex items-center gap-1.5 px-5 py-2 rounded-full text-sm font-bold border-2 transition-colors",
             tab === "south" ? "bg-emerald-100 text-emerald-700 border-emerald-300" : "border-border text-muted-foreground hover:bg-accent"
           )}
-        >🌴 南方</button>
+        >{lang === "en" ? "🌴 South" : "🌴 南方"}</button>
       </div>
 
       {/* 内容 */}
       <div className="grid grid-cols-2 gap-3">
         <div className="bg-background/60 rounded-2xl p-4">
-          <p className="text-sm font-bold text-foreground mb-2">🍽️ 吃什么</p>
+          <p className="text-sm font-bold text-foreground mb-2">{lang === "en" ? "🍽️ What to eat" : "🍽️ 吃什么"}</p>
           <p className="text-base text-foreground leading-relaxed">
             {tab === "north" ? fc.north.eat : fc.south.eat}
           </p>
         </div>
         <div className="bg-background/60 rounded-2xl p-4">
-          <p className="text-sm font-bold text-foreground mb-2">🎋 做什么</p>
+          <p className="text-sm font-bold text-foreground mb-2">{lang === "en" ? "🎋 What to do" : "🎋 做什么"}</p>
           <p className="text-base text-foreground leading-relaxed">
             {tab === "north" ? fc.north.do : fc.south.do}
           </p>
@@ -281,7 +289,7 @@ function FoodContent({ term, ageMode }: { term: SolarTerm; ageMode: "young" }) {
       {/* 儿童解说 */}
       <div className="bg-amber-100/60 dark:bg-amber-900/20 rounded-2xl p-4">
         <p className="text-base text-amber-800 dark:text-amber-200 leading-relaxed">
-          <span className="font-bold mr-1">🌟 小朋友说：</span>{fc.kidsExplain}
+          <span className="font-bold mr-1">{lang === "en" ? "🌟 Kids say: " : "🌟 小朋友说："}</span>{fc.kidsExplain}
         </p>
       </div>
     </div>
