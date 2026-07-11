@@ -172,10 +172,34 @@ const TabIconAchieve = ({ active }: { active: boolean }) => (
   </svg>
 );
 
+const TabIconAgent = ({ active }: { active: boolean }) => (
+  <svg viewBox="0 0 32 32" fill="none" style={{ width: 28, height: 28 }}>
+    <defs>
+      <linearGradient id="agent-face" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stopColor={active ? "#4ade80" : "#86efac"}/>
+        <stop offset="100%" stopColor={active ? "#15803d" : "#22c55e"}/>
+      </linearGradient>
+    </defs>
+    {/* 圆脸 */}
+    <circle cx="16" cy="17" r="11" fill="url(#agent-face)"/>
+    {/* 天线 */}
+    <rect x="15" y="3" width="2" height="4" rx="1" fill={active ? "#15803d" : "#22c55e"}/>
+    <circle cx="16" cy="3" r="2" fill="#fbbf24"/>
+    {/* 眼睛 */}
+    <circle cx="12" cy="16" r="1.8" fill="#fff"/>
+    <circle cx="20" cy="16" r="1.8" fill="#fff"/>
+    {/* 微笑 */}
+    <path d="M12 21 Q16 24 20 21" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" fill="none"/>
+    {/* 星光 */}
+    <circle cx="26" cy="8" r="1.2" fill="#fbbf24" opacity="0.8"/>
+  </svg>
+);
+
 /* ── 底部导航 Tab 配置（深绿填充图标）── */
 const bottomTabs = [
   { name: "首页",  path: "/",                    Icon: TabIconHome,    activeKey: "/" },
   { name: "节气",  path: "/solar-term/lichun",   Icon: TabIconSolar,   activeKey: "/solar-term" },
+  { name: "AI伙伴", path: "/culture",            Icon: TabIconAgent,   activeKey: "/culture" },
   { name: "诗词",  path: "/poetry",              Icon: TabIconPoetry,  activeKey: "/poetry" },
   { name: "成就",  path: "/achievement",         Icon: TabIconAchieve, activeKey: "/achievement" },
 ];
@@ -339,6 +363,7 @@ function SolarTermDropdown() {
 /* ── 顶部横向导航（桌面）── */
 const navItems = [
   { name: "首页",     path: "/" },
+  { name: "AI伙伴",   path: "/culture" },
   { name: "民间饮食", path: "/folk-food" },
   { name: "传统习俗", path: "/customs" },
   { name: "实景社区", path: "/community" },
