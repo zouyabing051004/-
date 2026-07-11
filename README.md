@@ -22,6 +22,12 @@
 - `src/services/cultureAgent.ts` — 智能体服务：RAG 注入、意图识别、场景要素抽取、3 套画风、文生图 + 图生视频管线
 - `src/pages/CultureAgentPage.tsx` + `src/routes.tsx` — 新页面「知节 · AI文化伙伴」（路由 `/culture`）
 
+## 🌾 把智能体嵌入线上网站（悬浮聊天球）
+
+**最快路径（今天就能用）**：复制 `app-c2zk70llophd/embed/一键嵌入代码.html` 全部内容 → 粘贴进秒哒「自定义 HTML」组件 → 发布。右下角出现聊天球，开箱即用（文心对话 + 内置精选知识库 + 配画/视频/朗读）。
+
+**知识库入库（500 首进数据库）**：在 Supabase SQL 编辑器执行 `supabase/migrations/00005_create_culture_poems.sql` 和 `00006_seed_culture_poems.sql`，挂件与站内页面自动共用数据库检索。配好 `DEEPSEEK_API_KEY` 并部署 `culture-agent-chat` 后自动升级为 DeepSeek 完全体。详见 [embed/嵌入指南.md](./app-c2zk70llophd/embed/嵌入指南.md)。
+
 ## 上线步骤
 
 1. 在 [platform.deepseek.com](https://platform.deepseek.com) 注册，创建 API Key（新账号送 500 万 token）。
