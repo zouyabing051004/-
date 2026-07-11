@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { useEffect, useState } from "react";
 import { getCurrentSolarTerm, getNextSolarTerm } from "@/data/solarTerms";
 import { fetchCityWeather, getWeatherEmoji, type WeatherNow } from "@/services/weatherService";
@@ -131,6 +132,7 @@ function WheatDecor({ className, style }: { className?: string; style?: React.CS
 }
 
 export default function HomePage() {
+  const { lang } = useLanguage();
   const currentTerm = getCurrentSolarTerm();
   const nextTerm    = getNextSolarTerm();
   const d           = getChinaDate();
@@ -510,7 +512,7 @@ export default function HomePage() {
 
               {/* 距下节气 */}
               <p className="text-xs font-semibold text-center" style={{ color: "#3d7a68" }}>
-                距下节气「{nextTerm.season}天」
+                {lang === "en" ? <>Next solar term in {nextTerm.season} days</> : <>距下节气「{nextTerm.season}天」</>}
               </p>
 
               {/* 两个大 CTA */}
@@ -525,7 +527,7 @@ export default function HomePage() {
                     letterSpacing: "0.04em",
                   }}
                 >
-                  听故事
+                  {lang === "en" ? "Story Time" : "听故事"}
                 </Link>
                 <Link
                   to={`/solar-term/${currentTerm.id}`}
@@ -537,7 +539,7 @@ export default function HomePage() {
                     letterSpacing: "0.04em",
                   }}
                 >
-                  去探险
+                  {lang === "en" ? "Explore!" : "去探险"}
                 </Link>
               </div>
             </div>

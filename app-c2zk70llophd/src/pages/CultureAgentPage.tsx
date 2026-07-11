@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   AGENT_AVATAR,
   type AgentLanguage,
@@ -130,6 +131,7 @@ const UI_TEXT: Record<AgentLanguage, {
 
 export default function CultureAgentPage() {
   const { user } = useAuth();
+  const { lang: siteLang, setLang: setSiteLang } = useLanguage();
   const [memory, setMemory] = useState<AgentMemory>(EMPTY_MEMORY);
   const [memoryReady, setMemoryReady] = useState(false);
   const language = memory.language;
@@ -198,11 +200,30 @@ export default function CultureAgentPage() {
   const switchLanguage = (lang: AgentLanguage) => {
     const next = { ...memory, language: lang };
     updateMemory(next);
+    if (lang !== "bilingual") setSiteLang(lang);
     setMessages((prev) => [
       ...prev,
       { role: "assistant", content: UI_TEXT[lang].greeting(next.nickname) },
     ]);
   };
+
+  // 左上角全站语言切换 → 四四跟随（仅当全站语言真的变化时）
+  const prevSiteLang = useRef(siteLang);
+  useEffect(() => {
+    if (!memoryReady) { prevSiteLang.current = siteLang; return; }
+    if (prevSiteLang.current !== siteLang && memoryRef.current.language !== siteLang) {
+      prevSiteLang.current = siteLang;
+      const next = { ...memoryRef.current, language: siteLang };
+      updateMemory(next);
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: UI_TEXT[siteLang].greeting(next.nickname) },
+      ]);
+    } else {
+      prevSiteLang.current = siteLang;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [siteLang, memoryReady]);
 
   const updateLast = (patch: Partial<AgentMessage>) => {
     setMessages((prev) => {

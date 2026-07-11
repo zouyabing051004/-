@@ -7,6 +7,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { solarTerms } from "@/data/solarTerms";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { SEASON_EN, termNameEn } from "@/data/solarTermsEn";
 import { toast } from "sonner";
 import SiteFooter from "@/components/SiteFooter";
 
@@ -195,18 +197,47 @@ const TabIconAgent = ({ active }: { active: boolean }) => (
   </svg>
 );
 
+/* ── 全站语言开关（左上角）── */
+function LangToggle({ compact = false }: { compact?: boolean }) {
+  const { lang, setLang } = useLanguage();
+  return (
+    <div
+      className="flex items-center rounded-full p-0.5 shrink-0"
+      style={{ background: "rgba(255,255,255,0.18)", border: "1px solid rgba(255,255,255,0.3)" }}
+      role="group"
+      aria-label="Language / 语言"
+    >
+      {([["zh", "中"], ["en", "EN"]] as const).map(([id, label]) => (
+        <button
+          key={id}
+          type="button"
+          onClick={() => setLang(id)}
+          className={cn(
+            "rounded-full font-bold transition-all",
+            compact ? "text-[11px] px-2 py-1" : "text-xs px-2.5 py-1",
+            lang === id ? "bg-white text-[#2a6e48] shadow-sm" : "text-white/85 hover:bg-white/20"
+          )}
+        >
+          {label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 /* ── 底部导航 Tab 配置（深绿填充图标）── */
 const bottomTabs = [
-  { name: "首页",  path: "/",                    Icon: TabIconHome,    activeKey: "/" },
-  { name: "节气",  path: "/solar-term/lichun",   Icon: TabIconSolar,   activeKey: "/solar-term" },
-  { name: "四四",   path: "/culture",            Icon: TabIconAgent,   activeKey: "/culture" },
-  { name: "诗词",  path: "/poetry",              Icon: TabIconPoetry,  activeKey: "/poetry" },
-  { name: "成就",  path: "/achievement",         Icon: TabIconAchieve, activeKey: "/achievement" },
+  { name: "首页",  en: "Home",   path: "/",                    Icon: TabIconHome,    activeKey: "/" },
+  { name: "节气",  en: "Terms",  path: "/solar-term/lichun",   Icon: TabIconSolar,   activeKey: "/solar-term" },
+  { name: "四四",  en: "Sisi",   path: "/culture",             Icon: TabIconAgent,   activeKey: "/culture" },
+  { name: "诗词",  en: "Poems",  path: "/poetry",              Icon: TabIconPoetry,  activeKey: "/poetry" },
+  { name: "成就",  en: "Awards", path: "/achievement",         Icon: TabIconAchieve, activeKey: "/achievement" },
 ];
 
 /* ── 底部导航栏（参考图：白色胶囊，激活圆形绿底）── */
 function BottomNav() {
   const location = useLocation();
+  const { lang } = useLanguage();
   const [lastTapped, setLastTapped] = useState<string | null>(null);
 
   const isActive = (tab: typeof bottomTabs[number]) => {
@@ -264,7 +295,7 @@ function BottomNav() {
                   className="font-semibold leading-none transition-colors duration-200"
                   style={{ fontSize: 13, color: active ? "#5BA883" : "#8aab96" }}
                 >
-                  {tab.name}
+                  {lang === "en" ? tab.en : tab.name}
                 </span>
               </Link>
             );
@@ -284,6 +315,7 @@ const SEASON_DROPDOWN = [
 ];
 
 function SolarTermDropdown() {
+  const { lang } = useLanguage();
   const [open, setOpen] = useState(false);
   const [activeSeason, setActiveSeason] = useState<string | null>(null);
   const ref = useRef<HTMLDivElement>(null);
@@ -312,7 +344,7 @@ function SolarTermDropdown() {
             : "text-white/90 hover:bg-white/20"
         )}
       >
-        节气科普
+        {lang === "en" ? "Solar Terms" : "节气科普"}
         <ChevronDown className={cn("w-4 h-4 transition-transform", open && "rotate-180")} />
       </button>
       {open && (
@@ -332,7 +364,7 @@ function SolarTermDropdown() {
                   color, bg, activeSeason === season && "bg-muted"
                 )}
               >
-                <span>{label}</span>
+                <span>{lang === "en" ? `${label.split(" ")[0]} ${SEASON_EN[season]}` : label}</span>
                 <ChevronRight className="w-3.5 h-3.5 opacity-60" />
               </button>
             ))}
@@ -348,7 +380,7 @@ function SolarTermDropdown() {
                     onClick={closeAll}
                     className="flex items-center justify-between px-4 py-2 text-sm text-foreground hover:bg-muted transition-colors"
                   >
-                    <span className="font-medium">{term.name}</span>
+                    <span className="font-medium">{lang === "en" ? termNameEn(term.id) : term.name}</span>
                     <span className="text-xs text-muted-foreground">{term.month}/{term.day}</span>
                   </Link>
                 ))}
@@ -362,12 +394,12 @@ function SolarTermDropdown() {
 
 /* ── 顶部横向导航（桌面）── */
 const navItems = [
-  { name: "首页",     path: "/" },
-  { name: "四四的家", path: "/culture" },
-  { name: "民间饮食", path: "/folk-food" },
-  { name: "传统习俗", path: "/customs" },
-  { name: "实景社区", path: "/community" },
-  { name: "成就馆",   path: "/achievement" },
+  { name: "首页",     en: "Home",        path: "/" },
+  { name: "四四的家", en: "Sisi's Home", path: "/culture" },
+  { name: "民间饮食", en: "Folk Food",   path: "/folk-food" },
+  { name: "传统习俗", en: "Traditions",  path: "/customs" },
+  { name: "实景社区", en: "Community",   path: "/community" },
+  { name: "成就馆",   en: "Awards",      path: "/achievement" },
 ];
 
 /* ── 季节侧边栏配置 ── */
@@ -392,6 +424,7 @@ function SolarTermSidebar({ onClose }: { onClose?: () => void }) {
   );
   const toggle = (season: string) => setExpanded(prev => ({ ...prev, [season]: !prev[season] }));
 
+  const { lang } = useLanguage();
   return (
     <div className="flex flex-col h-full bg-white/90 backdrop-blur-sm">
       {/* Logo */}
@@ -405,14 +438,14 @@ function SolarTermSidebar({ onClose }: { onClose?: () => void }) {
           </div>
           <div className="min-w-0">
             <h1 className="text-base font-bold text-foreground leading-snug tracking-wide">禾间识岁</h1>
-            <p className="text-xs text-muted-foreground leading-tight">二十四节气儿童学习</p>
+            <p className="text-xs text-muted-foreground leading-tight">{lang === "en" ? "24 Solar Terms for Kids" : "二十四节气儿童学习"}</p>
           </div>
         </Link>
         <div className="mt-3 h-px bg-gradient-to-r from-primary/50 via-primary/20 to-transparent" />
       </div>
 
       <div className="px-3 pb-1 shrink-0">
-        <p className="text-xs font-semibold text-muted-foreground tracking-widest px-1">二十四节气</p>
+        <p className="text-xs font-semibold text-muted-foreground tracking-widest px-1">{lang === "en" ? "THE 24 SOLAR TERMS" : "二十四节气"}</p>
       </div>
 
       <ScrollArea className="flex-1 px-2 pb-4">
@@ -427,7 +460,7 @@ function SolarTermSidebar({ onClose }: { onClose?: () => void }) {
                 className={cn("w-full flex items-center justify-between px-3 py-2.5 rounded-2xl transition-colors text-left", cfg.headerBg)}
               >
                 <div className="flex items-center gap-2">
-                  <span className={cn("text-sm font-bold tracking-wide", cfg.textClass)}>{cfg.label}</span>
+                  <span className={cn("text-sm font-bold tracking-wide", cfg.textClass)}>{lang === "en" ? SEASON_EN[season] : cfg.label}</span>
                   <span className="text-xs text-muted-foreground">({terms.length})</span>
                 </div>
                 {isExpanded
@@ -448,9 +481,9 @@ function SolarTermSidebar({ onClose }: { onClose?: () => void }) {
                       >
                         <div className="flex items-center gap-2 min-w-0">
                           <span className={cn("w-2 h-2 rounded-full shrink-0", isActiveItem ? "bg-primary" : cfg.dotClass)} />
-                          <span className="truncate">{term.name}</span>
+                          <span className="truncate">{lang === "en" ? termNameEn(term.id) : term.name}</span>
                         </div>
-                        <span className="text-xs text-muted-foreground shrink-0 ml-1">{term.month}月{term.day}日</span>
+                        <span className="text-xs text-muted-foreground shrink-0 ml-1">{lang === "en" ? `${term.month}/${term.day}` : `${term.month}月${term.day}日`}</span>
                       </Link>
                     );
                   })}
@@ -462,7 +495,7 @@ function SolarTermSidebar({ onClose }: { onClose?: () => void }) {
       </ScrollArea>
 
       <div className="px-4 py-3 border-t border-border/50 shrink-0">
-        <p className="text-xs text-muted-foreground text-center">田间草木 · 识得岁时</p>
+        <p className="text-xs text-muted-foreground text-center">{lang === "en" ? "Fields & seasons · learn nature's rhythm" : "田间草木 · 识得岁时"}</p>
       </div>
     </div>
   );
@@ -480,9 +513,10 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
     return location.pathname.startsWith(path);
   };
 
+  const { lang } = useLanguage();
   const handleSignOut = async () => {
     await signOut();
-    toast.success("已退出登录");
+    toast.success(lang === "en" ? "Signed out" : "已退出登录");
     navigate("/", { replace: true });
   };
 
@@ -532,9 +566,12 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
               <span className="font-bold text-white text-lg tracking-wider whitespace-nowrap drop-shadow">禾间识岁</span>
             </Link>
 
+            {/* 全站语言开关（左上角） */}
+            <LangToggle />
+
             {/* 导航项 — 居中 */}
             <div className="flex items-center justify-center gap-1 flex-1">
-              {navItems.map(({ name, path }) => {
+              {navItems.map(({ name, en, path }) => {
                 const active = isActiveNav(path);
                 return (
                   <Link key={path} to={path}>
@@ -543,7 +580,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                       active
                         ? "bg-white text-[#2a6e48] shadow-sm"
                         : "text-white/90 hover:bg-white/20"
-                    )}>{name}</div>
+                    )}>{lang === "en" ? en : name}</div>
                   </Link>
                 );
               })}
@@ -564,7 +601,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                     onClick={handleSignOut}
                     className="text-white hover:bg-white/20 rounded-full text-xs h-8 px-3 border border-white/30"
                   >
-                    <LogOut className="w-3.5 h-3.5 mr-1.5" />退出
+                    <LogOut className="w-3.5 h-3.5 mr-1.5" />{lang === "en" ? "Log out" : "退出"}
                   </Button>
                 </>
               ) : (
@@ -574,7 +611,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                     size="sm"
                     className="text-white hover:bg-white/20 rounded-full text-sm h-8 px-4 border border-white/30 font-semibold"
                   >
-                    <LogIn className="w-4 h-4 mr-1.5" />登录
+                    <LogIn className="w-4 h-4 mr-1.5" />{lang === "en" ? "Log in" : "登录"}
                   </Button>
                 </Link>
               )}
@@ -594,6 +631,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
             </div>
             <span className="font-bold text-white text-lg tracking-wide drop-shadow">禾间识岁</span>
           </Link>
+          <LangToggle compact />
           <div className="flex items-center gap-2">
             {user ? (
               <Button
@@ -602,7 +640,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                 onClick={handleSignOut}
                 className="text-white hover:bg-white/20 rounded-full text-xs h-8 px-3 border border-white/30"
               >
-                <LogOut className="w-3.5 h-3.5 mr-1" />退出
+                <LogOut className="w-3.5 h-3.5 mr-1" />{lang === "en" ? "Log out" : "退出"}
               </Button>
             ) : (
               <Link to="/login">
@@ -611,7 +649,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                   size="sm"
                   className="text-white hover:bg-white/20 rounded-full text-xs h-8 px-3 border border-white/30 font-semibold"
                 >
-                  <LogIn className="w-3.5 h-3.5 mr-1" />登录
+                  <LogIn className="w-3.5 h-3.5 mr-1" />{lang === "en" ? "Log in" : "登录"}
                 </Button>
               </Link>
             )}

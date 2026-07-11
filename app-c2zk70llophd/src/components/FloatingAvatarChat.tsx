@@ -16,6 +16,7 @@ import {
   saveMemory,
 } from "@/services/userMemory";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { getCurrentSolarTerm } from "@/data/solarTerms";
 import { toast } from "sonner";
 
@@ -131,6 +132,33 @@ const QUICK_QUESTIONS_BY_SEASON: Record<string, Array<{ label: string; q: string
     { label: "🥟 冬天为什么吃饺子？", q: "冬至为什么要吃饺子？有什么传说故事？" },
     { label: "☃️ 冬天动物在干什么？", q: "冬季节气时动物们都去哪里了？" },
     { label: "🔥 冬天怎么保暖？", q: "冬季节气有哪些御寒保暖的传统习俗？" },
+  ],
+};
+
+const QUICK_QUESTIONS_EN: Record<string, Array<{ label: string; q: string }>> = {
+  春: [
+    { label: "🌸 What is Start of Spring?", q: "Explain the solar term Start of Spring for kids" },
+    { label: "🌱 Spring solar terms?", q: "What are the six spring solar terms?" },
+    { label: "🍃 What to eat in spring?", q: "What do people eat during spring solar terms?" },
+    { label: "🦋 Spring traditions?", q: "Tell me fun spring solar term traditions" },
+  ],
+  夏: [
+    { label: "☀️ What is Summer Solstice?", q: "Explain the Summer Solstice for kids" },
+    { label: "🌊 Summer traditions?", q: "What fun traditions happen in summer solar terms?" },
+    { label: "🍉 Cool summer foods?", q: "What do people eat to stay cool in summer solar terms?" },
+    { label: "🌺 Nature in summer?", q: "How do plants change during summer solar terms?" },
+  ],
+  秋: [
+    { label: "🍂 What is Autumn Equinox?", q: "Explain the Autumn Equinox for kids" },
+    { label: "🌾 Why harvest in autumn?", q: "Why is autumn the harvest season?" },
+    { label: "🥮 Autumn foods?", q: "What do people eat during autumn solar terms?" },
+    { label: "🦅 Where do animals go?", q: "What do animals do during autumn solar terms?" },
+  ],
+  冬: [
+    { label: "❄️ What is Winter Solstice?", q: "Explain the Winter Solstice for kids" },
+    { label: "🥟 Why dumplings on Dongzhi?", q: "Why do people eat dumplings on the Winter Solstice?" },
+    { label: "☃️ Animals in winter?", q: "What do animals do during winter solar terms?" },
+    { label: "🔥 Keeping warm?", q: "What are traditional ways to keep warm in winter solar terms?" },
   ],
 };
 
@@ -410,7 +438,7 @@ function FloatingBtn({ season, onClick }: { season: keyof typeof SEASON_CONFIG; 
 ══════════════════════════════════════════ */
 function ChatPanel({
   isOpen, onClose, season, messages, isStreaming,
-  onSend, input, setInput, scrollRef, onGoHome,
+  onSend, input, setInput, scrollRef, onGoHome, lang,
 }: {
   isOpen: boolean; onClose: () => void;
   season: keyof typeof SEASON_CONFIG;
@@ -419,13 +447,16 @@ function ChatPanel({
   input: string; setInput: (v: string) => void;
   scrollRef: React.RefObject<HTMLDivElement | null>;
   onGoHome: () => void;
+  lang: "zh" | "en";
 }) {
   const panelRef     = useRef<HTMLDivElement>(null);
   const mascotRef    = useRef<HTMLDivElement>(null);  // 面板大吉祥物
   const mascotImgRef = useRef<HTMLImageElement>(null);
   const emotionRef   = useRef<HTMLDivElement>(null);
   const cfg          = SEASON_CONFIG[season];
-  const quickQ       = QUICK_QUESTIONS_BY_SEASON[season] ?? QUICK_QUESTIONS_BY_SEASON["春"];
+  const quickQ       = lang === "en"
+    ? (QUICK_QUESTIONS_EN[season] ?? QUICK_QUESTIONS_EN["春"])
+    : (QUICK_QUESTIONS_BY_SEASON[season] ?? QUICK_QUESTIONS_BY_SEASON["春"]);
   const lastMsgRef   = useRef<string>("");
 
   /* 情绪状态 */
@@ -608,7 +639,7 @@ function ChatPanel({
       {/* 快捷问题 */}
       {messages.length <= 1 && (
         <div className="px-4 py-3 border-b border-border shrink-0 bg-background/50">
-          <p className="text-xs text-muted-foreground mb-2 font-semibold tracking-wide">💡 快来问我：</p>
+          <p className="text-xs text-muted-foreground mb-2 font-semibold tracking-wide">{lang === "en" ? "💡 Ask me:" : "💡 快来问我："}</p>
           <div className="grid grid-cols-2 gap-2">
             {quickQ.map(({ label, q }) => (
               <button
@@ -679,7 +710,7 @@ function ChatPanel({
           style={{ color: cfg.glow, borderColor: `rgba(${cfg.glowRgb},0.4)`, background: `rgba(${cfg.glowRgb},0.08)` }}
         >
           <Home className="w-3.5 h-3.5" />
-          去四四的家 🎨 画画 · 做视频 · 我的诗集
+          {lang === "en" ? "Sisi's Home 🎨 Paint · Videos · My Poems" : "去四四的家 🎨 画画 · 做视频 · 我的诗集"}
         </button>
         <form
           onSubmit={e => { e.preventDefault(); onSend(input); }}
@@ -688,7 +719,7 @@ function ChatPanel({
           <Input
             value={input}
             onChange={e => setInput(e.target.value)}
-            placeholder={cfg.sleepy ? "叫醒四四，问我节气知识…" : "问我节气知识…"}
+            placeholder={lang === "en" ? "Ask me about solar terms & poems…" : cfg.sleepy ? "叫醒四四，问我节气知识…" : "问我节气知识…"}
             disabled={isStreaming}
             className="flex-1 rounded-2xl text-sm border-border/60 focus:border-primary bg-card"
           />
@@ -702,7 +733,7 @@ function ChatPanel({
           </button>
         </form>
         <p className="text-center text-xs text-muted-foreground mt-2">
-          {cfg.emoji} 四四·{cfg.mood} — 节气小精灵陪你探索
+          {lang === "en" ? `${cfg.emoji} Sisi the solar-term sprite, exploring with you` : `${cfg.emoji} 四四·${cfg.mood} — 节气小精灵陪你探索`}
         </p>
       </div>
     </div>
@@ -721,6 +752,7 @@ export default function FloatingAvatarChat() {
   const navigate  = useNavigate();
   const location  = useLocation();
   const { user }  = useAuth();
+  const { lang }  = useLanguage();
 
   /* 长期记忆：与「AI伙伴」页共用同一份（登录=云端，游客=本地） */
   const memoryRef = useRef<AgentMemory>(EMPTY_MEMORY);
@@ -743,6 +775,20 @@ export default function FloatingAvatarChat() {
     content: `你好呀小朋友！${cfg.emoji}\n\n${cfg.greetings[Math.floor(Math.random() * cfg.greetings.length)]}\n\n节气、古诗、传统节日都可以问我；想画画或做小视频，就到"四四的家"来～`,
   }]);
 
+  /* 全站语言切换时，重置欢迎语 */
+  useEffect(() => {
+    setMessages(prev => prev.length === 1 && prev[0].id === "welcome"
+      ? [{
+          role: "assistant",
+          id: "welcome",
+          content: lang === "en"
+            ? `Hi little friend! ${cfg.emoji}\n\nI'm Sisi the deer! Ask me anything about the 24 solar terms, poems and festivals. Want a painting or a little video? Come to Sisi's Home!`
+            : `你好呀小朋友！${cfg.emoji}\n\n${cfg.greetings[0]}\n\n节气、古诗、传统节日都可以问我；想画画或做小视频，就到"四四的家"来～`,
+        }]
+      : prev);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lang]);
+
   /* 去四四的家（AI伙伴页），可携带未完成的请求 */
   const goHome = useCallback((pendingText?: string) => {
     if (pendingText) {
@@ -759,7 +805,9 @@ export default function FloatingAvatarChat() {
     if (detectMediaIntent(text)) {
       setMessages(prev => [...prev,
         { role: "user", content: text, id: Date.now().toString() },
-        { role: "assistant", content: "画画要用我家里的大画板哦！🎨 这就带你去，马上开始画～", id: (Date.now() + 1).toString() },
+        { role: "assistant", content: lang === "en"
+          ? "I need my big easel at home for that! 🎨 Taking you there now~"
+          : "画画要用我家里的大画板哦！🎨 这就带你去，马上开始画～", id: (Date.now() + 1).toString() },
       ]);
       setInput("");
       setTimeout(() => goHome(text), 900);
@@ -788,7 +836,7 @@ export default function FloatingAvatarChat() {
       await streamCultureChat(
         text,
         history,
-        nextMemory.language,
+        lang,
         memoryForPrompt(nextMemory),
         (chunk) => setMessages(prev => prev.map(m =>
           m.id === assistantMsg.id ? { ...m, content: m.content + chunk } : m
@@ -826,6 +874,7 @@ export default function FloatingAvatarChat() {
         setInput={setInput}
         scrollRef={scrollRef}
         onGoHome={() => goHome()}
+        lang={lang}
       />
       {/* 面板背景遮罩 */}
       {isOpen && (

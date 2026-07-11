@@ -7,6 +7,7 @@ import FloatingAvatarChat from '@/components/FloatingAvatarChat';
 import CelebrationOverlay from '@/components/CelebrationOverlay';
 import { AchievementProvider } from '@/contexts/AchievementContext';
 import { AuthProvider } from '@/contexts/AuthContext';
+import { LanguageProvider } from '@/contexts/LanguageContext';
 import LoginPage from '@/pages/LoginPage';
 
 import { routes } from './routes';
@@ -18,6 +19,7 @@ const Router = ROUTER_MODE === 'hash' ? HashRouter : BrowserRouter;
 const App: React.FC = () => {
   return (
     <AuthProvider>
+      <LanguageProvider>
       <AchievementProvider>
         <Router basename={ROUTER_MODE === 'hash' ? undefined : import.meta.env.BASE_URL}>
           <IntersectObserver />
@@ -50,6 +52,7 @@ const App: React.FC = () => {
           <Toaster />
         </Router>
       </AchievementProvider>
+      </LanguageProvider>
     </AuthProvider>
   );
 };
