@@ -1,0 +1,301 @@
+/* stylelint-disable */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── ResourceHanRoundedCN 圆体字 ── */
+@font-face {
+  font-family: 'ResourceHanRoundedCN';
+  src: url('https://resource-static.cdn.bcebos.com/fonts/ResourceHanRoundedCN-Regular.woff2') format('woff2');
+  font-display: swap;
+}
+
+/*
+  禾间识岁 — 低饱和马卡龙儿童风 UI 设计系统 v3
+  ──────────────────────────────────────────
+  Vibe: 梦幻治愈 × 绘本插画
+  主色：薄荷森绿 #5BA883
+  页面背景：薄荷绿 #C8E6CE（护眼，柔和）
+  卡片：奶白 #FFF9F0
+  强调：薰衣草紫 #9B7FD4
+  ──────────────────────────────────────────
+*/
+
+@layer base {
+  :root {
+    --radius: 1.25rem; /* 圆润大圆角 20px */
+
+    /* ── 页面背景：薄荷绿 ── */
+    --background:          145 38% 85%;  /* #C8E6CE 薄荷绿 */
+    --foreground:          150 40% 18%;  /* #1E4A2C 深绿 */
+
+    /* 卡片：奶白暖调 */
+    --card:                40 80% 97%;   /* #FFF9F0 奶白 */
+    --card-foreground:     150 40% 18%;
+    --popover:             40 80% 97%;
+    --popover-foreground:  150 40% 18%;
+
+    /* ── 主色：森绿 #5BA883 ── */
+    --primary:             152 32% 48%;  /* #5BA883 */
+    --primary-foreground:  0 0% 100%;
+
+    /* 次级：薰衣草紫 */
+    --secondary:           270 38% 66%;  /* #9B7FD4 */
+    --secondary-foreground:0 0% 100%;
+
+    /* 柔和静音 */
+    --muted:               145 25% 88%;  /* 浅薄荷 */
+    --muted-foreground:    150 20% 42%;
+
+    /* 强调（hover 背景 / 橙黄点缀） */
+    --accent:              38 90% 70%;   /* #F5C87A 暖橙 */
+    --accent-foreground:   38 60% 25%;
+
+    --destructive:         4 68% 52%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* 边框 */
+    --border:              145 22% 80%;
+    --input:               145 22% 80%;
+    --ring:                152 32% 48%;
+
+    /* 图表色 */
+    --chart-1: 152 32% 48%;
+    --chart-2: 270 38% 66%;
+    --chart-3:  38 90% 70%;
+    --chart-4: 177 48% 54%;
+    --chart-5: 340 55% 68%;
+
+    /* 侧边栏 */
+    --sidebar-background:  145 32% 90%;
+    --sidebar-foreground:  150 38% 20%;
+    --sidebar-primary:     152 32% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent:      145 28% 84%;
+    --sidebar-accent-foreground:  150 32% 28%;
+    --sidebar-border:      145 22% 82%;
+    --sidebar-ring:        152 32% 48%;
+
+    /* 功能色 */
+    --success:   142 38% 50%;
+    --warning:    38 90% 65%;
+    --info:      177 48% 54%;  /* #4ECDC4 青绿 */
+    --star:       45 95% 60%;  /* #FFD93D 星星黄 */
+
+    /* ── 四季英雄卡 ── */
+    --hero-spring-bg:    145 55% 88%;   /* 嫩绿 */
+    --hero-spring-card:  40 80% 94%;    /* 奶白偏黄 */
+    --hero-spring-fg:    145 50% 20%;
+    --hero-spring-sub:   145 28% 38%;
+    --hero-spring-btn:   145 42% 52%;
+
+    --hero-summer-bg:    177 45% 84%;   /* 薄荷蓝 */
+    --hero-summer-card:  177 35% 93%;
+    --hero-summer-fg:    177 55% 16%;
+    --hero-summer-sub:   177 30% 36%;
+    --hero-summer-btn:   177 48% 48%;
+
+    --hero-autumn-bg:    38 72% 88%;    /* 暖橙米 */
+    --hero-autumn-card:  38 65% 94%;
+    --hero-autumn-fg:    38 55% 22%;
+    --hero-autumn-sub:   38 38% 40%;
+    --hero-autumn-btn:   38 68% 58%;
+
+    --hero-winter-bg:    205 55% 88%;   /* 奶蓝 */
+    --hero-winter-card:  205 45% 94%;
+    --hero-winter-fg:    205 55% 20%;
+    --hero-winter-sub:   205 32% 40%;
+    --hero-winter-btn:   205 52% 52%;
+
+    /* 当前激活英雄（默认夏色对应当前节气）*/
+    --hero-bg:       var(--hero-summer-bg);
+    --hero-fg:       var(--hero-summer-fg);
+    --hero-sub:      var(--hero-summer-sub);
+    --hero-muted:    177 22% 52%;
+    --hero-right-bg: var(--hero-summer-card);
+    --hero-divider:  177 28% 72%;
+    --hero-pill-bg:  var(--hero-summer-card);
+    --hero-pill-bd:  177 32% 65%;
+
+    /* ── 四季点缀色 ── */
+    --season-spring:    145 52% 68%;
+    --season-spring-fg: 145 52% 22%;
+    --season-summer:    177 48% 58%;
+    --season-summer-fg: 177 55% 18%;
+    --season-autumn:    38 72% 65%;
+    --season-autumn-fg: 38 58% 24%;
+    --season-winter:    205 55% 65%;
+    --season-winter-fg: 205 55% 22%;
+
+    /* 柔和弥散阴影 */
+    --shadow-card:  0 4px 24px rgba(100, 160, 130, 0.15);
+    --shadow-hover: 0 8px 36px rgba(100, 160, 130, 0.22);
+
+    /* 渐变 */
+    --gradient-primary: linear-gradient(135deg, #5BA883, #7BBFA0);
+    --gradient-card:    linear-gradient(160deg, #FFF9F0 0%, #F0FAF4 100%);
+    --gradient-background: linear-gradient(180deg, #C8E6CE 0%, #D4EED8 100%);
+    --gradient-spring:  linear-gradient(135deg, #A8D5B5, #C5E8C8);
+    --gradient-summer:  linear-gradient(135deg, #4ECDC4, #7EDDD8);
+    --gradient-autumn:  linear-gradient(135deg, #F5C87A, #F5D899);
+    --gradient-winter:  linear-gradient(135deg, #87CEEB, #AADDEE);
+  }
+
+  /* ── 禁用暗色模式（幼儿专属浅色体验）── */
+  .dark {
+    --background:          145 38% 85%;
+    --foreground:          150 40% 18%;
+    --card:                40 80% 97%;
+    --card-foreground:     150 40% 18%;
+    --popover:             40 80% 97%;
+    --popover-foreground:  150 40% 18%;
+    --primary:             152 32% 48%;
+    --primary-foreground:  0 0% 100%;
+    --secondary:           270 38% 66%;
+    --secondary-foreground:0 0% 100%;
+    --muted:               145 25% 88%;
+    --muted-foreground:    150 20% 42%;
+    --accent:              38 90% 70%;
+    --accent-foreground:   38 60% 25%;
+    --destructive:         4 68% 52%;
+    --destructive-foreground: 0 0% 100%;
+    --border:              145 22% 80%;
+    --input:               145 22% 80%;
+    --ring:                152 32% 48%;
+    --chart-1: 152 32% 48%;
+    --chart-2: 270 38% 66%;
+    --chart-3:  38 90% 70%;
+    --chart-4: 177 48% 54%;
+    --chart-5: 340 55% 68%;
+    --sidebar-background:  145 32% 90%;
+    --sidebar-foreground:  150 38% 20%;
+    --sidebar-primary:     152 32% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent:      145 28% 84%;
+    --sidebar-accent-foreground:  150 32% 28%;
+    --sidebar-border:      145 22% 82%;
+    --sidebar-ring:        152 32% 48%;
+    --hero-bg:       var(--hero-summer-bg);
+    --hero-fg:       var(--hero-summer-fg);
+    --hero-sub:      var(--hero-summer-sub);
+    --hero-muted:    177 22% 52%;
+    --hero-right-bg: var(--hero-summer-card);
+    --hero-divider:  177 28% 72%;
+    --hero-pill-bg:  var(--hero-summer-card);
+    --hero-pill-bd:  177 32% 65%;
+    --season-spring:    145 52% 68%;
+    --season-spring-fg: 145 52% 22%;
+    --season-summer:    177 48% 58%;
+    --season-summer-fg: 177 55% 18%;
+    --season-autumn:    38 72% 65%;
+    --season-autumn-fg: 38 58% 24%;
+    --season-winter:    205 55% 65%;
+    --season-winter-fg: 205 55% 22%;
+    --shadow-card:  0 4px 24px rgba(100, 160, 130, 0.15);
+    --shadow-hover: 0 8px 36px rgba(100, 160, 130, 0.22);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'ResourceHanRoundedCN', 'ZCOOL KuaiLe', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    font-size: 18px;
+  }
+
+  /* 强制全局圆体字，覆盖 shadcn font-sans */
+  *, *::before, *::after {
+    font-family: inherit;
+  }
+
+  /* 国风细滚动条 */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--border)) transparent;
+  }
+  *::-webkit-scrollbar {
+    width: 5px;
+    background: transparent;
+  }
+  *::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 3px;
+  }
+}
+
+/* ── 儿童友好按钮动效 ── */
+@layer utilities {
+  .btn-child-press {
+    @apply transition-all duration-150 active:scale-95;
+  }
+
+  /* 马卡龙卡片：大圆角、柔和投影 */
+  .card-child {
+    @apply rounded-3xl border border-white/60;
+    background: hsl(var(--card));
+    box-shadow: var(--shadow-card);
+  }
+  .card-child:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
+  }
+
+  /* 底部导航安全区留白 */
+  .pb-nav {
+    padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* 四季渐变文字 */
+  .text-gradient-spring  { background: var(--gradient-spring);  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .text-gradient-summer  { background: var(--gradient-summer);  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .text-gradient-autumn  { background: var(--gradient-autumn);  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .text-gradient-winter  { background: var(--gradient-winter);  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+  /* 呼吸动效 */
+  .animate-breathe {
+    animation: breathe 2.5s ease-in-out infinite;
+  }
+  @keyframes breathe {
+    0%, 100% { opacity: 0.7; transform: scale(1); }
+    50%       { opacity: 1;   transform: scale(1.08); }
+  }
+
+  /* 浮动动效 */
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-6px); }
+  }
+
+  /* 底部导航弹跳 */
+  .animate-bounce-sm {
+    animation: bounceSm 0.3s ease-out;
+  }
+  @keyframes bounceSm {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(1.22); }
+    70%  { transform: scale(0.94); }
+    100% { transform: scale(1); }
+  }
+
+  /* 棉花糖回弹 */
+  .animate-marshmallow {
+    animation: marshmallow 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes marshmallow {
+    0%   { transform: scale(0.92); }
+    60%  { transform: scale(1.08); }
+    100% { transform: scale(1); }
+  }
+
+  /* 页面背景装饰叶片（已由背景图替代，保留兼容） */
+  .bg-leaf-pattern {
+    position: relative;
+  }
+}
