@@ -1,0 +1,61 @@
+# 全自动部署：把升级后的网站构建并发布到 GitHub Pages
+# 触发：推送到开发分支 或 手动运行
+# 说明：VITE_* 均为前端公开配置（anon key 本来就会打进浏览器端产物），非机密
+name: Deploy site to GitHub Pages
+
+on:
+  push:
+    branches: [claude/culture-agent-media-gen-v998j7]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app-c2zk70llophd
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: app-c2zk70llophd/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - name: Build (Vite)
+        run: npx vite build --base=/-/
+        env:
+          VITE_SUPABASE_URL: https://backend.appmiaoda.com/projects/supabase320478069733244928
+          VITE_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoyMDk1ODM1MTI2LCJpc3MiOiJzdXBhYmFzZSIsInJvbGUiOiJhbm9uIiwic3ViIjoiYW5vbiJ9.iKorflFSe7jdx_50T14hKpAZ1oSn0JQb8W_pduqpLOs
+          VITE_APP_ID: app-c2zk70llophd
+      - name: SPA fallback for client-side routing
+        run: cp dist/index.html dist/404.html
+      - name: Enable & configure GitHub Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: app-c2zk70llophd/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

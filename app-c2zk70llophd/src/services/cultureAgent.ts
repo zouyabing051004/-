@@ -190,6 +190,26 @@ export async function streamCultureChat(
   }
 
   const systemPrompt = await buildSystemPrompt(userMessage, language, profile);
+  const handleData = (rawData: string) => {
+    try {
+      if (rawData === "[DONE]") return;
+      const parsed = JSON.parse(rawData);
+      const chunk = parsed.choices?.[0]?.delta?.content ?? "";
+      if (chunk) onChunk(chunk);
+    } catch {
+      // 不完整chunk，跳过
+    }
+  };
+
+  let gotContent = false;
+  const markingChunk = (rawData: string) => {
+    const before = gotContent;
+    handleData(rawData);
+    if (!before) gotContent = true;
+  };
+
+  // 首选 DeepSeek（deepseek-chat 云函数）；未部署/未配 Key 时自动降级到
+  // 已上线的文心 multimodal-chat，用户无感知（提示词与知识锚定相同）。
   await sendStreamRequest({
     functionUrl: `${supabaseUrl}/functions/v1/deepseek-chat`,
     requestBody: {
@@ -201,18 +221,32 @@ export async function streamCultureChat(
       ],
     },
     supabaseAnonKey,
-    onData: (rawData) => {
-      try {
-        if (rawData === "[DONE]") return;
-        const parsed = JSON.parse(rawData);
-        const chunk = parsed.choices?.[0]?.delta?.content ?? "";
-        if (chunk) onChunk(chunk);
-      } catch {
-        // 不完整chunk，跳过
-      }
-    },
+    onData: markingChunk,
     onComplete: onDone,
-    onError,
+    onError: async () => {
+      if (gotContent) {
+        onError(new Error("对话中断，请重试"));
+        return;
+      }
+      await sendStreamRequest({
+        functionUrl: `${supabaseUrl}/functions/v1/multimodal-chat`,
+        requestBody: {
+          messages: [
+            { role: "system", content: [{ type: "text", text: systemPrompt }] },
+            ...history.slice(-8).map((h) => ({
+              role: h.role,
+              content: [{ type: "text", text: h.content }],
+            })),
+            { role: "user", content: [{ type: "text", text: userMessage }] },
+          ],
+        },
+        supabaseAnonKey,
+        onData: handleData,
+        onComplete: onDone,
+        onError,
+        signal,
+      });
+    },
     signal,
   });
 }

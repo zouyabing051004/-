@@ -15,7 +15,7 @@ const App: React.FC = () => {
   return (
     <AuthProvider>
       <AchievementProvider>
-        <Router>
+        <Router basename={import.meta.env.BASE_URL}>
           <IntersectObserver />
           <Routes>
             {/* 登录页独立渲染，不套 MainLayout */}
