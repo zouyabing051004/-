@@ -1,7 +1,7 @@
 import { useEffect, useRef, useCallback } from "react";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
-import { useAchievement, type Badge } from "@/contexts/AchievementContext";
+import { useAchievement, type Badge, badgeName, badgeDesc } from "@/contexts/AchievementContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 gsap.registerPlugin(useGSAP);
@@ -70,7 +70,7 @@ function spawnStars(container: HTMLElement, cx: number, cy: number) {
 /* ══════════════════════════════════════════
    徽章卡片展示
 ══════════════════════════════════════════ */
-function BadgeCard({ badge }: { badge: Badge }) {
+function BadgeCard({ badge, lang }: { badge: Badge; lang: "zh" | "en" }) {
   return (
     <div
       className="flex flex-col items-center gap-1"
@@ -84,10 +84,10 @@ function BadgeCard({ badge }: { badge: Badge }) {
       </div>
       <p className="text-xl font-bold text-white mt-1 font-serif text-balance text-center"
         style={{ textShadow: "0 2px 8px rgba(0,0,0,0.4)" }}>
-        {badge.name}
+        {badgeName(badge, lang)}
       </p>
       <p className="text-sm text-white/85 text-center max-w-[200px] text-pretty">
-        {badge.desc}
+        {badgeDesc(badge, lang)}
       </p>
     </div>
   );
@@ -201,7 +201,7 @@ export default function CelebrationOverlay() {
 
       {/* 徽章卡片 */}
       <div ref={cardRef} className="relative z-10 mb-4">
-        <BadgeCard badge={badge} />
+        <BadgeCard badge={badge} lang={lang} />
         {/* 光圈 */}
         <div
           className="absolute inset-[-16px] rounded-full animate-ping pointer-events-none opacity-40"

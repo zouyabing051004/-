@@ -9,13 +9,15 @@ import {
   ALL_BADGES,
   TERM_BADGES,
   STREAK_BADGES,
+  badgeName,
+  badgeDesc,
   type Badge,
 } from "@/contexts/AchievementContext";
 
 gsap.registerPlugin(useGSAP);
 
 /* ── 单枚徽章卡片 ── */
-function BadgeTile({ badge, unlocked }: { badge: Badge; unlocked: boolean }) {
+function BadgeTile({ badge, unlocked, lang }: { badge: Badge; unlocked: boolean; lang: "zh" | "en" }) {
   const tileRef = useRef<HTMLDivElement>(null);
 
   /* 解锁态入场 */
@@ -56,7 +58,7 @@ function BadgeTile({ badge, unlocked }: { badge: Badge; unlocked: boolean }) {
         "text-xs font-semibold text-center leading-tight text-balance",
         unlocked ? "text-foreground" : "text-muted-foreground/50"
       )}>
-        {badge.name}
+        {badgeName(badge, lang)}
       </p>
       {/* 解锁光点 */}
       {unlocked && (
@@ -70,7 +72,7 @@ function BadgeTile({ badge, unlocked }: { badge: Badge; unlocked: boolean }) {
 }
 
 /* ── streak 火焰计数器 ── */
-function StreakCounter({ streak }: { streak: number }) {
+function StreakCounter({ streak, lang }: { streak: number; lang: "zh" | "en" }) {
   const numRef = useRef<HTMLSpanElement>(null);
   const prevRef = useRef(streak);
 
@@ -93,18 +95,20 @@ function StreakCounter({ streak }: { streak: number }) {
       </span>
       <div className="flex items-baseline gap-0.5">
         <span ref={numRef} className="text-3xl font-bold text-foreground font-serif">{streak}</span>
-        <span className="text-sm text-muted-foreground">天</span>
+        <span className="text-sm text-muted-foreground">{lang === "en" ? "days" : "天"}</span>
       </div>
       <p className="text-xs text-muted-foreground text-center">
-        {streak === 0
-          ? "开始学习节气吧！"
-          : streak >= 24
-          ? "你已是节气达人！🏆"
-          : streak >= 14
-          ? "太厉害了，快到24天！"
-          : streak >= 7
-          ? "连续一周，真棒！"
-          : "坚持下去！加油🦌"}
+        {lang === "en"
+          ? (streak === 0 ? "Start learning solar terms!"
+            : streak >= 24 ? "You're a Solar-Term Star! 🏆"
+            : streak >= 14 ? "Amazing — almost 24 days!"
+            : streak >= 7 ? "A whole week in a row, awesome!"
+            : "Keep it up! You can do it 🦌")
+          : (streak === 0 ? "开始学习节气吧！"
+            : streak >= 24 ? "你已是节气达人！🏆"
+            : streak >= 14 ? "太厉害了，快到24天！"
+            : streak >= 7 ? "连续一周，真棒！"
+            : "坚持下去！加油🦌")}
       </p>
     </div>
   );
@@ -179,9 +183,9 @@ export default function AchievementPage() {
         {/* 统计行 */}
         <div className="grid grid-cols-3 gap-3">
           {[
-            { icon: "🏅", value: unlockedIds.size, label: "已解锁", total: ALL_BADGES.length },
-            { icon: "🌿", value: totalTerms, label: "节气探索", total: 24 },
-            { icon: "🔥", value: streak, label: "连续天数", total: null },
+            { icon: "🏅", value: unlockedIds.size, label: lang === "en" ? "Unlocked" : "已解锁", total: ALL_BADGES.length },
+            { icon: "🌿", value: totalTerms, label: lang === "en" ? "Terms explored" : "节气探索", total: 24 },
+            { icon: "🔥", value: streak, label: lang === "en" ? "Day streak" : "连续天数", total: null },
           ].map(({ icon, value, label, total }) => (
             <div key={label}
               className="bg-white/20 backdrop-blur-sm rounded-2xl p-3 flex flex-col items-center text-center">
@@ -201,15 +205,15 @@ export default function AchievementPage() {
         <section className="ach-section bg-card border border-border rounded-2xl p-4">
           <div className="flex items-center gap-2 mb-4">
             <Flame className="w-5 h-5 text-orange-500" />
-            <h2 className="font-bold text-foreground text-base">连续学习</h2>
+            <h2 className="font-bold text-foreground text-base">{lang === "en" ? "Learning Streak" : "连续学习"}</h2>
           </div>
           <div className="flex items-center gap-6">
-            <StreakCounter streak={streak} />
+            <StreakCounter streak={streak} lang={lang} />
             <div className="flex-1 space-y-3">
               <div>
                 <div className="flex justify-between text-xs text-muted-foreground mb-1">
-                  <span>距离下个里程碑</span>
-                  <span>{Math.min(streak, streakNextMilestone)}/{streakNextMilestone}天</span>
+                  <span>{lang === "en" ? "Next milestone" : "距离下个里程碑"}</span>
+                  <span>{Math.min(streak, streakNextMilestone)}/{streakNextMilestone}{lang === "en" ? " days" : "天"}</span>
                 </div>
                 <ProgressBar value={streak} max={streakNextMilestone} color="#FF8C00" />
               </div>
@@ -231,7 +235,7 @@ export default function AchievementPage() {
                     >
                       {unlockedIds.has(badge.id) ? badge.emoji : <Lock className="w-3 h-3 text-muted-foreground/30" />}
                     </div>
-                    <p className="text-[10px] text-center text-muted-foreground leading-tight">{badge.name}</p>
+                    <p className="text-[10px] text-center text-muted-foreground leading-tight">{badgeName(badge, lang)}</p>
                   </div>
                 ))}
               </div>
@@ -244,7 +248,7 @@ export default function AchievementPage() {
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <Star className="w-5 h-5 text-amber-500" />
-              <h2 className="font-bold text-foreground text-base">节气徽章</h2>
+              <h2 className="font-bold text-foreground text-base">{lang === "en" ? "Solar-Term Badges" : "节气徽章"}</h2>
             </div>
             <span className="text-sm font-semibold text-muted-foreground">
               {totalTerms}<span className="text-muted-foreground/60">/24</span>
@@ -261,14 +265,14 @@ export default function AchievementPage() {
               <div key={season} className="mt-4">
                 <div className="flex items-center gap-1.5 mb-2">
                   <span className="text-base">{meta.emoji}</span>
-                  <span className="text-sm font-semibold text-foreground">{season}季</span>
+                  <span className="text-sm font-semibold text-foreground">{lang === "en" ? ({ 春: "Spring", 夏: "Summer", 秋: "Autumn", 冬: "Winter" } as Record<string,string>)[season] : `${season}季`}</span>
                   <span className="text-xs text-muted-foreground ml-auto">
                     {seasonUnlocked}/{seasonBadges.length}
                   </span>
                 </div>
                 <div className="grid grid-cols-3 gap-2 md:grid-cols-6">
                   {seasonBadges.map(badge => (
-                    <BadgeTile key={badge.id} badge={badge} unlocked={unlockedIds.has(badge.id)} />
+                    <BadgeTile key={badge.id} badge={badge} unlocked={unlockedIds.has(badge.id)} lang={lang} />
                   ))}
                 </div>
               </div>
@@ -280,7 +284,7 @@ export default function AchievementPage() {
         <section className="ach-section bg-card border border-border rounded-2xl p-4 mb-4">
           <div className="flex items-center gap-2 mb-4">
             <span className="text-xl">🎊</span>
-            <h2 className="font-bold text-foreground text-base">大师徽章</h2>
+            <h2 className="font-bold text-foreground text-base">{lang === "en" ? "Master Badge" : "大师徽章"}</h2>
           </div>
           {(() => {
             const badge = STREAK_BADGES.find(b => b.id === "complete")!;
@@ -298,12 +302,12 @@ export default function AchievementPage() {
                   {unlocked ? badge.emoji : <Lock className="w-6 h-6 text-muted-foreground/30" />}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className={cn("font-bold text-base text-balance", unlocked ? "text-foreground" : "text-muted-foreground/50")}>{badge.name}</p>
-                  <p className="text-xs text-muted-foreground mt-0.5 text-pretty">{badge.desc}</p>
+                  <p className={cn("font-bold text-base text-balance", unlocked ? "text-foreground" : "text-muted-foreground/50")}>{badgeName(badge, lang)}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5 text-pretty">{badgeDesc(badge, lang)}</p>
                   {!unlocked && (
                     <div className="mt-2">
                       <ProgressBar value={totalTerms} max={24} color="#FFD700" />
-                      <p className="text-xs text-muted-foreground mt-1">还差 {24 - totalTerms} 个节气</p>
+                      <p className="text-xs text-muted-foreground mt-1">{lang === "en" ? `${24 - totalTerms} more solar term${24 - totalTerms === 1 ? "" : "s"} to go` : `还差 ${24 - totalTerms} 个节气`}</p>
                     </div>
                   )}
                 </div>

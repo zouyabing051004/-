@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useState, useCallback, useEffect, useRef } from "react";
+import { termNameEn } from "@/data/solarTermsEn";
+import type { SiteLanguage } from "@/contexts/LanguageContext";
 
 /* ══════════════════════════════════════════
    成就徽章定义
@@ -6,7 +8,9 @@ import React, { createContext, useContext, useState, useCallback, useEffect, use
 export interface Badge {
   id: string;
   name: string;
+  nameEn?: string;
   desc: string;
+  descEn?: string;
   emoji: string;
   season?: string;
   type: "term" | "streak" | "complete";
@@ -51,10 +55,13 @@ const TERM_NAMES: Array<{ id: string; name: string; season: string }> = [
 
 export const TERM_BADGES: Badge[] = TERM_NAMES.map(({ id, name, season }) => {
   const meta = SEASON_META[season];
+  const en = termNameEn(id);
   return {
     id: `term_${id}`,
     name,
+    nameEn: en,
     desc: `探索了${name}节气的奥秘！`,
+    descEn: `You explored the ${en} solar term!`,
     emoji: meta.emoji,
     season,
     type: "term",
@@ -65,12 +72,20 @@ export const TERM_BADGES: Badge[] = TERM_NAMES.map(({ id, name, season }) => {
 
 /* 连续学习里程碑徽章 */
 export const STREAK_BADGES: Badge[] = [
-  { id: "streak_3",  name: "小学者",       desc: "连续学习3天！",   emoji: "📚", type: "streak", color: "bg-[#F0F8FF]", glowColor: "#6BB5F0" },
-  { id: "streak_7",  name: "节气迷",       desc: "连续学习7天！",   emoji: "🌟", type: "streak", color: "bg-[#FFF8E7]", glowColor: "#FFD700" },
-  { id: "streak_14", name: "文化探索家",   desc: "连续学习14天！",  emoji: "🏆", type: "streak", color: "bg-[#FFF0F5]", glowColor: "#FF69B4" },
-  { id: "streak_24", name: "节气达人",     desc: "连续学习24天！",  emoji: "👑", type: "streak", color: "bg-[#F5F0FF]", glowColor: "#9B59B6" },
-  { id: "complete",  name: "廿四节气大师", desc: "解锁全部24个节气徽章！", emoji: "🎊", type: "complete", color: "bg-[#FFF9E6]", glowColor: "#FF8C00" },
+  { id: "streak_3",  name: "小学者",       nameEn: "Little Scholar",   desc: "连续学习3天！",   descEn: "3 days of learning in a row!",  emoji: "📚", type: "streak", color: "bg-[#F0F8FF]", glowColor: "#6BB5F0" },
+  { id: "streak_7",  name: "节气迷",       nameEn: "Solar-Term Fan",   desc: "连续学习7天！",   descEn: "7 days of learning in a row!",  emoji: "🌟", type: "streak", color: "bg-[#FFF8E7]", glowColor: "#FFD700" },
+  { id: "streak_14", name: "文化探索家",   nameEn: "Culture Explorer", desc: "连续学习14天！",  descEn: "14 days of learning in a row!", emoji: "🏆", type: "streak", color: "bg-[#FFF0F5]", glowColor: "#FF69B4" },
+  { id: "streak_24", name: "节气达人",     nameEn: "Solar-Term Star",  desc: "连续学习24天！",  descEn: "24 days of learning in a row!", emoji: "👑", type: "streak", color: "bg-[#F5F0FF]", glowColor: "#9B59B6" },
+  { id: "complete",  name: "廿四节气大师", nameEn: "Master of the 24 Solar Terms", desc: "解锁全部24个节气徽章！", descEn: "Unlocked all 24 solar-term badges!", emoji: "🎊", type: "complete", color: "bg-[#FFF9E6]", glowColor: "#FF8C00" },
 ];
+
+/* 徽章名称/描述本地化助手 */
+export function badgeName(badge: Badge, lang: SiteLanguage): string {
+  return lang === "en" && badge.nameEn ? badge.nameEn : badge.name;
+}
+export function badgeDesc(badge: Badge, lang: SiteLanguage): string {
+  return lang === "en" && badge.descEn ? badge.descEn : badge.desc;
+}
 
 export const ALL_BADGES: Badge[] = [...TERM_BADGES, ...STREAK_BADGES];
 
