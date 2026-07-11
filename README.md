@@ -11,10 +11,14 @@
 | [prompts/](./prompts/) | 智能体系统提示词 + 场景风格模板（设计参考） |
 | [examples/](./examples/) | 独立部署备选方案（FastAPI 代理 + iframe 挂件），已被站内实现取代 |
 
+**🌐 效果演示（可直接打开）**：https://claude.ai/code/artifact/40dc9fec-5221-4fe5-b439-b5c089bc63d9
+（离线演示版：双语对话、500 首诗词知识库浏览与检索、朗读示意；生产版按下方步骤部署）
+
 ## 智能体已实现的部分（在 `app-c2zk70llophd/` 中）
 
 - `supabase/functions/deepseek-chat/` — DeepSeek 云函数（流式 + JSON 模式）
-- `src/data/poetryLibrary.ts` — 20 首精选古诗知识库（原文锚定）
+- `src/data/poetryLibrary.ts` — 20 首精选诗库（人工校准：原文+拼音+英译三重锚定）
+- `src/data/basePoetry.json` + `basePoetry.ts` — 底层库 480 首唐诗宋词元曲（源自开源 chinese-poetry，懒加载）
 - `src/services/cultureAgent.ts` — 智能体服务：RAG 注入、意图识别、场景要素抽取、3 套画风、文生图 + 图生视频管线
 - `src/pages/CultureAgentPage.tsx` + `src/routes.tsx` — 新页面「知节 · AI文化伙伴」（路由 `/culture`）
 

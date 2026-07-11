@@ -7,6 +7,7 @@ import { supabase } from "@/db/supabase";
 import { sendStreamRequest } from "@/lib/sse";
 import { solarTerms } from "@/data/solarTerms";
 import { searchPoems, formatPoemForPrompt } from "@/data/poetryLibrary";
+import { searchBasePoetry, formatBasePoemForPrompt } from "@/data/basePoetry";
 import { containsSensitiveContent, SAFE_RESPONSES } from "./safety";
 import { submitImageToVideo, queryVideoTask } from "./ai";
 
@@ -71,9 +72,9 @@ export function rememberTopics(profile: UserProfile, query: string): UserProfile
   return next;
 }
 
-// ---------- 知识检索（原文/拼音/英译三重锚定层） ----------
+// ---------- 知识检索（两层锚定：精选层三重校准 + 底层库约480首原文） ----------
 
-function retrieveKnowledge(query: string): string {
+async function retrieveKnowledge(query: string): Promise<string> {
   const parts: string[] = [];
 
   // 命中节气：注入结构化节气资料
@@ -89,12 +90,22 @@ function retrieveKnowledge(query: string): string {
     );
   }
 
-  // 命中诗词：注入原文 + 拼音 + 英译
+  // 精选层（人工校准：原文+拼音+英译）
   const matchedPoems = searchPoems(query, 3);
   for (const p of matchedPoems) {
     parts.push(
-      `【诗词资料】${formatPoemForPrompt(p)}\n儿童导读：${p.kidNote}\nKid note: ${p.kidNoteEn}`
+      `【诗词资料·精选层】${formatPoemForPrompt(p)}\n儿童导读：${p.kidNote}\nKid note: ${p.kidNoteEn}`
     );
+  }
+
+  // 底层库（约480首唐诗宋词元曲，原文可靠；拼音为机器标注）
+  // 精选层已命中足够内容时少取，避免上下文过长
+  const baseLimit = matchedPoems.length >= 2 ? 1 : 2;
+  const basePoems = await searchBasePoetry(query, baseLimit);
+  const curatedTitles = new Set(matchedPoems.map((p) => p.title));
+  for (const p of basePoems) {
+    if (curatedTitles.has(p.title)) continue;
+    parts.push(`【诗词资料·底层库】${formatBasePoemForPrompt(p)}`);
   }
 
   return parts.join("\n\n");
@@ -111,8 +122,12 @@ const LANGUAGE_RULES: Record<AgentLanguage, string> = {
     "Keep both languages child-friendly and short. Poem lines must show Chinese + pinyin + English, copied EXACTLY from the reference material.",
 };
 
-function buildSystemPrompt(query: string, language: AgentLanguage, profile: UserProfile): string {
-  const docs = retrieveKnowledge(query);
+async function buildSystemPrompt(
+  query: string,
+  language: AgentLanguage,
+  profile: UserProfile
+): Promise<string> {
+  const docs = await retrieveKnowledge(query);
   const today = new Date().toLocaleDateString("zh-CN", {
     year: "numeric",
     month: "long",
@@ -137,8 +152,10 @@ function buildSystemPrompt(query: string, language: AgentLanguage, profile: User
 3. 讲传统节日：春节、元宵、清明、端午、七夕、中秋、重阳等
 4. 陪小朋友玩诗词接龙、猜节气等小游戏
 
-【铁律：三重锚定，防止幻觉】
+【铁律：锚定资料，防止幻觉】
 - 诗词的原文、拼音、英文意思，只能逐字使用下方【参考资料】提供的内容，并注明题目和作者
+- 标注"精选层"的资料是人工校准的，可放心引用拼音和英译
+- 标注"底层库"的资料原文可靠，但拼音是机器标注：引用其拼音时提醒"个别多音字读音请以老师讲解为准"；英文意思可以由你意译，但要说明是大意（paraphrase），不是权威翻译
 - 参考资料里没有的诗，可以介绍它讲了什么，但不要默写原文或自编拼音
 - 不编造习俗、典故和出处，不确定就说不确定
 
@@ -172,12 +189,13 @@ export async function streamCultureChat(
     return;
   }
 
+  const systemPrompt = await buildSystemPrompt(userMessage, language, profile);
   await sendStreamRequest({
     functionUrl: `${supabaseUrl}/functions/v1/deepseek-chat`,
     requestBody: {
       stream: true,
       messages: [
-        { role: "system", content: buildSystemPrompt(userMessage, language, profile) },
+        { role: "system", content: systemPrompt },
         ...history.slice(-8),
         { role: "user", content: userMessage },
       ],

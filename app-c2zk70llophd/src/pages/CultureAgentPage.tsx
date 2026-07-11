@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Bot, Clapperboard, Globe, Loader2, Palette, Send, Sparkles, User } from "lucide-react";
+import { Bot, Clapperboard, Globe, Loader2, Palette, Send, Sparkles, Square, User, Volume2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -18,6 +18,7 @@ import {
   streamCultureChat,
   waitForVideo,
 } from "@/services/cultureAgent";
+import { generateSpeech } from "@/services/ai";
 
 interface AgentMessage {
   role: "user" | "assistant";
@@ -118,8 +119,60 @@ export default function CultureAgentPage() {
   const [input, setInput] = useState("");
   const [styleId, setStyleId] = useState(SCENE_STYLES[0].id);
   const [isLoading, setIsLoading] = useState(false);
+  const [speakingIdx, setSpeakingIdx] = useState<number | null>(null);
+  const [speechLoadingIdx, setSpeechLoadingIdx] = useState<number | null>(null);
   const abortRef = useRef<AbortController | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const speechCache = useRef<Map<string, string>>(new Map());
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // 卸载时停止朗读
+  useEffect(() => {
+    return () => {
+      audioRef.current?.pause();
+    };
+  }, []);
+
+  const stopSpeaking = () => {
+    audioRef.current?.pause();
+    audioRef.current = null;
+    setSpeakingIdx(null);
+  };
+
+  // 「读给我听」：复用站内 MiniMax TTS 云函数，同一段话的音频缓存复用
+  const handleSpeak = async (idx: number, text: string) => {
+    if (speakingIdx === idx) {
+      stopSpeaking();
+      return;
+    }
+    stopSpeaking();
+    // 去掉 emoji 和链接，控制长度，让朗读干净
+    const clean = text
+      .replace(/\p{Extended_Pictographic}/gu, "")
+      .replace(/https?:\/\/\S+/g, "")
+      .trim()
+      .slice(0, 300);
+    if (!clean) return;
+    try {
+      setSpeechLoadingIdx(idx);
+      let url = speechCache.current.get(clean);
+      if (!url) {
+        url = await generateSpeech(clean);
+        speechCache.current.set(clean, url);
+      }
+      const audio = new Audio(url);
+      audioRef.current = audio;
+      audio.onended = () => setSpeakingIdx(null);
+      audio.onerror = () => setSpeakingIdx(null);
+      setSpeakingIdx(idx);
+      await audio.play();
+    } catch (err) {
+      console.error("朗读失败:", err);
+      setSpeakingIdx(null);
+    } finally {
+      setSpeechLoadingIdx(null);
+    }
+  };
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -396,6 +449,25 @@ export default function CultureAgentPage() {
                         )}
                         {msg.pending && msg.content && (
                           <Loader2 className="w-3 h-3 animate-spin inline-block ml-1" />
+                        )}
+                        {msg.role === "assistant" && msg.content && !msg.pending && (
+                          <button
+                            type="button"
+                            onClick={() => handleSpeak(idx, msg.content)}
+                            className="mt-1.5 flex items-center gap-1 text-xs opacity-70 hover:opacity-100 transition-opacity"
+                            aria-label={language === "en" ? "Read aloud" : "读给我听"}
+                          >
+                            {speechLoadingIdx === idx ? (
+                              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                            ) : speakingIdx === idx ? (
+                              <Square className="w-3.5 h-3.5" />
+                            ) : (
+                              <Volume2 className="w-3.5 h-3.5" />
+                            )}
+                            {speakingIdx === idx
+                              ? language === "en" ? "Stop" : "停止"
+                              : language === "en" ? "Read aloud" : "读给我听"}
+                          </button>
                         )}
                         {msg.imageUrl && (
                           <img
