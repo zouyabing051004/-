@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { MessageCircle, Lightbulb, Sparkles } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,6 +15,7 @@ const suggestedQuestions = [
 ];
 
 export default function QAPage() {
+  const { lang } = useLanguage();
   const [selectedQ, setSelectedQ] = useState<string | null>(null);
 
   return (
@@ -30,9 +32,9 @@ export default function QAPage() {
         <div className="absolute bottom-0 left-0 p-6">
           <h1 className="text-2xl font-bold text-white drop-shadow font-serif flex items-center gap-2">
             <MessageCircle className="w-6 h-6" />
-            节气问答
+            {lang === "en" ? "Ask About Solar Terms" : "节气问答"}
           </h1>
-          <p className="text-white/80 text-sm mt-1">和节气小老师一起探索二十四节气的奥秘</p>
+          <p className="text-white/80 text-sm mt-1">{lang === "en" ? "Explore the 24 solar terms with Sisi" : "和四四一起探索二十四节气的奥秘"}</p>
         </div>
       </div>
 

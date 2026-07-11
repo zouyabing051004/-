@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Link } from "react-router-dom";
 import { solarTerms } from "@/data/solarTerms";
 
@@ -41,6 +42,7 @@ const foodImages: Record<string, string> = {
 };
 
 export default function FolkFoodPage() {
+  const { lang } = useLanguage();
   const [activeSeason, setActiveSeason] = useState<typeof seasons[number]>("春");
   const filtered = solarTerms.filter(t => t.season === activeSeason);
   const cfg = seasonConfig[activeSeason];
@@ -54,8 +56,8 @@ export default function FolkFoodPage() {
         style={{ background: cfg.passiveBg }}
       >
         <div className="absolute right-4 top-2 text-4xl opacity-20 pointer-events-none">🍜</div>
-        <h1 className="text-2xl font-bold mb-1" style={{ color: cfg.passiveFg }}>🍜 民俗饮食</h1>
-        <p className="font-medium" style={{ fontSize: 15, color: `${cfg.passiveFg}99` }}>二十四节气南北方特色美食，美味又有趣！</p>
+        <h1 className="text-2xl font-bold mb-1" style={{ color: cfg.passiveFg }}>{lang === "en" ? "🍜 Festive Foods" : "🍜 民俗饮食"}</h1>
+        <p className="font-medium" style={{ fontSize: 15, color: `${cfg.passiveFg}99` }}>{lang === "en" ? "Tasty seasonal foods from north and south China!" : "二十四节气南北方特色美食，美味又有趣！"}</p>
       </div>
 
       <div className="px-4 pt-4 space-y-5 max-w-2xl mx-auto">

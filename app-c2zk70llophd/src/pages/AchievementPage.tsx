@@ -1,4 +1,5 @@
 import { useRef, useEffect } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
 import { Trophy, Flame, Lock, Star } from "lucide-react";
@@ -134,6 +135,7 @@ function ProgressBar({ value, max, color }: { value: number; max: number; color:
    主页面
 ══════════════════════════════════════════ */
 export default function AchievementPage() {
+  const { lang } = useLanguage();
   const { unlockedIds, streak, totalTerms } = useAchievement();
   const headerRef = useRef<HTMLDivElement>(null);
 
@@ -169,8 +171,8 @@ export default function AchievementPage() {
             <Trophy className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-white font-serif text-balance">四四成就馆</h1>
-            <p className="text-white/80 text-sm">探索节气，解锁专属徽章！</p>
+            <h1 className="text-2xl font-bold text-white font-serif text-balance">{lang === "en" ? "Sisi\u2019s Hall of Badges" : "四四成就馆"}</h1>
+            <p className="text-white/80 text-sm">{lang === "en" ? "Explore the solar terms and unlock your badges!" : "探索节气，解锁专属徽章！"}</p>
           </div>
         </div>
 

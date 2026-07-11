@@ -1,4 +1,6 @@
 import { useParams, Link } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { termNameEn } from "@/data/solarTermsEn";
 import { useEffect } from "react";
 import { ArrowLeft, Sprout } from "lucide-react";
 import { getTermById } from "@/data/solarTerms";
@@ -73,6 +75,7 @@ const seasonStyle: Record<string, { heroBg: string; badgeBg: string; badgeFg: st
 type AgeMode = "young";
 
 export default function SolarTermDetailPage() {
+  const { lang } = useLanguage();
   const { id } = useParams<{ id: string }>();
   const term = getTermById(id || "");
   const ageMode: AgeMode = "young";
@@ -128,7 +131,7 @@ export default function SolarTermDetailPage() {
             className="font-bold leading-none"
             style={{ fontSize: "clamp(52px, 12vw, 80px)", color: style.badgeFg }}
           >
-            {term.name}
+            {term.name}{lang === "en" && term.id ? ` · ${termNameEn(term.id)}` : ""}
           </h1>
           <p className="mt-2 text-sm font-medium" style={{ color: `${style.badgeFg}aa` }}>{term.date}</p>
         </div>

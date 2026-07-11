@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Link } from "react-router-dom";
 import { solarTerms } from "@/data/solarTerms";
 
@@ -49,6 +50,7 @@ const wearBg: Record<string, { bg: string; fg: string }> = {
 };
 
 export default function CustomsPage() {
+  const { lang } = useLanguage();
   const [activeSeason, setActiveSeason] = useState<typeof seasons[number]>("春");
   const filtered = solarTerms.filter(t => t.season === activeSeason);
   const cfg = seasonConfig[activeSeason];
@@ -63,8 +65,8 @@ export default function CustomsPage() {
         style={{ background: cfg.passiveBg }}
       >
         <div className="absolute right-4 top-2 text-4xl opacity-20 pointer-events-none">🎭</div>
-        <h1 className="text-2xl font-bold mb-1" style={{ color: cfg.passiveFg }}>🎭 传统习俗</h1>
-        <p className="font-medium" style={{ fontSize: 15, color: `${cfg.passiveFg}99` }}>节气南北民俗活动，了解中华传统文化！</p>
+        <h1 className="text-2xl font-bold mb-1" style={{ color: cfg.passiveFg }}>{lang === "en" ? "🎭 Traditions" : "🎭 传统习俗"}</h1>
+        <p className="font-medium" style={{ fontSize: 15, color: `${cfg.passiveFg}99` }}>{lang === "en" ? "Folk customs of the solar terms across China!" : "节气南北民俗活动，了解中华传统文化！"}</p>
       </div>
 
       <div className="px-4 pt-4 space-y-5 max-w-2xl mx-auto">

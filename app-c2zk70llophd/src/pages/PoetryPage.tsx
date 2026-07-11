@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { BookOpen, ImageIcon, Upload, X } from "lucide-react";
 import { CardContent } from "@/components/ui/card";
 import { solarTermPoems } from "@/data/solarTerms";
@@ -8,6 +9,7 @@ import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function PoetryPage() {
+  const { lang } = useLanguage();
   const { user } = useAuth();
   const [selectedPoem, setSelectedPoem] = useState(solarTermPoems[0]);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
@@ -70,9 +72,9 @@ export default function PoetryPage() {
       >
         <h1 className="text-2xl font-bold flex items-center gap-2 mb-1" style={{ color: "#1A4D45" }}>
           <BookOpen className="w-6 h-6" />
-          诗词配画
+          {lang === "en" ? "Poems & Paintings" : "诗词配画"}
         </h1>
-        <p className="text-sm font-medium" style={{ color: "#1A4D45aa" }}>欣赏节气诗词，为诗词配上你喜爱的画作</p>
+        <p className="text-sm font-medium" style={{ color: "#1A4D45aa" }}>{lang === "en" ? "Enjoy seasonal poems and match them with art you love" : "欣赏节气诗词，为诗词配上你喜爱的画作"}</p>
       </div>
 
       <div className="p-4 md:p-6 max-w-5xl mx-auto">

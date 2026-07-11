@@ -3,7 +3,10 @@ import { Send, Bot, User, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { streamAIChat } from "@/services/ai";
+import { streamCultureChat } from "@/services/cultureAgent";
+import { loadMemory, memoryForPrompt, absorbMessage, saveMemory } from "@/services/userMemory";
+import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Message {
   role: 'user' | 'assistant';
@@ -16,12 +19,18 @@ interface AIChatProps {
 }
 
 export default function AIChat({ context, initialMessage }: AIChatProps) {
+  const { user } = useAuth();
+  const { lang } = useLanguage();
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
-      content: context
-        ? `小朋友你好！我是节气小老师，今天我们来聊聊"${context}"吧！你想知道什么呢？`
-        : '小朋友你好！我是节气小老师，专门为你讲解二十四节气的知识。你想了解哪个节气呢？'
+      content: lang === 'en'
+        ? (context
+            ? `Hi! I'm Sisi 🦌 Let's talk about "${context}"! What would you like to know?`
+            : "Hi! I'm Sisi 🦌 Ask me anything about the 24 solar terms!")
+        : (context
+            ? `小朋友你好！我是四四 🦌 今天我们来聊聊"${context}"吧！你想知道什么呢？`
+            : '小朋友你好！我是四四 🦌 二十四节气的问题都可以问我哦！你想了解哪个节气呢？')
     }
   ]);
   const [input, setInput] = useState(initialMessage ?? '');
@@ -53,8 +62,18 @@ export default function AIChat({ context, initialMessage }: AIChatProps) {
     let assistantContent = '';
     setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
 
-    await streamAIChat(
-      userMsg,
+    const memory = await loadMemory(user?.id ?? null);
+    const nextMemory = absorbMessage(memory, userMsg);
+    void saveMemory(user?.id ?? null, nextMemory);
+    const chatHistory = messages
+      .filter(m => m.content)
+      .slice(-8)
+      .map(m => ({ role: m.role, content: m.content }));
+    await streamCultureChat(
+      context ? `（当前正在浏览「${context}」节气页面）${userMsg}` : userMsg,
+      chatHistory,
+      lang,
+      memoryForPrompt(nextMemory),
       (chunk) => {
         assistantContent += chunk;
         setMessages(prev => {
@@ -86,8 +105,8 @@ export default function AIChat({ context, initialMessage }: AIChatProps) {
           <Bot className="w-4 h-4 text-secondary-foreground" />
         </div>
         <div>
-          <h3 className="text-sm font-semibold text-foreground">节气小老师</h3>
-          <p className="text-xs text-muted-foreground">AI智能助手</p>
+          <h3 className="text-sm font-semibold text-foreground">{lang === 'en' ? 'Sisi' : '四四'}</h3>
+          <p className="text-xs text-muted-foreground">{lang === 'en' ? 'AI Culture Buddy' : 'AI文化伙伴'}</p>
         </div>
         {isLoading && (
           <Loader2 className="w-4 h-4 text-secondary animate-spin ml-auto" />
@@ -132,7 +151,7 @@ export default function AIChat({ context, initialMessage }: AIChatProps) {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="小朋友，你想问什么？"
+            placeholder={lang === 'en' ? "What would you like to ask?" : "小朋友，你想问什么？"}
             className="min-h-[40px] max-h-[100px] resize-none text-sm"
             rows={1}
           />

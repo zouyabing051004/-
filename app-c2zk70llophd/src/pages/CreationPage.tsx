@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   PenTool, BookOpen, Feather, Loader2, RefreshCw,
   Sparkles, Volume2, VolumeX, Image as ImageIcon, Film, CheckCircle2
@@ -257,6 +258,7 @@ const GUIDED_PROMPTS: Record<CreationType, Record<string, string[]>> = {
 };
 
 export default function CreationPage() {
+  const { lang } = useLanguage();
   const [type, setType] = useState<CreationType>("poem");
   const [selectedTerm, setSelectedTerm] = useState(solarTerms[0].name);
   const [input, setInput] = useState("");
@@ -300,10 +302,10 @@ export default function CreationPage() {
         <div className="absolute bottom-0 left-0 p-5">
           <h1 className="text-xl font-bold text-white drop-shadow font-serif flex items-center gap-2">
             <PenTool className="w-5 h-5" />
-            引导式创作
+            {lang === "en" ? "Guided Creation" : "引导式创作"}
           </h1>
           <p className="text-white/80 text-xs mt-0.5">
-            写小诗 · 编故事 · 图文并茂 · 小奶音朗读
+            {lang === "en" ? "Write poems · Tell stories · Add pictures · Hear them read aloud" : "写小诗 · 编故事 · 图文并茂 · 小奶音朗读"}
           </p>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Upload, Heart, MapPin, Camera, Loader2, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -29,6 +30,7 @@ function getSessionId() {
 }
 
 export default function CommunityPage() {
+  const { lang } = useLanguage();
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
@@ -118,9 +120,9 @@ export default function CommunityPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl md:text-2xl font-bold font-serif text-foreground flex items-center gap-2">
-            <Camera className="w-6 h-6 text-primary" />实景社区
+            <Camera className="w-6 h-6 text-primary" />{lang === "en" ? "Photo Community" : "实景社区"}
           </h1>
-          <p className="text-sm text-muted-foreground mt-0.5">分享你拍到的节气实景，发现南北方的不同风景</p>
+          <p className="text-sm text-muted-foreground mt-0.5">{lang === "en" ? "Share your seasonal photos and discover scenery across China" : "分享你拍到的节气实景，发现南北方的不同风景"}</p>
         </div>
         <Button onClick={() => setShowUpload(!showUpload)} className="gap-2 shrink-0">
           <Upload className="w-4 h-4" />上传照片

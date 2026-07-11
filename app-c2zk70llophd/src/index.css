@@ -244,9 +244,14 @@
     transform: translateY(-2px);
   }
 
-  /* 底部导航安全区留白 */
+  /* 底部导航安全区留白（底部Tab仅移动端显示，桌面端不留白） */
   .pb-nav {
-    padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(112px + env(safe-area-inset-bottom, 0px));
+  }
+  @media (min-width: 1024px) {
+    .pb-nav {
+      padding-bottom: 0;
+    }
   }
 
   /* 四季渐变文字 */

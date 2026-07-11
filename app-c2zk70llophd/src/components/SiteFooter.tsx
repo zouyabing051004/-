@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
 import { Users, Eye } from "lucide-react";
 import { supabase } from "@/db/supabase";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 // 今日访客标记 key
 const VISITOR_KEY = "siteVisitorDate";
 
-function formatNumber(n: number): string {
-  return n.toLocaleString("zh-CN");
+function formatNumber(n: number, lang: string): string {
+  return n.toLocaleString(lang === "en" ? "en-US" : "zh-CN");
 }
 
 export default function SiteFooter() {
+  const { lang } = useLanguage();
   const [visitors, setVisitors] = useState<number>(0);
   const [pageviews, setPageviews] = useState<number>(0);
   const [loaded, setLoaded] = useState(false);
@@ -73,35 +75,50 @@ export default function SiteFooter() {
 
         {/* 统计文字 */}
         <p className="text-sm text-foreground font-medium text-center text-pretty">
-          今天已有{" "}
-          <span className="text-primary font-bold text-base">
-            {loaded ? formatNumber(visitors) : "—"}
-          </span>{" "}
-          人与你一起学习，你们共浏览了{" "}
-          <span className="text-primary font-bold text-base">
-            {loaded ? formatNumber(pageviews) : "—"}
-          </span>{" "}
-          次
+          {lang === "en" ? (
+            <>
+              <span className="text-primary font-bold text-base">
+                {loaded ? formatNumber(visitors, lang) : "—"}
+              </span>{" "}
+              friends are learning with you today, with{" "}
+              <span className="text-primary font-bold text-base">
+                {loaded ? formatNumber(pageviews, lang) : "—"}
+              </span>{" "}
+              page visits so far
+            </>
+          ) : (
+            <>
+              今天已有{" "}
+              <span className="text-primary font-bold text-base">
+                {loaded ? formatNumber(visitors, lang) : "—"}
+              </span>{" "}
+              人与你一起学习，你们共浏览了{" "}
+              <span className="text-primary font-bold text-base">
+                {loaded ? formatNumber(pageviews, lang) : "—"}
+              </span>{" "}
+              次
+            </>
+          )}
         </p>
 
         {/* 小图标 */}
         <div className="hidden sm:flex items-center gap-3 text-xs text-muted-foreground shrink-0">
           <span className="flex items-center gap-1">
             <Users className="w-3.5 h-3.5 text-primary" />
-            今日访客
+            {lang === "en" ? "Visitors today" : "今日访客"}
           </span>
           <span className="flex items-center gap-1">
             <Eye className="w-3.5 h-3.5 text-primary" />
-            总浏览量
+            {lang === "en" ? "Total views" : "总浏览量"}
           </span>
         </div>
       </div>
 
       {/* 底部版权 */}
       <div className="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-4 py-2.5 px-4 text-xs text-muted-foreground">
-        <span>© {new Date().getFullYear()} 禾间识岁 · 二十四节气儿童学习平台</span>
+        <span>© {new Date().getFullYear()} {lang === "en" ? "Hejian Shisui · A 24-Solar-Terms Learning Site for Kids" : "禾间识岁 · 二十四节气儿童学习平台"}</span>
         <span className="hidden sm:block text-border">|</span>
-        <span>探索节气奥秘，AI伴游童趣传统文化 🌿</span>
+        <span>{lang === "en" ? "Discover the solar terms with Sisi, your AI culture buddy 🌿" : "探索节气奥秘，AI伴游童趣传统文化 🌿"}</span>
       </div>
     </footer>
   );
