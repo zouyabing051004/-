@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>知节 · 传统文化智能体</title>
+<!--
+  嵌入方式（秒哒站二选一）：
+  A. iframe：<iframe src="https://你的部署域名/widget.html" style="width:100%;height:600px;border:none"></iframe>
+  B. 若秒哒支持自定义脚本，可将本页改造成右下角浮动聊天球注入。
+  部署前把下方 API_BASE 改成你的后端地址。
+-->
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body { font-family: "Noto Serif SC", "Songti SC", serif; background: #f6f3ec; height: 100vh; display: flex; flex-direction: column; }
+  header { padding: 14px 18px; background: #2f4f3e; color: #f6f3ec; display: flex; align-items: center; gap: 10px; }
+  header .dot { width: 10px; height: 10px; border-radius: 50%; background: #a8c8a0; }
+  #log { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+  .msg { max-width: 82%; padding: 10px 14px; border-radius: 12px; line-height: 1.7; font-size: 15px; white-space: pre-wrap; }
+  .user { align-self: flex-end; background: #d9e7d3; border-bottom-right-radius: 3px; }
+  .bot  { align-self: flex-start; background: #fff; border: 1px solid #e3ddcf; border-bottom-left-radius: 3px; }
+  .bot img, .bot video { max-width: 100%; border-radius: 8px; margin-top: 8px; display: block; }
+  .wait { color: #8a8272; font-style: italic; }
+  form { display: flex; gap: 8px; padding: 12px; background: #fff; border-top: 1px solid #e3ddcf; }
+  input { flex: 1; padding: 10px 14px; border: 1px solid #cfc7b4; border-radius: 20px; font: inherit; outline: none; }
+  button { padding: 10px 20px; border: none; border-radius: 20px; background: #2f4f3e; color: #fff; font: inherit; cursor: pointer; }
+  button:disabled { opacity: .5; }
+</style>
+</head>
+<body>
+<header><span class="dot"></span><strong>知节</strong><span style="opacity:.7;font-size:13px">· 与你聊节气，为你画诗词</span></header>
+<div id="log"></div>
+<form id="f">
+  <input id="q" placeholder="问问节气习俗，或说：给《小池》配一幅水墨画" autocomplete="off">
+  <button id="send">发送</button>
+</form>
+
+<script>
+const API_BASE = "http://localhost:8000";   // TODO: 改为你的后端部署地址
+const log = document.getElementById("log");
+const form = document.getElementById("f");
+const input = document.getElementById("q");
+const btn = document.getElementById("send");
+const history = [];
+
+function add(cls, html) {
+  const d = document.createElement("div");
+  d.className = "msg " + cls;
+  d.innerHTML = html;
+  log.appendChild(d);
+  log.scrollTop = log.scrollHeight;
+  return d;
+}
+
+add("bot", "你好，我是知节 🌾 今日小暑。想听听节气的故事，还是让我为一首诗作画？");
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = ""; btn.disabled = true;
+  add("user", esc(text));
+  const wait = add("bot wait", "研墨中…");
+  try {
+    const r = await fetch(API_BASE + "/api/chat", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: text, history })
+    });
+    const data = await r.json();
+    wait.classList.remove("wait");
+    wait.innerHTML = esc(data.reply);
+    history.push({ role: "user", content: text }, { role: "assistant", content: data.reply });
+    if (data.gen) await handleGen(data.gen, wait);
+  } catch (err) {
+    wait.innerHTML = "抱歉，纸笔未备好，请稍后再试。";
+  } finally {
+    btn.disabled = false; input.focus();
+  }
+});
+
+async function handleGen(gen, container) {
+  // 后端返回的画面要素 -> 这里简单拼 T1 水墨模板；正式版建议模板拼接也放到后端
+  const prompt = `中国传统水墨画，写意风格，${gen.scene}，画面主体：${(gen.elements||[]).join("、")}，` +
+    `${gen.time_light||""}，大量留白构图，宣纸质感，意境${gen.mood||"悠远"}，主色调${gen.palette||"淡墨"}，杰作，高清。` +
+    `避免：文字、水印、现代建筑、低质量`;
+  if (gen.type === "video") {
+    const note = add("bot wait", "铺纸研墨，正在成片（约 1-3 分钟）…");
+    const { task_id } = await (await fetch(API_BASE + "/api/video", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt })
+    })).json();
+    const timer = setInterval(async () => {
+      const s = await (await fetch(`${API_BASE}/api/video/${task_id}`)).json();
+      if (s.status === "done") { clearInterval(timer); note.classList.remove("wait");
+        note.innerHTML = `<video src="${s.url}" controls autoplay muted loop></video><small>AI 生成</small>`; }
+      if (s.status === "failed") { clearInterval(timer); note.innerHTML = "视频生成失败，换个描述试试？"; }
+    }, 5000);
+  } else {
+    const note = add("bot wait", "落笔中…");
+    const img = await (await fetch(API_BASE + "/api/image", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt })
+    })).json();
+    note.classList.remove("wait");
+    note.innerHTML = `<img src="${img.url}" alt="AI 生成配图"><small>AI 生成</small>`;
+  }
+}
+
+function esc(s) { const d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
+</script>
+</body>
+</html>
