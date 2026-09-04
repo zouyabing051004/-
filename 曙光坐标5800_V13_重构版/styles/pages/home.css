@@ -1,0 +1,158 @@
+/* ============================================================
+   首页 — Hero → 三个文明坐标 → 证据实验室 → 三章预览 → 对象之证 → 结语
+   首屏只有一个视觉主角、一个主标题、一句主张、两个入口、一句素材说明。
+   ============================================================ */
+
+/* ---------- A. 序厅 Hero ---------- */
+.hero { position: relative; display: grid; align-items: end; min-height: min(88svh, 760px); overflow: hidden; }
+.hero__art { position: absolute; inset: 0; background: var(--night); }
+.hero__art img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 42%; }
+.hero__scrim {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(180deg, rgba(20, 23, 20, .78) 0%, rgba(20, 23, 20, .35) 34%, rgba(20, 23, 20, .80) 78%, var(--night) 100%),
+    linear-gradient(90deg, rgba(20, 23, 20, .72) 0%, rgba(20, 23, 20, .10) 62%);
+}
+.hero__inner { position: relative; z-index: var(--z-base); padding-block: clamp(72px, 12vh, 132px) clamp(56px, 9vh, 96px); }
+.hero__eyebrow {
+  display: flex; align-items: center; gap: var(--s-3);
+  margin: 0 0 var(--s-5);
+  color: var(--dawn-bright); font-size: var(--fs-meta); font-weight: 700; letter-spacing: .06em;
+}
+.hero__eyebrow::before { content: ""; width: 30px; height: 2px; background: var(--dawn); }
+.hero__title {
+  margin: 0;
+  max-width: 14ch;
+  color: var(--on-night);
+  font-size: var(--fs-h1);
+  font-weight: 600;
+}
+.hero__title .tw { display: inline-block; }   /* 只允许在「曙光坐标」与「5800」之间换行 */
+.hero__title .dot { margin-inline: .06em; color: var(--dawn); }
+.hero__title .num { font-variant-numeric: tabular-nums; letter-spacing: .01em; }
+.hero__claim {
+  max-width: 30ch;
+  margin: var(--s-5) 0 0;
+  color: var(--on-night);
+  font-family: var(--serif);
+  font-size: var(--fs-quote);
+  line-height: 1.6;
+}
+.hero__actions { display: flex; flex-wrap: wrap; gap: var(--s-3); margin-top: var(--s-6); }
+.hero__disclosure {
+  display: inline-flex; align-items: center; gap: .5em;
+  max-width: 36em;
+  margin: var(--s-7) 0 0;
+  color: var(--on-night-faint); font-size: var(--fs-meta); line-height: 1.6;
+}
+.hero__disclosure::before { content: ""; flex: none; width: 16px; height: 1px; background: var(--on-night-faint); }
+
+/* 地层线与曙光弧：唯一的装饰母题，极轻 */
+.hero__strata { position: absolute; z-index: var(--z-base); right: clamp(16px, 4vw, 72px); bottom: clamp(20px, 4vh, 56px); width: min(38vw, 380px); color: var(--dawn); pointer-events: none; }
+.hero__strata svg { width: 100%; height: auto; opacity: .55; animation: dawn-breathe 9s var(--ease) infinite; }
+
+/* ---------- B. 三个文明坐标 ---------- */
+.coordinates { background: var(--paper); }
+.coordinate-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; margin: 0; padding: 0; list-style: none; background: var(--line); border-block: 1px solid var(--line); }
+.coordinate { display: grid; grid-template-rows: auto auto 1fr auto; gap: var(--s-3); padding: var(--s-7) var(--s-6) var(--s-6); background: var(--paper); }
+.coordinate__num {
+  font-family: var(--serif); font-size: var(--fs-numeral); font-weight: 600; line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--jade);
+}
+.coordinate:nth-child(2) .coordinate__num { color: var(--cinnabar); }
+.coordinate:nth-child(3) .coordinate__num { color: var(--ink); }
+.coordinate__label { display: flex; align-items: baseline; gap: .6em; color: var(--muted); font-size: var(--fs-meta); }
+.coordinate__label b { color: var(--ink); font-size: var(--fs-h4); font-family: var(--serif); font-weight: 600; }
+.coordinate p { margin: 0; color: var(--ink-soft); }
+.coordinate .go-link { margin-top: var(--s-2); }
+
+/* ---------- C. 证据实验室（深色 · 首页内嵌真实互动） ---------- */
+.lab-showcase { padding-block: var(--s-9); }
+.lab-showcase__inner { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: clamp(32px, 5vw, 72px); align-items: center; }
+.lab-showcase__copy h2 { max-width: 15ch; }
+.lab-showcase__copy > p { max-width: 46ch; margin-top: var(--s-4); font-size: var(--fs-lede); }
+.lab-showcase .eyebrow { color: var(--dawn-bright); }
+.lab-showcase .eyebrow::before { background: linear-gradient(90deg, var(--dawn), var(--jade-soft)); }
+
+.lab-picks { display: grid; gap: 1px; margin: var(--s-6) 0 var(--s-5); background: var(--line-night); border-block: 1px solid var(--line-night); }
+.lab-picks a { display: grid; grid-template-columns: auto 1fr auto; gap: var(--s-4); align-items: center; padding: var(--s-4) var(--s-1); background: var(--night); transition: background var(--dur-1) var(--ease); }
+.lab-picks a:hover { background: var(--night-2); }
+.lab-picks .no { color: var(--dawn); font-family: var(--mono); font-size: var(--fs-meta); }
+.lab-picks b { color: var(--on-night); font-family: var(--serif); font-size: var(--fs-h4); font-weight: 600; }
+.lab-picks small { display: block; color: var(--on-night-faint); font-size: var(--fs-meta); }
+.lab-picks .arrow { color: var(--on-night-faint); font-family: var(--mono); }
+.lab-picks a:hover .arrow { color: var(--dawn); }
+
+/* 内嵌迷你实验台 */
+.mini-lab { display: grid; gap: var(--s-4); padding: var(--s-6); background: var(--night-2); border: 1px solid var(--line-night); border-radius: var(--r-sm); }
+.mini-lab__head { display: flex; flex-wrap: wrap; gap: var(--s-3); align-items: baseline; justify-content: space-between; }
+.mini-lab__head b { color: var(--on-night); font-family: var(--serif); font-size: var(--fs-h4); }
+.mini-lab__head span { color: var(--on-night-faint); font-size: var(--fs-meta); }
+.mini-lab__matrix { display: grid; grid-template-columns: repeat(11, 1fr); gap: 5px; max-width: 430px; }
+.mini-lab__matrix i {
+  aspect-ratio: 1; border-radius: 1px;
+  background: var(--night-3); border: 1px solid transparent;
+  transition: background var(--dur-2) var(--ease), border-color var(--dur-2) var(--ease), opacity var(--dur-2) var(--ease);
+}
+.mini-lab__matrix i.jade { background: color-mix(in srgb, var(--jade-soft) 82%, transparent); }
+.mini-lab__matrix i.plain { background: transparent; border-color: rgba(240, 234, 223, .30); }
+.mini-lab__matrix i.dim { opacity: .18; }
+.mini-lab__read { display: grid; gap: var(--s-2); min-height: 84px; }
+.mini-lab__read strong { color: var(--dawn-bright); font-family: var(--serif); font-size: 40px; font-weight: 600; line-height: 1; font-variant-numeric: tabular-nums; }
+.mini-lab__read p { margin: 0; color: var(--on-night-soft); font-size: var(--fs-meta); }
+.mini-lab__foot { color: var(--on-night-faint); font-size: var(--fs-meta); line-height: 1.6; }
+
+/* ---------- D. 九章预览 ---------- */
+.chronicle-preview .preview-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-6); }
+.preview-card { display: grid; gap: var(--s-4); align-content: start; }
+.preview-card .media { aspect-ratio: 4 / 3; border-radius: var(--r-sm); }
+.preview-card .no { color: var(--cinnabar); font-family: var(--mono); font-size: var(--fs-meta); font-weight: 700; }
+.preview-card h3 { font-size: var(--fs-h3); }
+.preview-card p { margin: 0; color: var(--ink-soft); font-size: var(--fs-meta); line-height: 1.7; }
+
+/* ---------- E. 对象之证 ---------- */
+.object-spotlight { background: var(--paper-bright); }
+.spotlight-grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: var(--s-6); }
+.spotlight-lead .media { aspect-ratio: auto; display: grid; place-items: center; min-height: 320px; padding: var(--s-4); background: var(--paper-bright); }
+.spotlight-lead .media > img { width: auto; height: auto; max-width: 100%; max-height: min(58svh, 560px); }
+.spotlight-rest { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-5); align-content: start; }
+.spotlight-rest .media { aspect-ratio: 1; }
+.spotlight-item { display: grid; gap: var(--s-3); align-content: start; }
+.spotlight-item .media { border: 1px solid var(--line-soft); border-radius: var(--r-sm); background: var(--paper-deep); }
+.spotlight-item > span:last-child { display: grid; gap: 4px; }
+.spotlight-item .id { display: block; color: var(--muted); font-family: var(--mono); font-size: var(--fs-meta-sm); letter-spacing: .04em; }
+.spotlight-item b { display: block; font-family: var(--serif); font-size: var(--fs-h4); font-weight: 600; line-height: 1.45; }
+.spotlight-item small { display: block; color: var(--muted); font-size: var(--fs-meta); line-height: 1.6; }
+.spotlight-lead .spotlight-item b { font-size: var(--fs-h3); }
+
+/* ---------- F. 结语 ---------- */
+.closing { text-align: center; }
+.closing h2 { max-width: 22ch; margin-inline: auto; }
+.closing p { max-width: 46ch; margin: var(--s-4) auto 0; color: var(--ink-soft); font-size: var(--fs-lede); }
+.closing .actions { display: flex; flex-wrap: wrap; gap: var(--s-3); justify-content: center; margin-top: var(--s-6); }
+
+/* ---------- 响应式 ---------- */
+@media (max-width: 1024px) {
+  .lab-showcase__inner { grid-template-columns: 1fr; }
+  .spotlight-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 860px) {
+  .coordinate-grid { grid-template-columns: 1fr; }
+  .coordinate { padding: var(--s-6) 0; }
+  .chronicle-preview .preview-grid { grid-template-columns: 1fr; gap: var(--s-7); }
+}
+@media (max-width: 640px) {
+  .hero { min-height: auto; }
+  .hero__inner { padding-block: clamp(56px, 14vh, 96px) var(--s-8); }
+  .hero__strata { width: 62vw; opacity: .8; }
+  .hero__actions .btn { flex: 1 1 auto; }
+  .spotlight-rest { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-4); }
+}
+@media (max-width: 400px) {
+  .hero__strata { opacity: .55; }
+}
+@media (max-width: 380px) {
+  .spotlight-rest { grid-template-columns: 1fr; }
+  .mini-lab { padding: var(--s-5) var(--s-4); }
+}

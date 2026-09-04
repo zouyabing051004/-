@@ -1,0 +1,29 @@
+﻿source_id,title,publisher,publication_date,source_type,authority_level,is_primary,url,supports_summary,limitations,current_status
+SRC-01,在牛河梁进行拉网式排查 为红山文化申遗全力冲刺,辽宁省文化和旅游厅 / 辽宁日报,2026-03-05T00:00:00,gov_release,A2,False,https://whly.ln.gov.cn/whly/mtjj/2026030511221196726/index.shtml,2026区域调查、第十三地点、玉器检测数据库,媒体采访体裁；阶段性结论需保留限定词,active
+SRC-02,牛河梁遗址第一地点台基发掘简报（《考古》2026年第1期）,中国社会科学院考古研究所 / 《考古》,2026-02-01T00:00:00,excavation_report,A1,True,https://kaogu.cssn.cn/xsqy/kycg/jbbg/202602/W020260228597873858401.pdf,第一地点台基、2号台基尺寸与结构,图版有版权；数据可重组，勿复制完整图版,active
+SRC-03,牛河梁九台最新解读,中国日报网转辽宁日报,2026-06-09T00:00:00,interview,B1,False,https://ln.chinadaily.com.cn/a/202606/09/WS6a279e5da310942cc49b0bf6.html,九台营建阶段与同时使用解读,属于专家综合判断,active
+SRC-04,全国十大考古新发现：牛河梁遗址,辽宁省文化和旅游厅,,gov_archive,A2,False,https://whly.ln.gov.cn/whly/wlzt/lnww/qgsdkg/FCF6E28E91D248C2BF5119121DB4FB86/index.shtml,发现、发掘、保护与重要节点,网页更新日期需另核,active
+SRC-05,牛河梁第一地点九台相关报道,朝阳市人民政府转载央视,2024-09-01T00:00:00,media,B1,False,https://www.chaoyang.gov.cn/html/CYSZF/202409/0172705538617338.html,九台与面积口径,近4万/6万/10万定义需分开,active
+SRC-06,牛河梁台基与规划专家访谈,朝阳市自然资源局,2024-09-01T00:00:00,expert_interview,B1,False,https://zrzyj.chaoyang.gov.cn/html/ZRZYJ/202409/0172587053112122.html,台基关系、功能未知与工程解释,解释性内容需标INF,active
+SRC-07,红山女神像与牛河梁资料,人民日报海外版,2024-08-06T00:00:00,media,B1,False,https://paper.people.com.cn/rmrbhwb/html/2024-08/06/content_26073127.htm,年代框架、泥塑头像尺寸材料,展陈复制件状态需随机构资料复核,active
+SRC-08,牛河梁未解之谜专题,新华网,2024-08-21T00:00:00,media,B1,False,https://www.news.cn/politics/20240821/3f813f81373240eea2540e46fe9c8730/c.html,女神庙与身份解释边界,专题体裁，不作为唯一尺寸源,active
+SRC-09,礼出红山,中国社会科学网,2022-07-28T00:00:00,academic_outreach,A2,False,https://cssn.cn/kgxc/kgxc_kgsb/202207/t20220728_5431503.shtml,N2Z3三环与红山礼仪,天文/礼制解读需标解释,active
+SRC-10,牛河梁墓葬与玉器统计讲座记录,中国科学院大学,2022-09-21T00:00:00,lecture_record,B2,False,https://renwen.ucas.ac.cn/index.php/rczp/2015-12-09-08-37-4/55672-2022-09-21-01-06-37,66墓、地点分布、分级与玉器统计,讲座记录；最好与正式论文交叉核验,active
+SRC-11,Sites of Hongshan Culture — Tentative List Ref.5804,UNESCO World Heritage Centre,2013-01-29T00:00:00,official_register,A1,True,https://whc.unesco.org/en/tentativelists/5804/,世界遗产预备名单状态、系列构成和标准,2013文本中的考古认识可被新调查更新,active
+SRC-12,辽宁省牛河梁遗址保护条例,辽宁省文化和旅游厅,2025-12-26T00:00:00,law,A1,True,https://whly.ln.gov.cn/whly/zfxxgk/fdzdgknr/lzyj/dfxfg/2025122609264496858/index.shtml,法定保护、数字化、拍摄与利用边界,自2026-01-01施行,active
+SRC-13,牛河梁红山文化遗址保护规划（2025—2040）征求意见公告,朝阳市文旅广电局,2026-05-19T00:00:00,draft_notice,A2,True,https://wlgdj.chaoyang.gov.cn/html/CYWLG/202605/0177917473100994.html,规划草案状态,截至2026-07-14未核到正式批准公告,draft
+SRC-14,何以文明·牛河梁数字展,央视央博,2024-04-07T00:00:00,competitor_reference,B1,False,https://yangbo.cctv.com/2024/04/07/ARTIs1hYUe52Jjaj23WGKSdA240407.shtml,竞品3D复原、小游戏、部分尺寸,含宣传性/争议性强表述，不直接复制结论,active
+SRC-15,红山文化,中国大百科全书,,reference,B1,False,https://www.zgbk.com/ecph/words?Name=%E7%BA%A2%E5%B1%B1%E6%96%87%E5%8C%96&SiteID=1,红山文化年代与分布概述,起止年代是百科口径；需与碳十四研究并置,active
+SRC-16,Demographic and climatic changes in the West Liao River Basin,Nature Communications,2019-09-17T00:00:00,peer_reviewed,A2,True,https://www.nature.com/articles/s41467-019-12138-0,627个碳十四数据、礼仪中心年代、人口与生业转型,概率峰值不是文化完整起止边界,active
+SRC-17,Early mixed farming and sedentism in Northeast China,PLOS ONE,2019-06-26T00:00:00,peer_reviewed,A2,True,https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0218751,约7.9千年前定居/植物利用与兴隆洼聚落实例,具体遗址样本不可代表整个东北,active
+SRC-18,小河沿文化,中国大百科全书,,reference,B1,False,https://www.zgbk.com/ecph/words?Name=%E5%B0%8F%E6%B2%B3%E6%B2%BF%E6%96%87%E5%8C%96&SiteID=1,小河沿文化年代与分布,与红山宽年代存在重叠，不作瞬时接替,active
+SRC-19,红山文化考古发现与研究史,中国社会科学网,2022-10-24T00:00:00,academic_history,B1,False,https://www.cssn.cn/lsx/lsx_kgx/202210/t20221024_5552755.shtml,1906—1956调查、发掘与命名史,早期族属与年代判断已被修正,active
+SRC-20,Regional human activity and environmental change in the Yan-Liao region,Journal of Geographical Sciences,2019-01-01T00:00:00,peer_reviewed,A2,True,https://link.springer.com/article/10.1007/s11442-019-1609-y,燕辽区域遗址数量、密度与复杂度模型,区域模型不能替代单遗址结论,active
+TECH-01,Progressive Web Apps,MDN,,technical_docs,A1,True,https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps,PWA能力与最佳实践,技术文档会更新,active
+TECH-02,Making PWAs installable,MDN,,technical_docs,A1,True,https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Making_PWAs_installable,安装条件与平台差异,安装不等于离线,active
+TECH-03,Service workers,web.dev,,technical_docs,A1,True,https://web.dev/learn/pwa/service-workers,缓存、离线和首次访问边界,需主动配置缓存策略,active
+TECH-04,WebXR Device API,MDN,,technical_docs,A1,True,https://developer.mozilla.org/en-US/docs/Web/API/WebXR_Device_API,WebXR有限可用、实验性、HTTPS,兼容性快速变化,active
+TECH-05,Augmented Reality,model-viewer,,technical_docs,A1,True,https://modelviewer.dev/examples/augmentedreality/,WebXR/Scene Viewer/Quick Look与降级,原生查看器不保留复杂网页UI,active
+TECH-06,WebXR requirements,Google ARCore,,technical_docs,A1,True,https://developers.google.com/ar/develop/webxr/requirements,Android WebAR设备要求,模拟器不支持,active
+TECH-07,Full Stack FastAPI Template,FastAPI,,technical_docs,A1,True,https://fastapi.tiangolo.com/project-generation/,React+FastAPI全栈架构参考,非本项目直接模板要求,active
+TECH-08,Appropriate Uses For SQLite,SQLite,,technical_docs,A1,True,https://www.sqlite.org/whentouse.html,SQLite适用范围与并发边界,高并发/多实例需迁移,active

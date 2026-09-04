@@ -1,0 +1,98 @@
+{
+  "version": "1.0",
+  "updatedAt": "2026-07-16",
+  "disclosure": "AI生成资产只用于非证据性策展视觉和研究性概念模型，不作为遗址实景、文物照片、地图或考古结论。",
+  "assets": [
+    {
+      "id": "AI-001",
+      "files": [
+        "/assets/generated/hero-strata-dawn-mobile.avif",
+        "/assets/generated/hero-strata-dawn-1280.avif",
+        "/media/assets/generated/hero-strata-dawn.avif",
+        "/media/assets/generated/hero-strata-dawn.webp"
+      ],
+      "tool": "GPT Image / Image 2",
+      "generatedAt": "2026-07-16",
+      "use": "序厅主视觉、章节过渡、个人报告底图",
+      "label": "AI生成视觉",
+      "aiGenerated": true,
+      "factRole": "none",
+      "promptSummary": "辽西山地曙光、黄土地层断面、矿物纸肌理与克制的档案坐标痕迹构成宽幅策展视觉；左侧为网站标题保留深色负空间；禁止文物、人物、建筑、地图和文字。",
+      "negativeConstraints": "不生成遗址复原、器物、人物、伪文字、宫殿、神话、霓虹与黑金粒子。",
+      "alt": "地层、辽西山影、曙光和坐标线构成的AI生成策展意象"
+    },
+    {
+      "id": "AI-002",
+      "files": [
+        "/media/assets/generated/nine-platforms-study.avif",
+        "/media/assets/generated/nine-platforms-study.webp"
+      ],
+      "tool": "GPT Image / Image 2",
+      "generatedAt": "2026-07-15",
+      "use": "九台营造实验的研究性概念模型底图",
+      "label": "研究性概念模型／设计示意",
+      "aiGenerated": true,
+      "factRole": "interpretive-only",
+      "factReferences": ["CLM-005", "CLM-006", "CLM-007", "SRC-02"],
+      "promptSummary": "只表现辽西山脊上的低矮土石台基基础、夯土层和测绘线，不出现屋顶、宫殿、人物或仪式。",
+      "negativeConstraints": "不对应实际台基位置、数量和比例；禁止上部建筑、生活场景、伪文字与地图。",
+      "alt": "AI生成的土石台基研究性概念模型"
+    },
+    {
+      "id": "AI-003",
+      "files": [
+        "/media/assets/generated/three-rings-study.avif",
+        "/media/assets/generated/three-rings-study.webp"
+      ],
+      "tool": "GPT Image / Image 2",
+      "generatedAt": "2026-07-15",
+      "use": "礼仪建筑章节中的三重环形土石材料关系视觉",
+      "label": "AI生成材料模型／设计示意",
+      "aiGenerated": true,
+      "factRole": "interpretive-only",
+      "factReferences": ["CLM-012", "SRC-09"],
+      "promptSummary": "以国际考古博物馆实体模型摄影语言表现三重同心土石环、夯土和材料纹理，不出现建筑、人物或仪式。",
+      "negativeConstraints": "不对应遗址测绘、保存状态和建筑原貌；禁止文字、比例尺、文物与生活场景。",
+      "alt": "AI生成的三重环形土石材料模型设计示意"
+    },
+    {
+      "id": "AI-004",
+      "files": [
+        "/media/assets/generated/survey-landscape-study.avif",
+        "/media/assets/generated/survey-landscape-study.webp"
+      ],
+      "tool": "GPT Image / Image 2",
+      "generatedAt": "2026-07-15",
+      "use": "2026调查实验中的辽西山地与证据聚类理论地景模型",
+      "label": "AI生成理论地景模型／设计示意",
+      "aiGenerated": true,
+      "factRole": "interpretive-only",
+      "factReferences": ["CLM-018", "CLM-019", "CLM-020", "CLM-021", "CLM-022", "SRC-01"],
+      "promptSummary": "辽西山脊河谷的实体地形模型，以克制的材料变化表达调查带来密度认识，不画真实地图边界。",
+      "negativeConstraints": "不表达518个网格的真实位置和5个聚落群的真实边界；禁止地图、文字、建筑与聚落复原。",
+      "alt": "AI生成的辽西山地调查地景材料模型"
+    },
+    {
+      "id": "AI-005",
+      "files": ["/og.png"],
+      "tool": "GPT Image / Image 2 + deterministic SVG typography",
+      "generatedAt": "2026-07-15",
+      "use": "网站社交分享预览图",
+      "label": "AI生成背景／代码排版文字",
+      "aiGenerated": true,
+      "factRole": "none",
+      "promptSummary": "以地层断面、辽西山脉、曙光、环形痕迹和坐标线构成无字分享背景，左侧预留中文标题区。",
+      "negativeConstraints": "不生成文物、人物、建筑、地图、伪文字和考古数据；中文标题由SVG确定性排版。",
+      "alt": "曙光坐标·5800红山—牛河梁文明交互志分享封面"
+    },
+    {
+      "id": "GEN-QR-001",
+      "files": ["/media/assets/generated/site-qr.png"],
+      "tool": "QuickChart QR generator",
+      "generatedAt": "2026-07-15",
+      "use": "个人考古笔记报告与提交材料中的公开网址二维码",
+      "aiGenerated": false,
+      "encodes": "https://shuguang-5800.modymarylou7.chatgpt.site"
+    }
+  ]
+}

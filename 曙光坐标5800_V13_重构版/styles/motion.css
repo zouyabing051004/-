@@ -1,0 +1,37 @@
+/* ============================================================
+   Motion — 只保留有叙事意义的动效
+   ============================================================ */
+
+/* 进场：区块进入视口时 260–420ms 淡入 + 小位移
+   只有在脚本确认 IntersectionObserver 可用、且用户未要求减少动效时，
+   才会给 <html> 加上 .has-reveal —— 因此任何异常情况下内容都保持可见，绝不会「消失」。 */
+.has-reveal .reveal { opacity: 0; transform: translateY(14px); }
+.has-reveal .reveal.is-in {
+  opacity: 1; transform: none;
+  transition: opacity var(--dur-3) var(--ease), transform var(--dur-3) var(--ease);
+}
+
+/* 文物 hover 最多 1.02，避免夸张缩放 */
+.hover-lift { transition: transform var(--dur-2) var(--ease), box-shadow var(--dur-2) var(--ease); }
+.hover-lift:hover { transform: translateY(-2px); box-shadow: var(--shadow-1); }
+.hover-zoom > img { transition: transform var(--dur-3) var(--ease); }
+.hover-zoom:hover > img { transform: scale(1.02); }
+
+/* 序厅地层线与曙光的极轻呼吸 */
+@keyframes dawn-breathe {
+  0%, 100% { opacity: .55; }
+  50%      { opacity: .85; }
+}
+
+/* 完整尊重系统的「减少动态效果」偏好 */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal { opacity: 1; transform: none; }
+  .hover-lift:hover, .hover-zoom:hover > img { transform: none; }
+}

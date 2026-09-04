@@ -1,0 +1,68 @@
+/* ============================================================
+   我的考古笔记 — 数字田野札记 / FIELD NOTE
+   浅纸色、装订线、坐标戳、细小朱砂印记；不做古风卷轴，不复用首页序厅图。
+   ============================================================ */
+.notebook { padding-block: var(--s-8) var(--s-9); }
+.note-progress { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; margin-bottom: var(--s-7); background: var(--line); border: 1px solid var(--line); border-radius: var(--r-sm); overflow: hidden; }
+.note-progress article { display: grid; gap: var(--s-2); padding: var(--s-5); background: var(--paper-bright); }
+.note-progress small { color: var(--muted); font-size: var(--fs-meta); }
+.note-progress b { display: flex; align-items: baseline; gap: .3em; font-family: var(--serif); font-size: 40px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.note-progress b span { color: var(--muted); font-family: var(--sans); font-size: var(--fs-meta); font-weight: 400; }
+
+.first-run { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--s-6); align-items: center; margin-bottom: var(--s-7); padding: var(--s-6); background: var(--paper-bright); border: 1px solid var(--line-soft); border-radius: var(--r-sm); }
+.first-run .actions { display: flex; flex-wrap: wrap; gap: var(--s-3); }
+
+.note-layout { display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: clamp(28px, 4vw, 56px); align-items: start; }
+
+/* 札记封面：独立视觉，不使用序厅图 */
+.note-cover {
+  position: relative; display: grid; align-content: space-between; gap: var(--s-6);
+  min-height: 440px; padding: var(--s-6) var(--s-6) var(--s-6) var(--s-7);
+  color: var(--ink);
+  background:
+    repeating-linear-gradient(180deg, transparent 0 27px, var(--line-soft) 27px 28px),
+    var(--paper-bright);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  overflow: hidden;
+}
+/* 装订线 */
+.note-cover::before {
+  content: ""; position: absolute; top: 0; bottom: 0; left: 22px; width: 1px;
+  background: color-mix(in srgb, var(--cinnabar) 45%, transparent);
+}
+.note-cover::after {
+  content: ""; position: absolute; top: 0; bottom: 0; left: 12px; width: 4px;
+  background: repeating-linear-gradient(180deg, var(--stone) 0 6px, transparent 6px 22px);
+  opacity: .5;
+}
+.note-cover__head { display: grid; gap: var(--s-2); }
+.note-cover__head small { color: var(--muted); font-family: var(--mono); font-size: var(--fs-meta-sm); letter-spacing: .1em; }
+.note-cover__head b { font-family: var(--serif); font-size: 28px; font-weight: 600; }
+.note-cover__num { font-family: var(--serif); font-size: 76px; font-weight: 600; line-height: 1; color: var(--jade); font-variant-numeric: tabular-nums; }
+.note-cover__stats { display: grid; gap: var(--s-1); color: var(--ink-soft); font-size: var(--fs-meta); }
+/* 朱砂坐标戳 */
+.note-stamp { position: absolute; right: var(--s-5); bottom: var(--s-5); width: 74px; height: 74px; color: var(--cinnabar); opacity: .8; }
+
+.note-content { display: grid; gap: var(--s-7); }
+.note-section { display: grid; gap: var(--s-4); }
+.note-section > .label { display: flex; align-items: center; gap: var(--s-3); margin: 0; color: var(--muted); font-size: var(--fs-meta); font-weight: 700; }
+.note-section > .label::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+.note-item { display: grid; grid-template-columns: auto 1fr; gap: var(--s-4); align-items: baseline; padding-bottom: var(--s-4); border-bottom: 1px solid var(--line-soft); }
+.note-item b { color: var(--cinnabar); font-family: var(--mono); font-size: var(--fs-meta); font-weight: 700; }
+.note-item p { margin: 0; color: var(--ink-soft); }
+.note-open blockquote { padding-left: var(--s-4); border-left: 3px solid var(--stone); color: var(--ink-soft); font-family: var(--serif); font-size: var(--fs-lede); line-height: 1.65; }
+.note-actions { display: flex; flex-wrap: wrap; gap: var(--s-3); align-items: center; padding-top: var(--s-5); border-top: 1px solid var(--line); }
+.note-reset { min-height: 44px; padding: 8px 4px; color: var(--muted); font-size: var(--fs-meta); text-decoration: underline; text-underline-offset: .2em; }
+.note-reset:hover { color: var(--cinnabar); }
+.note-empty { display: inline-flex; align-items: center; gap: .5em; min-height: 44px; color: var(--jade-ink); font-weight: 700; }
+
+@media (max-width: 900px) {
+  .note-layout { grid-template-columns: 1fr; }
+  .note-cover { min-height: 320px; }
+  .first-run { grid-template-columns: 1fr; }
+}
+@media (max-width: 560px) {
+  .note-progress { grid-template-columns: 1fr; }
+  .note-progress b { font-size: 32px; }
+}

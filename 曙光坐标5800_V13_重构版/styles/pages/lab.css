@@ -1,0 +1,174 @@
+/* ============================================================
+   证据实验室 — 全站唯一长期使用的深色沉浸模式
+   标准布局：左 65% 交互画布 / 右 35% 题目与实时判断；操作后进入浅色结论区。
+   ============================================================ */
+.lab-page { background: var(--night); }
+.lab-index { padding-block: var(--s-8) var(--s-9); }
+.lab-index .page-intro h1, .lab-index .page-intro p { color: var(--on-night); }
+.lab-index .page-intro p { color: var(--on-night-soft); }
+
+.lab-cards { display: grid; gap: 1px; background: var(--line-night); border-block: 1px solid var(--line-night); }
+.lab-card { display: grid; grid-template-columns: 240px minmax(0, 1fr) auto; gap: var(--s-5); align-items: center; padding: var(--s-5) 0; background: var(--night); transition: background var(--dur-2) var(--ease); }
+.lab-card:hover { background: var(--night-2); }
+.lab-card__media { aspect-ratio: 16 / 10; border-radius: var(--r-sm); background: var(--night-3); }
+.lab-card__copy { display: grid; gap: var(--s-2); }
+.lab-card__copy .no { color: var(--dawn); font-family: var(--mono); font-size: var(--fs-meta); font-weight: 700; }
+.lab-card__copy h2 { font-size: var(--fs-h3); }
+.lab-card__copy p { margin: 0; color: var(--on-night-soft); font-size: var(--fs-meta); }
+.lab-card__copy .promise { color: var(--jade-soft); font-size: var(--fs-meta); }
+.lab-card__go { color: var(--on-night-faint); font-family: var(--mono); font-size: 20px; }
+.lab-card:hover .lab-card__go { color: var(--dawn); }
+
+/* 实验详情 */
+.lab-head { padding-block: var(--s-8) var(--s-6); display: grid; gap: var(--s-4); }
+.lab-head .no { color: var(--dawn); font-family: var(--mono); font-size: var(--fs-meta); font-weight: 700; letter-spacing: .1em; }
+.lab-head h1 { max-width: 20ch; color: var(--on-night); font-size: clamp(34px, 4.4vw, 64px); }
+.lab-head blockquote { max-width: 44ch; color: var(--on-night); font-family: var(--serif); font-size: var(--fs-quote); line-height: 1.6; }
+
+.lab-steps { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: var(--s-6); padding-block: var(--s-5); border-top: 1px solid var(--line-night); }
+.lab-steps__meta { display: grid; gap: var(--s-2); align-content: start; }
+.lab-steps__meta b { color: var(--on-night); font-size: var(--fs-h4); font-family: var(--serif); }
+.lab-steps__meta small, .lab-steps__meta p { color: var(--on-night-soft); font-size: var(--fs-meta); margin: 0; }
+.lab-steps ol { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-5); margin: 0; padding: 0; list-style: none; }
+.lab-steps li { display: grid; gap: var(--s-2); padding-top: var(--s-3); border-top: 1px solid var(--line-night); }
+.lab-steps li span { color: var(--dawn); font-family: var(--mono); font-size: var(--fs-meta); font-weight: 700; }
+.lab-steps li p { margin: 0; color: var(--on-night-soft); font-size: var(--fs-meta); line-height: 1.7; }
+
+/* 实验台：左画布 / 右读数 */
+.lab-stage { display: grid; grid-template-columns: 65% 35%; gap: 0; margin-block: var(--s-6) 0; border: 1px solid var(--line-night); border-radius: var(--r-sm); overflow: hidden; background: var(--night-2); }
+.lab-canvas { position: relative; display: grid; align-content: stretch; min-height: clamp(420px, 52svh, 560px); background: var(--night); overflow: hidden; }
+.lab-inspector { display: grid; align-content: start; gap: var(--s-4); padding: var(--s-6); background: var(--night-2); border-left: 1px solid var(--line-night); }
+.lab-inspector .label { margin: 0; color: var(--dawn); font-family: var(--mono); font-size: var(--fs-meta); font-weight: 700; letter-spacing: .08em; }
+.lab-inspector h3 { color: var(--on-night); font-size: var(--fs-h4); }
+.lab-inspector p { margin: 0; color: var(--on-night-soft); font-size: var(--fs-meta); line-height: 1.7; }
+.lab-hint { color: var(--on-night-faint); font-size: var(--fs-meta); }
+
+.state-list { display: grid; gap: var(--s-3); }
+.state-list > div { display: grid; grid-template-columns: 1fr auto; gap: var(--s-3); align-items: center; padding-bottom: var(--s-2); border-bottom: 1px solid var(--line-night); }
+.state-list span { color: var(--on-night-soft); font-size: var(--fs-meta); }
+.state-list em {
+  display: inline-flex; align-items: center; gap: .4em;
+  font-size: var(--fs-meta); font-style: normal; font-weight: 700;
+}
+.state-list em::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.state-list em.direct    { color: var(--jade-soft); }
+.state-list em.supported { color: var(--dawn-bright); }
+.state-list em.limited   { color: var(--on-night-soft); }
+.state-list em.open      { color: var(--on-night-faint); }
+
+/* 画布内通用元素 */
+.canvas-art { position: absolute; inset: 0; }
+.canvas-art img { width: 100%; height: 100%; object-fit: cover; }
+.canvas-scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(20,23,20,.55), rgba(20,23,20,.86)); }
+.canvas-note { position: absolute; left: var(--s-5); right: var(--s-5); bottom: var(--s-4); color: var(--on-night-faint); font-size: var(--fs-meta); line-height: 1.55; }
+.canvas-title { position: absolute; top: var(--s-5); left: var(--s-5); display: grid; gap: 2px; }
+.canvas-title small { color: var(--on-night-faint); font-family: var(--mono); font-size: var(--fs-meta-sm); letter-spacing: .1em; }
+.canvas-title b { color: var(--on-night); font-family: var(--serif); font-size: var(--fs-h4); }
+.canvas-title span { color: var(--on-night-faint); font-size: var(--fs-meta); }
+
+/* LAB 02 九台节点 */
+.node-grid { position: absolute; inset: auto 0 64px; display: grid; grid-template-columns: repeat(3, 88px); gap: 12px; justify-content: center; }
+.node-grid button {
+  display: grid; place-content: center; gap: 2px;
+  aspect-ratio: 1.5; min-height: 44px;
+  color: var(--on-night-soft); font-family: var(--mono); font-size: var(--fs-meta); font-weight: 700;
+  background: rgba(20, 23, 20, .62); border: 1px solid var(--line-night); border-radius: var(--r-sm);
+  backdrop-filter: blur(6px);
+  transition: border-color var(--dur-1) var(--ease), color var(--dur-1) var(--ease), background var(--dur-1) var(--ease);
+}
+.node-grid button span { color: var(--on-night-faint); font-size: var(--fs-meta-sm); font-weight: 500; }
+.node-grid button:hover { color: var(--on-night); border-color: var(--on-night-soft); }
+.node-grid button.selected { color: var(--night); background: var(--dawn); border-color: var(--dawn); }
+.node-grid button.selected span { color: rgba(20, 23, 20, .7); }
+
+/* LAB 03 证据镜片 */
+.lens-frame { position: absolute; inset: 0; display: grid; place-items: center; padding: var(--s-6) var(--s-6) 72px; }
+.lens-frame figure { position: relative; max-height: 100%; }
+.lens-frame img { max-height: min(46svh, 400px); width: auto; border-radius: var(--r-sm); }
+.lens-veil { position: absolute; inset: 0; border-radius: var(--r-sm); pointer-events: none; transition: background var(--dur-3) var(--ease), backdrop-filter var(--dur-3) var(--ease); }
+.lens-veil.l0 { background: none; }
+.lens-veil.l1 { background: rgba(68, 120, 107, .16); }
+.lens-veil.l2 { background: rgba(201, 138, 71, .18); }
+.lens-veil.l3 { background: repeating-linear-gradient(135deg, rgba(20,23,20,.34) 0 8px, rgba(20,23,20,.08) 8px 16px); }
+.lens-stack { position: absolute; top: var(--s-5); right: var(--s-5); display: grid; gap: 6px; }
+.lens-stack span { display: flex; align-items: center; gap: .5em; color: var(--on-night-faint); font-size: var(--fs-meta); }
+.lens-stack span i { width: 8px; height: 8px; border: 1px solid var(--on-night-faint); border-radius: 50%; }
+.lens-stack span.active { color: var(--jade-soft); }
+.lens-stack span.active i { background: var(--jade-soft); border-color: var(--jade-soft); }
+.lens-tabs { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+.lens-tabs button { min-height: 48px; padding: 8px; color: var(--on-night-soft); font-size: var(--fs-meta); font-weight: 700; background: var(--night-3); border: 1px solid transparent; border-radius: var(--r-sm); }
+.lens-tabs button small { display: block; color: var(--on-night-faint); font-family: var(--mono); font-size: var(--fs-meta-sm); font-weight: 500; }
+.lens-tabs button.active { color: var(--night); background: var(--dawn); }
+.lens-tabs button.active small { color: rgba(20, 23, 20, .72); }
+
+/* LAB 04 墓葬矩阵 */
+.tomb-canvas { display: grid; gap: var(--s-4); padding: var(--s-5); }
+.tomb-strip { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-3); }
+.tomb-strip figure { display: grid; gap: 6px; }
+.tomb-strip .media { aspect-ratio: 16 / 10; border-radius: var(--r-xs); }
+.tomb-strip figcaption { color: var(--on-night-faint); font-size: var(--fs-meta-sm); line-height: 1.5; }
+.tomb-matrix { align-self: center; justify-self: center; width: 100%; max-width: 540px; display: grid; grid-template-columns: repeat(11, minmax(0, 1fr)); gap: 6px; }
+.tomb-matrix span { position: relative; display: grid; place-items: center; aspect-ratio: 1; border-radius: 2px; background: var(--night-3); border: 1px solid transparent; transition: opacity var(--dur-2) var(--ease), background var(--dur-2) var(--ease); }
+.tomb-matrix span.with-jade { background: color-mix(in srgb, var(--jade-soft) 82%, transparent); }
+.tomb-matrix span.without-jade { background: transparent; border-color: rgba(240, 234, 223, .32); }
+.tomb-matrix span i { color: rgba(20, 23, 20, .72); font-family: var(--mono); font-size: 12px; font-style: normal; }
+.tomb-matrix span.without-jade i { color: var(--on-night-soft); }
+.tomb-matrix span.muted { opacity: .16; }
+
+/* LAB 05 调查网格 */
+.survey-field { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(12, 1fr); grid-auto-rows: 1fr; gap: 3px; padding: var(--s-6); opacity: .9; }
+.survey-field i { border: 1px solid rgba(240, 234, 223, .12); border-radius: 1px; }
+.survey-field i.found { background: color-mix(in srgb, var(--dawn) 46%, transparent); border-color: color-mix(in srgb, var(--dawn) 60%, transparent); }
+.survey-toggle { position: absolute; top: var(--s-5); right: var(--s-5); }
+.survey-insight { position: absolute; left: var(--s-5); right: var(--s-5); bottom: 56px; max-width: 46ch; padding: var(--s-4); background: rgba(20, 23, 20, .78); border-radius: var(--r-sm); backdrop-filter: blur(6px); }
+.survey-insight small { display: block; color: var(--dawn); font-family: var(--mono); font-size: var(--fs-meta-sm); letter-spacing: .08em; }
+.survey-insight p { margin: 4px 0 0; color: var(--on-night); font-size: var(--fs-meta); line-height: 1.6; }
+.metric-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+.metric-grid button { display: grid; gap: 2px; min-height: 60px; padding: 10px; text-align: left; background: var(--night-3); border: 1px solid transparent; border-radius: var(--r-sm); }
+.metric-grid button b { color: var(--on-night); font-family: var(--serif); font-size: 22px; font-variant-numeric: tabular-nums; }
+.metric-grid button span { color: var(--on-night-faint); font-size: var(--fs-meta-sm); line-height: 1.4; }
+.metric-grid button.active { background: var(--dawn); }
+.metric-grid button.active b { color: var(--night); }
+.metric-grid button.active span { color: rgba(20, 23, 20, .78); }
+
+/* LAB 01 时间坐标 */
+.time-scene { position: absolute; inset: 0; display: grid; place-items: center; }
+.time-window { position: relative; display: grid; gap: var(--s-2); justify-items: center; padding: var(--s-6) var(--s-7); background: rgba(20, 23, 20, .58); border: 1px solid var(--line-night); border-radius: var(--r-sm); backdrop-filter: blur(8px); }
+.time-window b { color: var(--dawn-bright); font-family: var(--serif); font-size: clamp(56px, 8vw, 104px); font-weight: 600; line-height: 1; font-variant-numeric: tabular-nums; }
+.time-window small { color: var(--on-night-soft); font-size: var(--fs-meta); }
+.time-bands { display: grid; gap: 6px; }
+.time-bands button { display: grid; gap: 2px; min-height: 56px; padding: 10px 12px; text-align: left; background: var(--night-3); border: 1px solid transparent; border-radius: var(--r-sm); }
+.time-bands button b { color: var(--on-night); font-family: var(--mono); font-size: var(--fs-meta); font-weight: 700; }
+.time-bands button span { color: var(--on-night-faint); font-size: var(--fs-meta); }
+.time-bands button.active { background: var(--dawn); }
+.time-bands button.active b { color: var(--night); }
+.time-bands button.active span { color: rgba(20, 23, 20, .78); }
+
+/* 结论区回到浅色 */
+.lab-debrief { color: var(--ink); background: var(--paper); }
+.lab-debrief .inner { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-6) clamp(32px, 5vw, 72px); padding-block: var(--s-8); }
+.lab-debrief h2 { font-size: var(--fs-h3); }
+.lab-debrief .wide { grid-column: 1 / -1; }
+.lab-debrief .recap { display: grid; gap: var(--s-2); padding: var(--s-5); background: var(--paper-bright); border-radius: var(--r-sm); }
+.lab-debrief .recap small { color: var(--muted); font-size: var(--fs-meta); }
+.lab-collect { display: flex; flex-wrap: wrap; gap: var(--s-4); align-items: center; justify-content: space-between; padding-top: var(--s-5); border-top: 1px solid var(--line); }
+.collect-btn { min-height: 48px; padding: 12px 20px; font-size: var(--fs-body); font-weight: 700; color: var(--paper-bright); background: var(--jade-ink); border-radius: var(--r-sm); }
+.collect-btn.collected { color: var(--jade-ink); background: var(--jade-wash); border: 1px solid var(--jade); }
+
+@media (max-width: 1024px) {
+  .lab-stage { grid-template-columns: 1fr; }
+  .lab-inspector { border-left: 0; border-top: 1px solid var(--line-night); }
+  .lab-steps { grid-template-columns: 1fr; }
+  .lab-steps ol { grid-template-columns: 1fr; gap: var(--s-4); }
+  .lab-card { grid-template-columns: 180px minmax(0, 1fr); }
+  .lab-card__go { display: none; }
+  .lab-debrief .inner { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .lab-card { grid-template-columns: 1fr; gap: var(--s-4); }
+  .lab-card__media { aspect-ratio: 16 / 9; }
+  .node-grid { grid-template-columns: repeat(3, minmax(64px, 84px)); bottom: 72px; }
+  .tomb-strip { grid-template-columns: 1fr; }
+  .tomb-strip figure:last-child { display: none; }
+  .metric-grid { grid-template-columns: 1fr; }
+}

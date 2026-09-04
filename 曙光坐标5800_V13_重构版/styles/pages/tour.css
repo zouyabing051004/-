@@ -1,0 +1,60 @@
+/* ============================================================
+   公众导览 — 比赛现场演示主模式
+   每幕只有：幕号 → 一个问题 → 一句结论 → 一个证据边界 → 下一步
+   ============================================================ */
+.tour { display: grid; grid-template-columns: 62% 38%; min-height: calc(100svh - var(--header-h)); }
+
+.tour__stage { position: relative; background: var(--night); overflow: hidden; }
+.tour__stage > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.tour__stage-scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(20,23,20,.62) 0%, rgba(20,23,20,.12) 40%, rgba(20,23,20,.86) 100%); }
+.tour__stage-copy { position: relative; display: grid; align-content: end; gap: var(--s-3); min-height: 100%; padding: clamp(28px, 4vw, 56px); }
+.tour__act { display: flex; align-items: baseline; gap: .5em; color: var(--dawn-bright); font-family: var(--mono); font-size: var(--fs-meta); font-weight: 700; }
+.tour__act em { color: var(--on-night-faint); font-style: normal; }
+.tour__stage-copy h1 { max-width: 16ch; color: var(--on-night); font-size: clamp(30px, 3.6vw, 52px); }
+.tour__question { max-width: 32ch; margin: 0; color: var(--on-night); font-family: var(--serif); font-size: var(--fs-quote); line-height: 1.55; }
+.tour__stage .media-boundary { max-width: 44ch; margin-top: var(--s-4); }
+
+.tour__panel { display: grid; align-content: start; gap: var(--s-5); padding: clamp(24px, 3vw, 44px); background: var(--paper-bright); border-left: 1px solid var(--line); }
+.tour__topline { display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); color: var(--muted); font-size: var(--fs-meta); }
+.tour__progress { display: flex; flex-wrap: wrap; gap: 6px; }
+.tour__progress button { flex: 1 1 0; min-width: 34px; min-height: 44px; display: grid; place-items: center; gap: 4px; border-radius: var(--r-xs); }
+.tour__progress button span { display: block; width: 100%; height: 3px; background: var(--line); transition: background var(--dur-2) var(--ease); }
+.tour__progress button.seen span { background: var(--jade); }
+.tour__progress button[aria-current="step"] span { background: var(--cinnabar); }
+.tour__progress button small { color: var(--muted); font-family: var(--mono); font-size: var(--fs-meta-sm); }
+.tour__progress button[aria-current="step"] small { color: var(--cinnabar); font-weight: 700; }
+
+.tour__takeaway { display: grid; gap: var(--s-3); padding: var(--s-5); background: var(--paper); border-left: 3px solid var(--jade); border-radius: 0 var(--r-sm) var(--r-sm) 0; }
+.tour__takeaway b { color: var(--jade-ink); font-size: var(--fs-meta); }
+.tour__takeaway blockquote { font-family: var(--serif); font-size: var(--fs-lede); line-height: 1.65; }
+
+.tour__background { display: grid; gap: var(--s-3); }
+.tour__background b { font-size: var(--fs-meta); color: var(--muted); }
+.tour__background p { margin: 0; color: var(--ink-soft); font-size: var(--fs-meta); line-height: 1.7; }
+
+.tour__controls { display: flex; gap: var(--s-3); margin-top: var(--s-2); }
+.tour__controls .btn { flex: 1; }
+
+.tour__summary { display: grid; gap: var(--s-3); padding: var(--s-5); background: var(--paper-deep); border-radius: var(--r-sm); }
+.tour__summary ol { display: grid; gap: var(--s-3); margin: 0; padding: 0; list-style: none; counter-reset: c; }
+.tour__summary li { display: grid; grid-template-columns: auto 1fr; gap: var(--s-3); align-items: baseline; }
+.tour__summary li b { color: var(--cinnabar); font-family: var(--serif); font-size: 22px; font-variant-numeric: tabular-nums; }
+.tour__summary li span { color: var(--ink-soft); font-size: var(--fs-meta); }
+
+.quiz { display: grid; gap: var(--s-5); }
+.quiz fieldset { display: grid; gap: var(--s-2); margin: 0; padding: 0; border: 0; }
+.quiz legend { padding: 0 0 var(--s-2); font-size: var(--fs-body); font-weight: 700; }
+.quiz label { display: flex; gap: .6em; align-items: flex-start; min-height: 44px; padding: 8px 10px; font-size: var(--fs-meta); border: 1px solid var(--line-soft); border-radius: var(--r-sm); }
+.quiz label:hover { background: var(--paper); }
+.quiz input { margin-top: .35em; accent-color: var(--cinnabar); }
+.quiz .verdict { margin: var(--s-2) 0 0; padding: 10px 12px; font-size: var(--fs-meta); border-radius: var(--r-sm); }
+.quiz .verdict b { display: block; }
+.quiz .verdict.correct { color: var(--jade-ink); background: var(--jade-wash); }
+.quiz .verdict.incorrect { color: var(--cinnabar-deep); background: var(--cinnabar-wash); }
+
+@media (max-width: 1024px) { .tour { grid-template-columns: 56% 44%; } }
+@media (max-width: 900px) {
+  .tour { grid-template-columns: 1fr; }
+  .tour__stage { min-height: 48svh; }
+  .tour__panel { border-left: 0; border-top: 1px solid var(--line); }
+}

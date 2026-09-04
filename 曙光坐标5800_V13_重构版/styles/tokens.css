@@ -1,0 +1,126 @@
+/* ============================================================
+   曙光坐标·5800 — Design Tokens
+   设计概念：玉礼曙光 / DAWN OF RITUAL
+   现代博物馆编辑设计 × 红山玉器温润质感 × 辽西山地与考古地层 × 朱砂土色 × 曙光
+   —— 全站唯一的颜色 / 字号 / 间距 / 圆角 / 动效 / 层级来源。
+      任何页面样式都必须引用这里的变量，不允许为单个卡片写一次性数值。
+   ============================================================ */
+
+:root {
+  /* ---------- 色彩 · Color ----------
+     比例目标：象牙纸 70% / 墨黑 15% / 玉青 7% / 朱砂 5% / 曙光金 3%
+     深色只在「序厅 Hero」与「证据实验室 Lab」出现，使暗色成为一种模式切换。 */
+  --ink:            #171A17;   /* 墨黑 · 正文与标题 */
+  --ink-soft:       #3A403A;   /* 次级正文 */
+  --muted:          #5F5850;   /* 元数据文字（13px 仍满足 AA） */
+  --stone:          #81776B;   /* 石灰褐 · 细线与装饰，不用于小字 */
+
+  --paper:          #F3EEE4;   /* 象牙纸 · 全站主底色 */
+  --paper-bright:   #FAF7F0;   /* 抬升面（卡片、面板） */
+  --paper-deep:     #E9E1D3;   /* 下沉面（分区、表头） */
+
+  --jade:           #44786B;   /* 红山玉青 · 面与大字 */
+  --jade-ink:       #2F5A4E;   /* 玉青文字（小字安全） */
+  --jade-soft:      #8FB3A6;   /* 深色底上的玉青 */
+  --jade-wash:      rgba(68, 120, 107, .10);
+
+  --cinnabar:       #A44A35;   /* 朱砂土红 · 强调与栏目标记 */
+  --cinnabar-deep:  #7E3527;
+  --cinnabar-wash:  rgba(164, 74, 53, .10);
+
+  --dawn:           #C98A47;   /* 曙光金 · 仅作线、点与深色底上的文字 */
+  --dawn-bright:    #E0A660;
+
+  --night:          #141714;   /* 深色模式底 */
+  --night-2:        #1D221E;   /* 深色模式抬升面 */
+  --night-3:        #262C27;   /* 深色模式描边面 */
+  --on-night:       #F0EADF;   /* 深色底上的正文 */
+  --on-night-soft:  rgba(240, 234, 223, .70);
+  --on-night-faint: rgba(240, 234, 223, .62);   /* 12–13px 小字在深色底上的最低可用亮度 */
+
+  --line:           rgba(23, 26, 23, .16);
+  --line-soft:      rgba(23, 26, 23, .09);
+  --line-strong:    rgba(23, 26, 23, .38);
+  --line-night:     rgba(240, 234, 223, .16);
+
+  /* 证据状态色（语义固定，不随版式改变） */
+  --ev-known:       var(--jade-ink);
+  --ev-inferred:    var(--cinnabar);
+  --ev-unknown:     var(--muted);
+
+  /* ---------- 字体 · Typeface ----------
+     中文是唯一视觉主语言；英文只承担副标与资料字段；等宽仅用于年份、坐标、编号。 */
+  --serif: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong", "SimSun", Georgia, "Times New Roman", serif;
+  --sans:  "Noto Sans SC", "Source Han Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:  ui-monospace, "SFMono-Regular", "Geist Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+  /* ---------- 字号 · Type scale ----------
+     公众可读信息一律 ≥12px；正文 17–18px；H1 桌面 72–104px；H2 44–64px。 */
+  --fs-meta-sm:  12px;                        /* 仅限编号、许可等次级字段 */
+  --fs-meta:     13px;                        /* 元数据默认 */
+  --fs-nav:      15px;
+  --fs-body:     17px;
+  --fs-body-lg:  18px;
+  --fs-lede:     clamp(18px, 1.35vw, 20px);
+  --fs-quote:    clamp(20px, 1.9vw, 26px);
+  --fs-h4:       clamp(17px, 1.4vw, 20px);
+  --fs-h3:       clamp(21px, 2.1vw, 27px);
+  --fs-h2:       clamp(32px, 4.4vw, 58px);
+  --fs-h1:       clamp(46px, 6.2vw, 92px);
+  --fs-numeral:  clamp(52px, 7.4vw, 104px);   /* 三个坐标的数字 */
+
+  --lh-tight:    1.14;
+  --lh-title:    1.24;
+  --lh-body:     1.75;
+  --lh-loose:    1.8;
+
+  --ls-label:    .16em;   /* 英文小标签字距 */
+  --ls-title:    .005em;  /* 中文标题不做过度字距 */
+
+  /* ---------- 布局 · Layout ---------- */
+  --page:        min(1320px, 100% - clamp(32px, 6vw, 96px));
+  --page-narrow: min(760px, 100%);
+  --page-read:   min(680px, 100%);
+  --header-h:    72px;
+
+  --s-1:  4px;
+  --s-2:  8px;
+  --s-3:  12px;
+  --s-4:  16px;
+  --s-5:  24px;
+  --s-6:  32px;
+  --s-7:  48px;
+  --s-8:  64px;
+  --s-9:  clamp(72px, 9vw, 120px);   /* 区块纵向节奏：桌面 96–120 / 移动 64–80 */
+  --s-10: clamp(96px, 12vw, 160px);
+
+  /* ---------- 形状与阴影 ---------- */
+  --r-xs: 2px;
+  --r-sm: 3px;
+  --r-md: 6px;
+  --r-pill: 999px;
+  --shadow-1: 0 1px 2px rgba(23, 26, 23, .05), 0 10px 30px rgba(23, 26, 23, .06);
+  --shadow-2: 0 2px 6px rgba(23, 26, 23, .07), 0 22px 60px rgba(23, 26, 23, .10);
+
+  /* ---------- 动效 · Motion ---------- */
+  --dur-1: 160ms;
+  --dur-2: 260ms;
+  --dur-3: 420ms;
+  --ease:  cubic-bezier(.22, .61, .36, 1);
+
+  /* ---------- 层级 · Z-index ---------- */
+  --z-base:   1;
+  --z-raised: 10;
+  --z-header: 100;
+  --z-menu:   200;
+  --z-skip:   999;
+}
+
+/* 极窄屏（≤380px）收敛最大标题，避免中文标题被迫在词中断行 */
+@media (max-width: 380px) {
+  :root {
+    --fs-h1: clamp(38px, 11.6vw, 46px);
+    --fs-h2: clamp(27px, 8.4vw, 34px);
+    --fs-numeral: clamp(44px, 13vw, 56px);
+  }
+}

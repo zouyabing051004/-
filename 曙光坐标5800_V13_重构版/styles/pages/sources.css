@@ -1,0 +1,70 @@
+/* ============================================================
+   来源与方法 / 无障碍声明 — 研究附录式版式，越克制越可信
+   ============================================================ */
+.appendix { padding-block: var(--s-8) var(--s-9); display: grid; gap: var(--s-9); }
+.appendix > section { display: grid; gap: var(--s-6); }
+
+.principle-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-6); }
+.principle { display: grid; gap: var(--s-3); align-content: start; }
+.principle .media { aspect-ratio: 16 / 10; border-radius: var(--r-sm); }
+.principle .no { color: var(--cinnabar); font-family: var(--mono); font-size: var(--fs-meta); font-weight: 700; }
+.principle h3 { font-size: var(--fs-h4); }
+.principle p { margin: 0; color: var(--ink-soft); font-size: var(--fs-meta); line-height: 1.7; }
+
+/* 证据卡：图小、文字为主，避免又一轮大图卡片 */
+.claim-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-5); }
+.claim { display: grid; grid-template-columns: 132px minmax(0, 1fr); gap: var(--s-4); padding: var(--s-4); background: var(--paper-bright); border: 1px solid var(--line-soft); border-radius: var(--r-sm); }
+.claim .media { aspect-ratio: 4 / 5; border-radius: var(--r-xs); }
+.claim__copy { display: grid; gap: var(--s-2); align-content: start; }
+.claim__copy .ids { color: var(--muted); font-family: var(--mono); font-size: var(--fs-meta-sm); }
+.claim__copy h3 { font-size: var(--fs-body-lg); }
+.claim__copy p { margin: 0; color: var(--ink-soft); font-size: var(--fs-meta); line-height: 1.7; }
+.claim__limit { padding-left: var(--s-3); border-left: 2px solid var(--cinnabar); }
+.claim__limit b { display: block; color: var(--cinnabar); font-size: var(--fs-meta); }
+.claim__kind { position: absolute; left: 6px; bottom: 6px; padding: 2px 6px; color: var(--paper-bright); font-size: var(--fs-meta-sm); background: rgba(20, 23, 20, .86); border-radius: var(--r-xs); }
+
+/* 来源登记 */
+.source-register { display: grid; border-top: 1px solid var(--line); }
+.source-register a { display: grid; grid-template-columns: 74px minmax(0, 1fr) 30% 62px; gap: var(--s-4); align-items: center; padding: var(--s-4) var(--s-2); border-bottom: 1px solid var(--line-soft); transition: background var(--dur-1) var(--ease); }
+.source-register a:hover { background: var(--paper-bright); }
+.source-register .id { color: var(--muted); font-family: var(--mono); font-size: var(--fs-meta); }
+.source-register b { font-size: var(--fs-meta); font-weight: 600; line-height: 1.55; }
+.source-register em { color: var(--muted); font-size: var(--fs-meta); font-style: normal; }
+.source-register .grade { color: var(--jade-ink); font-family: var(--mono); font-size: var(--fs-meta); font-weight: 700; text-align: right; }
+
+.glossary-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-4) var(--s-6); }
+.glossary-grid article { display: grid; gap: var(--s-1); padding-top: var(--s-3); border-top: 1px solid var(--line); }
+.glossary-grid b { font-size: var(--fs-body); }
+.glossary-grid p { margin: 0; color: var(--muted); font-size: var(--fs-meta); line-height: 1.65; }
+
+/* 工作簿 */
+.workbook { display: grid; gap: var(--s-5); padding: var(--s-6); background: var(--paper-bright); border: 1px solid var(--line-soft); border-radius: var(--r-sm); }
+.workbook__head { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--s-5); align-items: center; }
+.workbook__dl { display: grid; gap: 2px; min-height: 64px; padding: var(--s-4) var(--s-5); color: var(--paper-bright); background: var(--jade-ink); border-radius: var(--r-sm); }
+.workbook__dl span { color: rgba(250, 247, 240, .72); font-family: var(--mono); font-size: var(--fs-meta-sm); }
+.workbook__dl b { font-size: var(--fs-body); }
+.sheet-table { font-size: var(--fs-meta); }
+.sheet-table th, .sheet-table td { padding: 10px 12px; border-bottom: 1px solid var(--line-soft); text-align: left; }
+.sheet-table th { color: var(--muted); background: var(--paper-deep); }
+.sheet-table td .no { color: var(--cinnabar); font-family: var(--mono); margin-right: .6em; }
+.raw-files { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+.raw-files a { min-height: 40px; display: inline-flex; align-items: center; padding: 8px 12px; color: var(--jade-ink); font-family: var(--mono); font-size: var(--fs-meta); border: 1px solid var(--line); border-radius: var(--r-sm); }
+.raw-files a:hover { background: var(--paper-deep); }
+
+.independence { display: grid; gap: var(--s-2); padding: var(--s-5); border: 1px solid var(--line); border-radius: var(--r-sm); }
+.independence b { font-size: var(--fs-body); }
+.independence p { margin: 0; color: var(--muted); font-size: var(--fs-meta); }
+
+/* 无障碍页 */
+.a11y-example { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: clamp(28px, 4vw, 56px); align-items: center; }
+.a11y-example .media { aspect-ratio: 3 / 2; border: 1px solid var(--line-soft); border-radius: var(--r-sm); }
+
+@media (max-width: 1024px) { .principle-grid { grid-template-columns: 1fr; } .claim-grid { grid-template-columns: 1fr; } }
+@media (max-width: 860px) {
+  .source-register a { grid-template-columns: 64px minmax(0, 1fr) 52px; }
+  .source-register em { grid-column: 2 / -1; }
+  .glossary-grid { grid-template-columns: 1fr; }
+  .workbook__head { grid-template-columns: 1fr; }
+  .a11y-example { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) { .claim { grid-template-columns: 1fr; } .claim .media { aspect-ratio: 16 / 10; } }

@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>曙光坐标·5800｜红山—牛河梁文明交互志</title>
+<meta name="description" content="从时间坐标、礼仪建筑、玉器墓葬到最新考古调查，以可交互证据重新理解红山—牛河梁文明。九章文明长卷、五个证据实验与 90 张开放许可图像。" />
+<meta name="keywords" content="红山文化,牛河梁遗址,辽宁考古,中华文明探源,数字人文,互动展览" />
+<meta name="theme-color" content="#141714" />
+<meta name="color-scheme" content="light" />
+<meta name="format-detection" content="telephone=no" />
+
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="zh_CN" />
+<meta property="og:title" content="曙光坐标·5800｜红山—牛河梁文明交互志" />
+<meta property="og:description" content="沿证据进入距今约5800年的文明现场：九台、祭坛、玉礼与不断被重绘的考古地图。" />
+<meta property="og:site_name" content="曙光坐标·5800" />
+<meta property="og:image" content="og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="曙光坐标·5800｜红山—牛河梁文明交互志" />
+<meta name="twitter:description" content="九章文明长卷、五个证据实验与 90 张开放图像。" />
+<meta name="twitter:image" content="og.png" />
+
+<link rel="icon" href="favicon.svg" />
+<link rel="apple-touch-icon" href="icon-192.png" />
+<link rel="manifest" href="manifest.webmanifest" />
+
+<!-- 字体自托管子集：无需联网，评审现场断网也能保持完整排版 -->
+<link rel="preload" as="image" href="assets/generated/hero-strata-dawn.webp" />
+<script>
+  /* 直接双击打开（file://）时，部分浏览器会以 CORS 规则拦截字体文件；
+     此时改用同样两个子集的内嵌版本，保证排版一致。http(s) 访问不加载它。 */
+  if (location.protocol === "file:") {
+    document.write('<link rel="stylesheet" href="styles/fonts-embedded.css">');
+  }
+</script>
+
+<!-- 设计系统：fonts → tokens → base → layout → components → motion → 各页面 -->
+<link rel="stylesheet" href="styles/fonts.css" />
+<link rel="stylesheet" href="styles/tokens.css" />
+<link rel="stylesheet" href="styles/base.css" />
+<link rel="stylesheet" href="styles/layout.css" />
+<link rel="stylesheet" href="styles/components.css" />
+<link rel="stylesheet" href="styles/motion.css" />
+<link rel="stylesheet" href="styles/pages/home.css" />
+<link rel="stylesheet" href="styles/pages/tour.css" />
+<link rel="stylesheet" href="styles/pages/chronicle.css" />
+<link rel="stylesheet" href="styles/pages/lab.css" />
+<link rel="stylesheet" href="styles/pages/atlas.css" />
+<link rel="stylesheet" href="styles/pages/notebook.css" />
+<link rel="stylesheet" href="styles/pages/sources.css" />
+</head>
+<body>
+
+<div id="app" class="site-shell">
+  <!-- 无脚本时的可读回退：核心身份、主张与来源仍然可见 -->
+  <noscript>
+    <div style="max-width:720px;margin:64px auto;padding:0 24px">
+      <h1 style="font-family:serif">曙光坐标·5800</h1>
+      <p>红山—牛河梁文明交互志。本站的九章长卷、五个证据实验与开放图鉴需要浏览器脚本才能交互。</p>
+      <p>你仍然可以直接下载开放数据：
+        <a href="downloads/曙光坐标5800_开放研究数据_v12.xlsx">完整研究工作簿 XLSX</a>、
+        <a href="data/fact_claims.csv">事实陈述 CSV</a>、
+        <a href="data/fact_sources.csv">来源清单 CSV</a>、
+        <a href="data/assets.json">图片主数据 JSON</a>。
+      </p>
+      <p>本项目为独立数字文化与竞赛作品，不代表牛河梁遗址、博物馆、考古机构或 UNESCO 官方立场。</p>
+    </div>
+  </noscript>
+</div>
+
+<!-- 数据层（事实、导读、图片主数据，均自 V12 原样继承） -->
+<script src="scripts/data/content.js"></script>
+<script src="scripts/data/guides.js"></script>
+<script src="scripts/data/assets.js"></script>
+<!-- 核心 -->
+<script src="scripts/core/dom.js"></script>
+<script src="scripts/core/router.js"></script>
+<script src="scripts/core/store.js"></script>
+<!-- 组件 -->
+<script src="scripts/components/shared.js"></script>
+<script src="scripts/components/chrome.js"></script>
+<!-- 页面 -->
+<script src="scripts/pages/home.js"></script>
+<script src="scripts/pages/tour.js"></script>
+<script src="scripts/pages/chronicle.js"></script>
+<script src="scripts/pages/lab.js"></script>
+<script src="scripts/pages/atlas.js"></script>
+<script src="scripts/pages/notebook.js"></script>
+<script src="scripts/pages/sources.js"></script>
+<!-- 启动 -->
+<script src="scripts/app.js"></script>
+</body>
+</html>

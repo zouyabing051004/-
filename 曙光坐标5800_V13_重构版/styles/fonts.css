@@ -1,0 +1,23 @@
+/* ============================================================
+   字体 — 自托管子集（离线可用）
+   Noto Serif SC / Noto Sans SC，SIL Open Font License 1.1，
+   已按本站实际用到的 1247 个字符做子集（两个字族合计约 780 KB），
+   保留可变字重轴，因此不必为每个字重单独加载文件。
+   若将来新增文字而缺字，浏览器会自动回落到 tokens.css 中的系统字体栈。
+   ============================================================ */
+
+@font-face {
+  font-family: "Noto Serif SC";
+  src: url("../fonts/NotoSerifSC-subset.woff2") format("woff2");
+  font-weight: 200 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Noto Sans SC";
+  src: url("../fonts/NotoSansSC-subset.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}

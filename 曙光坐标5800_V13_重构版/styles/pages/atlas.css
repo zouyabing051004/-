@@ -1,0 +1,70 @@
+/* ============================================================
+   开放图鉴 — 可信、现代的数字馆藏界面（浅色 · 文物原色 · 不裁关键形态）
+   ============================================================ */
+.atlas-tools { display: grid; grid-template-columns: minmax(220px, 320px) minmax(0, 1fr) auto; gap: var(--s-4); align-items: end; padding-block: var(--s-5); border-block: 1px solid var(--line); }
+.atlas-search { display: grid; gap: var(--s-2); }
+.atlas-search span { color: var(--muted); font-size: var(--fs-meta); }
+.atlas-search input { width: 100%; min-height: 48px; padding: 10px 14px; background: var(--paper-bright); border: 1px solid var(--line); border-radius: var(--r-sm); }
+.atlas-search input::placeholder { color: color-mix(in srgb, var(--muted) 70%, transparent); }
+.atlas-filters { display: flex; flex-wrap: wrap; gap: 6px; }
+.atlas-filters button { min-height: 40px; padding: 8px 14px; color: var(--ink-soft); font-size: var(--fs-meta); font-weight: 600; border: 1px solid var(--line); border-radius: var(--r-pill); transition: all var(--dur-1) var(--ease); }
+.atlas-filters button:hover { border-color: var(--ink); }
+.atlas-filters button.active { color: var(--paper-bright); background: var(--jade-ink); border-color: var(--jade-ink); }
+.atlas-sort { display: grid; gap: var(--s-2); }
+.atlas-sort span { color: var(--muted); font-size: var(--fs-meta); }
+.atlas-sort select { min-height: 48px; padding: 10px 12px; background: var(--paper-bright); border: 1px solid var(--line); border-radius: var(--r-sm); }
+
+.atlas-result-head { display: flex; flex-wrap: wrap; gap: var(--s-3); align-items: baseline; justify-content: space-between; padding-block: var(--s-5); }
+.atlas-result-head b { font-family: var(--serif); font-size: 26px; font-variant-numeric: tabular-nums; }
+.atlas-result-head span { color: var(--muted); font-size: var(--fs-meta); }
+
+.atlas-grid { margin-bottom: var(--s-9); display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: var(--s-5); }
+.atlas-card { display: grid; gap: var(--s-3); align-content: start; }
+.atlas-card .media { aspect-ratio: 4 / 3; background: var(--paper-bright); border: 1px solid var(--line-soft); border-radius: var(--r-sm); }
+.atlas-card .media img { padding: 6px; }
+.atlas-card.is-scene .media img { padding: 0; }
+.atlas-card__grade { position: absolute; top: 8px; left: 8px; padding: 2px 7px; color: var(--muted); font-family: var(--mono); font-size: var(--fs-meta-sm); font-weight: 700; background: color-mix(in srgb, var(--paper-bright) 88%, transparent); border-radius: var(--r-xs); }
+.atlas-card__views { position: absolute; top: 8px; right: 8px; padding: 2px 7px; color: var(--paper-bright); font-size: var(--fs-meta-sm); font-weight: 700; font-style: normal; background: var(--jade-ink); border-radius: var(--r-xs); }
+.atlas-card__copy { display: grid; gap: 3px; }
+.atlas-card__copy small { color: var(--muted); font-family: var(--mono); font-size: var(--fs-meta-sm); }
+.atlas-card__copy b { font-size: var(--fs-meta); font-weight: 600; line-height: 1.5; }
+.atlas-card__copy em { color: var(--muted); font-size: var(--fs-meta-sm); font-style: normal; }
+.atlas-more { display: block; width: 100%; min-height: 52px; margin-top: var(--s-6); color: var(--jade-ink); font-weight: 700; border: 1px solid var(--line); border-radius: var(--r-sm); }
+.atlas-more:hover { background: var(--paper-bright); }
+
+/* 对象详情 */
+.record { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: clamp(32px, 5vw, 72px); padding-block: var(--s-7) var(--s-8); align-items: start; }
+.record__media { position: sticky; top: calc(var(--header-h) + var(--s-5)); display: grid; gap: var(--s-3); justify-items: start; }
+.record__media > .record__frame, .record__media > .media-boundary { justify-self: stretch; }
+.record__frame { background: var(--paper-bright); border: 1px solid var(--line-soft); border-radius: var(--r-sm); overflow: hidden; }
+.record__frame img { width: 100%; max-height: min(64svh, 620px); object-fit: contain; padding: var(--s-5); transition: transform var(--dur-3) var(--ease); }
+.record__frame.is-scene img { object-fit: cover; padding: 0; }
+.record__frame.zoom img { transform: scale(1.6); cursor: zoom-out; }
+.record__compare { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--s-3); }
+.record__compare figure { display: grid; gap: 6px; }
+.record__compare .media { aspect-ratio: 1; background: var(--paper-bright); border: 1px solid var(--line-soft); border-radius: var(--r-sm); }
+.record__compare figcaption { color: var(--muted); font-size: var(--fs-meta); }
+.record__copy { display: grid; gap: var(--s-5); }
+.record__copy h1 { font-size: clamp(28px, 3.2vw, 44px); }
+.public-reading { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-4); }
+.public-reading article { display: grid; gap: var(--s-2); padding-top: var(--s-3); border-top: 2px solid var(--line); }
+.public-reading article:nth-child(4) { border-top-color: var(--cinnabar); }
+.public-reading small { color: var(--muted); font-size: var(--fs-meta); font-weight: 700; }
+.public-reading p { margin: 0; color: var(--ink-soft); font-size: var(--fs-meta); line-height: 1.7; }
+.record__related { display: grid; gap: var(--s-4); }
+.record__related-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s-3); }
+.record__related-grid a { display: grid; gap: 6px; }
+.record__related-grid .media { aspect-ratio: 1; background: var(--paper-bright); border: 1px solid var(--line-soft); border-radius: var(--r-sm); }
+.record__related-grid small { color: var(--muted); font-family: var(--mono); font-size: var(--fs-meta-sm); }
+.record__related-grid b { font-size: var(--fs-meta-sm); font-weight: 600; line-height: 1.4; }
+
+@media (max-width: 1024px) {
+  .atlas-tools { grid-template-columns: 1fr; }
+  .record { grid-template-columns: 1fr; }
+  .record__media { position: static; }
+}
+@media (max-width: 640px) {
+  .atlas-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: var(--s-4); }
+  .public-reading { grid-template-columns: 1fr; }
+  .record__related-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
