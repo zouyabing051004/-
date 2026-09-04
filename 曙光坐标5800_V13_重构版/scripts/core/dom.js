@@ -6,6 +6,13 @@
 (function () {
   "use strict";
 
+  /* 资源解析：普通版原样返回路径；单文件版会预置 window.__INLINE_ASSETS__，
+     把路径换成内嵌的 data URI，因此 imagePresentation() 仍能拿到真实路径做判断。 */
+  function assetUrl(value) {
+    var map = window.__INLINE_ASSETS__;
+    return (map && typeof value === "string" && map[value]) ? map[value] : value;
+  }
+
   function h(spec, props) {
     var children = Array.prototype.slice.call(arguments, 2);
     /* "tag#id.a.b" 与 "tag.a b"（含空格的类名串）都接受 */
@@ -23,6 +30,7 @@
         if (key === "class") { node.className = (node.className ? node.className + " " : "") + value; return; }
         if (key === "text") { node.textContent = value; return; }
         if (key === "html") { node.innerHTML = value; return; }
+        if (key === "src" || key === "srcset") value = assetUrl(value);
         if (key === "style" && typeof value === "object") { Object.assign(node.style, value); return; }
         if (key === "dataset" && typeof value === "object") { Object.assign(node.dataset, value); return; }
         if (key.slice(0, 2) === "on" && typeof value === "function") { node.addEventListener(key.slice(2).toLowerCase(), value); return; }
@@ -63,5 +71,5 @@
     return f;
   }
 
-  window.DC = Object.assign(window.DC || {}, { h: h, svg: svg, clear: clear, frag: frag });
+  window.DC = Object.assign(window.DC || {}, { h: h, svg: svg, clear: clear, frag: frag, assetUrl: assetUrl });
 })();

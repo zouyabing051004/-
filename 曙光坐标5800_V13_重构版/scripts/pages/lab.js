@@ -13,47 +13,76 @@
     return h("div", null, h("span", { text: label }), h("em", { class: cls, text: value }));
   }
 
-  /* ---------- LAB 01 · 时间坐标 ---------- */
+  /* ---------- LAB 01 · 时间坐标 ----------
+     三个时间口径按同一条真实刻度轴等比绘制，让「5800 不是一个精确年份」变成可看见的事实。
+     刻度与区间全部来自站内既有数据，未新增任何年代。 */
   function coordinateVisual() {
+    var AXIS_FROM = 6000, AXIS_TO = 4800;          /* 距今年（BP），仅作为绘图刻度 */
     var bands = [
-      { id: "framework", range: "约 5800—5200 年前", title: "阶段框架", body: "“5800”帮助公众进入古国时代第一阶段的讨论；它是一段时间框架，不是单一事件的纪年。", known: "可用来定位研究问题与文化进程。", boundary: "不能把阶段起点写成所有遗迹的统一建成年份。" },
-      { id: "centre", range: "约 5800—5300 cal BP", title: "礼仪中心时间窗", body: "测年研究把牛河梁大型礼仪中心的主要活动放入一个有上下界的时间窗。不同对象仍需回到各自样本与测年语境。", known: "可比较不同遗迹和材料进入研究叙事的先后。", boundary: "不能从区间中任取一个年份，替代具体样本的测年结果。" },
-      { id: "change", range: "约 5300 cal BP 以后", title: "变化与延续", body: "礼仪中心式微并不等于区域生活立即停止。新的调查把聚落、日用陶片与礼仪景观重新放在一起讨论。", known: "可讨论礼仪中心变化与区域聚落延续。", boundary: "不能将‘式微’简化为文明突然消失。" },
+      { id: "framework", from: 5800, to: 5200, range: "约 5800—5200 年前", title: "阶段框架",
+        body: "“5800”帮助公众进入古国时代第一阶段的讨论；它是一段时间框架，不是单一事件的纪年。",
+        known: "可用来定位研究问题与文化进程。",
+        boundary: "不能把阶段起点写成所有遗迹的统一建成年份。" },
+      { id: "centre", from: 5800, to: 5300, range: "约 5800—5300 cal BP", title: "礼仪中心时间窗",
+        body: "测年研究把牛河梁大型礼仪中心的主要活动放入一个有上下界的时间窗。不同对象仍需回到各自样本与测年语境。",
+        known: "可比较不同遗迹和材料进入研究叙事的先后。",
+        boundary: "不能从区间中任取一个年份，替代具体样本的测年结果。" },
+      { id: "change", from: 5300, to: 4800, range: "约 5300 cal BP 以后", title: "变化与延续",
+        body: "礼仪中心式微并不等于区域生活立即停止。新的调查把聚落、日用陶片与礼仪景观重新放在一起讨论。",
+        known: "可讨论礼仪中心变化与区域聚落延续。",
+        boundary: "不能将‘式微’简化为文明突然消失。", openEnd: true },
     ];
+    var pct = function (bp) { return (AXIS_FROM - bp) / (AXIS_FROM - AXIS_TO) * 100; };
     var active = 0;
-    var yearLabel = h("small", { text: bands[0].range });
     var reading = h("div", { "aria-live": "polite" });
-    var tabs = h("div.time-bands", { role: "tablist", "aria-label": "三个时间口径" });
+    var tabs = h("div.time-bands", { "aria-label": "三个时间口径" });
+    var rows = [];
+
+    /* 刻度轴 */
+    var ticks = h("div.timeaxis__ticks", { "aria-hidden": "true" });
+    [6000, 5800, 5600, 5400, 5200, 5000, 4800].forEach(function (bp) {
+      ticks.appendChild(h("span", { style: { left: pct(bp) + "%" } }, h("i"), h("em", { text: String(bp) })));
+    });
+
+    var chart = h("div.timeaxis", { role: "img",
+      "aria-label": "三个时间口径在同一条距今年代刻度上的范围比较：阶段框架约5800至5200年前；礼仪中心时间窗约5800至5300 cal BP；约5300 cal BP以后为变化与延续，右端开放。" });
+    bands.forEach(function (b, i) {
+      var bar = h("i", { style: { left: pct(b.from) + "%", width: (pct(b.to) - pct(b.from)) + "%" } });
+      var row = h("div.timeaxis__row" + (b.openEnd ? ".is-open" : ""), null, bar, h("b", { text: b.range }));
+      rows.push(row);
+      chart.appendChild(row);
+    });
+    chart.appendChild(ticks);
+    chart.appendChild(h("p.timeaxis__unit", { "aria-hidden": "true", text: "距今年代（BP）· 刻度等距，区间按公开口径等比绘制" }));
 
     var canvas = h("div.lab-canvas", null,
-      h("div.canvas-art", { "aria-hidden": "true" }, h("img", { src: "assets/generated/hero-strata-dawn.webp", alt: "" })),
+      h("div.canvas-art", { "aria-hidden": "true" }, h("img", { src: "assets/scene/lab01-valley.webp", alt: "" })),
       h("div.canvas-scrim", { "aria-hidden": "true" }),
-      h("div.time-scene", null, h("div.time-window", null,
-        h("b", { text: "5800" }),
-        yearLabel,
-        h("small", { text: "约数 · 区间 · 研究口径", style: { opacity: ".7" } }))),
-      h("p.canvas-note", { text: "AI生成的地层与曙光策展意象｜非遗址实景、非建筑复原" }));
+      h("div.time-scene", null, chart),
+      h("p.canvas-note", { text: "背景为 AI 生成晨光地景意象；时间带按公开年代口径等比绘制，不代表任何单次测年结果。" }));
 
     function paint() {
       var band = bands[active];
-      yearLabel.textContent = band.range;
+      rows.forEach(function (r, i) { r.classList.toggle("active", i === active); });
       D.clear(reading);
       reading.appendChild(h("h3", { text: band.title }));
+      reading.appendChild(h("p.time-range", { text: band.range }));
       reading.appendChild(h("p", { text: band.body, style: { marginBottom: "16px" } }));
       reading.appendChild(ui.boundaryPair(band.known, band.boundary));
       Array.prototype.forEach.call(tabs.children, function (btn, i) {
-        btn.classList.toggle("active", i === active);
-        btn.setAttribute("aria-selected", i === active ? "true" : "false");
+        var on = i === active;
+        btn.classList.toggle("active", on);
+        btn.setAttribute("aria-pressed", on ? "true" : "false");
       });
     }
     bands.forEach(function (band, i) {
-      tabs.appendChild(h("button", { type: "button", role: "tab", onclick: function () { active = i; paint(); } },
+      tabs.appendChild(h("button", { type: "button", onclick: function () { active = i; paint(); } },
         h("b", { text: band.range }), h("span", { text: band.title })));
     });
 
     var inspector = h("div.lab-inspector", null,
       h("p.label", { text: "选择一个时间口径" }),
-      h("p.lab-hint", { text: "年代不是一条可以任意拖动的直线：三个范围分别回答文化阶段、礼仪中心活动与后来的变化。" }),
+      h("p.lab-hint", { text: "三条时间带画在同一条刻度上：它们互相重叠，但回答的问题并不相同。" }),
       tabs, reading);
     paint();
     return { canvas: canvas, inspector: inspector };
@@ -61,13 +90,17 @@
 
   /* ---------- LAB 02 · 九台营造 ---------- */
   function platformVisual() {
+    /* 九个节点里，只有 2 号与 9 号有可核验的公开细节。
+       其余节点不补数据、不编尺寸——把「公开资料有限」本身作为信息呈现出来。 */
+    var DETAILED = [2, 9];
     var generic = function (n) {
       return {
-        title: "第" + n + "台基：关系节点",
-        fact: "它属于已确认的台基系统；公开资料未为这一节点提供可直接展示的完整尺度。",
+        title: "第" + n + "台基：公开资料有限",
+        fact: "它属于已确认的台基系统；截至本站核验日期，公开资料未为这一节点提供可直接展示的尺度、方向或结构细节。",
         metrics: [["台基关系", "进入整体讨论"], ["具体尺度", "公开资料有限"], ["上部形态", "尚未确认"]],
         confirm: "可确认它进入至少九座台基的整体讨论。",
         boundary: "编号不代表史前名称，也不能据此推定等级。",
+        why: "本站不会为了让九个节点看起来一致而补齐数据。没有公开材料支持的尺度与方位，这里就留空。",
       };
     };
     var records = {
@@ -81,10 +114,14 @@
     function paint() {
       var record = records[platform] || generic(platform);
       D.clear(panel);
+      panel.appendChild(h("p.lab-datalevel" + (DETAILED.indexOf(platform) !== -1 ? ".is-full" : ""), null,
+        h("i", { "aria-hidden": "true" }),
+        DETAILED.indexOf(platform) !== -1 ? "公开资料较充分" : "当前公开资料有限"));
       panel.appendChild(h("h3", { text: record.title }));
       panel.appendChild(h("p", { text: record.fact, style: { marginBottom: "16px" } }));
       panel.appendChild(h("div.state-list", null, record.metrics.map(function (m) { return stateRow(m[0], m[1]); })));
       panel.appendChild(h("div", { style: { marginTop: "16px" } }, ui.boundaryPair(record.confirm, record.boundary)));
+      if (record.why) panel.appendChild(h("p.lab-hint", { text: record.why, style: { marginTop: "12px" } }));
       Array.prototype.forEach.call(grid.children, function (btn, i) {
         var on = platform === i + 1;
         btn.classList.toggle("selected", on);
@@ -93,10 +130,13 @@
     }
     for (var i = 1; i <= 9; i++) {
       (function (n) {
+        var full = DETAILED.indexOf(n) !== -1;
         grid.appendChild(h("button", {
-          type: "button", "aria-label": "查看第" + n + "台基的证据说明",
+          type: "button",
+          class: full ? "has-detail" : "",
+          "aria-label": "查看第" + n + "台基：" + (full ? "公开资料较充分" : "当前公开资料有限"),
           onclick: function () { platform = n; paint(); },
-        }, "P" + String(n).padStart(2, "0"), h("span", { text: "关系节点" })));
+        }, "P" + String(n).padStart(2, "0"), h("span", { text: full ? "● 资料较充分" : "○ 资料有限" })));
       })(i);
     }
 
@@ -111,6 +151,9 @@
         h("b", { text: "九台关系档案" }),
         h("span", { text: "3 × 3 仅为交互索引，不表达真实空间位置" })),
       grid,
+      h("div.node-legend", { "aria-hidden": "true" },
+        h("span", null, h("i.full"), "公开资料较充分"),
+        h("span", null, h("i.thin"), "当前公开资料有限")),
       h("p.canvas-note", { text: "AI生成材料模型／设计示意｜不表达台基真实位置、数量比例与建筑原貌" }));
 
     var inspector = h("div.lab-inspector", null,
@@ -137,8 +180,9 @@
       stack.appendChild(node);
       return node;
     });
-    var tabs = h("div.lens-tabs", { role: "tablist", "aria-label": "证据层级" });
-    var panel = h("div", { id: "lens-panel", role: "tabpanel", "aria-live": "polite" });
+    /* 用 aria-pressed 的切换按钮组，而不是缺少方向键支持的半套 Tab Pattern */
+    var tabs = h("div.lens-tabs", { role: "group", "aria-label": "证据层级" });
+    var panel = h("div", { id: "lens-panel", "aria-live": "polite" });
 
     function paint() {
       var current = layers[layer];
@@ -152,12 +196,12 @@
       panel.appendChild(h("p.lab-hint", { text: "这不是分数表。镜片越向解释移动，限定词、来源与尚未回答的问题越重要。", style: { marginTop: "16px" } }));
       Array.prototype.forEach.call(tabs.children, function (btn, i) {
         btn.classList.toggle("active", i === layer);
-        btn.setAttribute("aria-selected", i === layer ? "true" : "false");
+        btn.setAttribute("aria-pressed", i === layer ? "true" : "false");
       });
     }
     layers.forEach(function (item, i) {
       tabs.appendChild(h("button", {
-        type: "button", role: "tab", id: "lens-tab-" + i, "aria-controls": "lens-panel",
+        type: "button", "aria-controls": "lens-panel", "aria-pressed": "false",
         onclick: function () { layer = i; paint(); },
       }, item.label, h("small", { text: item.code })));
     });
@@ -187,7 +231,7 @@
     var matrix = h("div.tomb-matrix", { role: "img" });
     var cells = [];
     for (var i = 0; i < 66; i++) {
-      var cell = h("span", null, h("i", { "aria-hidden": "true", text: String(i + 1) }));
+      var cell = h("span", { "aria-hidden": "true" });   /* 不写编号：方格是统计单元，不是墓号 */
       cells.push(cell);
       matrix.appendChild(cell);
     }
@@ -227,7 +271,12 @@
             ui.media({ src: "assets/artifacts_sites_expanded/AX006_jade_group_liaoning_03.webp", alt: "辽宁省博物馆红山文化玉器组合陈列，用于器类比较", kind: "scene" }),
             h("figcaption", { text: "AX006 · 玉器组合陈列｜不对应页面中的具体墓号" }))),
         matrix,
-        h("p.canvas-note", { style: { position: "static" }, text: "一格代表一座纳入统计的墓；方格只用于计数，不代表墓葬的真实位置、年代或大小。" })));
+        h("div.tomb-legend", null,
+          h("p", { text: "每格 = 1 个纳入统计的样本" }),
+          h("ul", null,
+            h("li", null, h("i.swatch.jade", { "aria-hidden": "true" }), "有玉墓 37"),
+            h("li", null, h("i.swatch.plain", { "aria-hidden": "true" }), "无玉墓 29")),
+          h("p.canvas-note", { style: { position: "static" }, text: "方格排列不对应真实墓号、空间位置、年代或墓葬大小。" }))));
 
     var inspector = h("div.lab-inspector", null,
       h("p.label", { text: "筛选并比较限定样本" }), seg, readout,
@@ -255,6 +304,10 @@
     };
     var layer = "after";
     var metric = "grids";
+    /* 固定的示意网格：96 格中标记若干格，仅用于说明「按网格记录」这一方法，
+       不表达数量、密度或真实位置；两个认识层完全相同。 */
+    var FOUND = [];
+    for (var k = 0; k < 96; k++) FOUND.push(k % 5 === 0 || k % 8 === 3);
     var field = h("div.survey-field", { "aria-hidden": "true" });
     var cells = [];
     for (var i = 0; i < 96; i++) { var c = h("i"); cells.push(c); field.appendChild(c); }
@@ -264,15 +317,15 @@
     var toggle = h("div.segmented", { "aria-label": "认识变化" });
 
     function paint() {
-      cells.forEach(function (cell, index) {
-        var found = layer === "after" ? (index % 2 === 0 || index % 7 === 0) : (index % 11 === 0);
-        cell.className = found ? "found" : "";
-      });
+      /* 两个认识层共用同一张固定网格：切换只改变解释框架，不改变高亮数量。
+         此前旧认识/2026 用不同取模生成高亮，会让人误读为「2026 之后发现了更多点位」。 */
+      cells.forEach(function (cell, index) { cell.className = FOUND[index] ? "found" : ""; });
       D.clear(insight);
       insight.appendChild(h("small", { text: layer === "before" ? "较早认识" : "2026 区域调查" }));
       insight.appendChild(h("p", { text: layer === "before"
-        ? "旧认识常把礼仪中心与日常生活截然分开。"
-        : "系统调查让生活材料进入同一景观讨论，但尚不能给出每个聚落群的完整年代。" }));
+        ? "礼仪中心是叙事中心，区域生活材料处于次级位置。"
+        : "生活材料重新进入区域景观讨论，聚落与礼仪的关系成为新的研究问题。" }));
+      insight.appendChild(h("small.survey-insight__note", { text: "切换只改变解释框架；网格与标记保持不变，不表示发现数量的增减。" }));
       var current = metrics[metric];
       D.clear(detail);
       detail.appendChild(h("p.label", { text: "当前口径" }));

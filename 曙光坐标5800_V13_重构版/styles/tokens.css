@@ -38,15 +38,46 @@
   --on-night-soft:  rgba(240, 234, 223, .70);
   --on-night-faint: rgba(240, 234, 223, .62);   /* 12–13px 小字在深色底上的最低可用亮度 */
 
+  /* ---- 传统色阶深化（松烟青 / 绛秋 / 湘叶）----
+     不新增第二套品牌色，只在既有玉青、朱砂、曙金内部补足明暗层次，
+     使同一颜色在深浅两种底上都能站住。整页不会同时出现全部色阶。 */
+  --jade-deep:      #3D5B57;   /* 松烟青·浓 */
+  --jade-mid:       #6F857C;
+  --jade-mist:      #A6B7AF;
+  --jade-pale:      #D2DDD6;
+  --jade-veil:      #EDEFE9;   /* 玉青向宣纸过渡 */
+
+  --cinnabar-heritage: #8E3B2F; /* 绛秋·浓 */
+  --cinnabar-soft:  #B65D4B;
+  --cinnabar-mist:  #D98A73;
+  --cinnabar-pale:  #EBC4B7;
+  --cinnabar-veil:  #F6EDE7;
+
+  --dawn-ochre:     #C79A2E;   /* 湘叶·浓 */
+  --dawn-deep:      #9E7420;   /* 浅底上可作大字的曙金（≥3:1） */
+  --dawn-ink:       #87631B;   /* 浅底上可作小字的曙金（≥4.5:1） */
+  --dawn-soft:      #E6D199;
+  --dawn-pale:      #F0E6C9;
+
+  --paper-cool:     #EDEFE9;
+  --paper-sand:     #EDE0D0;
+  --paper-ivory:    #FBF7EF;
+
   --line:           rgba(23, 26, 23, .16);
   --line-soft:      rgba(23, 26, 23, .09);
   --line-strong:    rgba(23, 26, 23, .38);
   --line-night:     rgba(240, 234, 223, .16);
 
-  /* 证据状态色（语义固定，不随版式改变） */
+  /* ---- 色彩语义（全站统一，不作装饰性挪用）----
+     玉青＝已确认 / 器物 / 可核验证据
+     朱砂＝章节标识 / 研究解释 / 文化强调（不代表「错误」）
+     曙金＝时间 / 坐标 / 转折 / 新认识
+     墨灰＝尚未知 / 资料有限 / 次级信息 */
   --ev-known:       var(--jade-ink);
   --ev-inferred:    var(--cinnabar);
   --ev-unknown:     var(--muted);
+  --ev-time:        var(--dawn-ochre);   /* 时间口径专用，与「解释」区分开 */
+  --danger:         #9B2C1F;             /* 真正的错误态：与品牌朱砂刻意区分 */
 
   /* ---------- 字体 · Typeface ----------
      中文是唯一视觉主语言；英文只承担副标与资料字段；等宽仅用于年份、坐标、编号。 */
@@ -58,6 +89,7 @@
      公众可读信息一律 ≥12px；正文 17–18px；H1 桌面 72–104px；H2 44–64px。 */
   --fs-meta-sm:  12px;                        /* 仅限编号、许可等次级字段 */
   --fs-meta:     13px;                        /* 元数据默认 */
+  --fs-small-body: 15px;                      /* 真正需要阅读的短文：卡片摘要、实验问题、器物名称 */
   --fs-nav:      15px;
   --fs-body:     17px;
   --fs-body-lg:  18px;

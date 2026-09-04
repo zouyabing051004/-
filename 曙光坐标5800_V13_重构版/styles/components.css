@@ -22,7 +22,7 @@
 .btn--ghost:hover { background: var(--paper-deep); border-color: var(--ink); }
 .btn--jade { color: var(--paper-bright); background: var(--jade-ink); }
 .btn--jade:hover { background: #24473D; }
-.btn--quiet { min-height: 40px; padding: 8px 4px; color: var(--jade-ink); font-size: var(--fs-body); }
+.btn--quiet { min-height: 44px; padding: 8px 4px; color: var(--jade-ink); font-size: var(--fs-body); }
 .btn--quiet:hover { color: var(--cinnabar); }
 .btn:disabled { cursor: not-allowed; transform: none; }
 .btn--primary:disabled, .btn--jade:disabled { color: var(--muted); background: var(--paper-deep); border-color: var(--line); }
@@ -34,7 +34,7 @@
 /* 行内前进链接 */
 .go-link {
   display: inline-flex; align-items: center; gap: .45em;
-  min-height: 40px;
+  min-height: 44px;
   color: var(--cinnabar); font-weight: 700; font-size: var(--fs-body);
 }
 .go-link:hover { color: var(--cinnabar-deep); }
@@ -45,6 +45,7 @@
 /* ---------- 证据等级徽标 ---------- */
 .ev-badge {
   display: inline-flex; align-items: center; gap: .5em;
+  white-space: nowrap;
   padding: 5px 11px 5px 9px;
   font-size: var(--fs-meta); font-weight: 700; line-height: 1.4;
   border: 1px solid currentColor; border-radius: var(--r-pill);
@@ -55,6 +56,7 @@
 .ev-badge.inferred { color: var(--ev-inferred); }
 .ev-badge.unknown  { color: var(--ev-unknown); }
 .ev-badge .en { font-family: var(--mono); font-size: var(--fs-meta-sm); font-weight: 500; opacity: .75; letter-spacing: .06em; }
+@media (max-width: 1024px) { .ev-badge .en { display: none; } }   /* 窄栏里先舍英文副标，不折行 */
 .on-night .ev-badge.known, .on-dark .ev-badge.known { color: var(--jade-soft); }
 .on-night .ev-badge.inferred, .on-dark .ev-badge.inferred { color: var(--dawn-bright); }
 .on-night .ev-badge.unknown, .on-dark .ev-badge.unknown { color: var(--on-night-soft); }
@@ -64,7 +66,7 @@
 .source-links > .label { color: var(--muted); font-size: var(--fs-meta); }
 .source-links a, .source-links .plain {
   display: inline-flex; align-items: center; gap: .3em;
-  min-height: 32px; padding: 4px 10px;
+  min-height: 36px; padding: 6px 12px;
   color: var(--jade-ink); font-family: var(--mono); font-size: var(--fs-meta); font-weight: 600;
   border: 1px solid color-mix(in srgb, var(--jade) 38%, transparent);
   border-radius: var(--r-pill);
@@ -121,7 +123,7 @@
   background: var(--paper-deep); border-radius: var(--r-sm);
 }
 .segmented button {
-  min-height: 42px; padding: 8px 16px;
+  min-height: 44px; padding: 8px 16px;
   color: var(--ink-soft); font-size: var(--fs-meta); font-weight: 700;
   border-radius: var(--r-xs);
   transition: background var(--dur-1) var(--ease), color var(--dur-1) var(--ease);

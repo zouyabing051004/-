@@ -75,6 +75,13 @@
     var essay = h("div.chapter-essay", null,
       guide ? h("div.chapter-brief", null, h("small", { text: "一分钟先懂" }), h("p", { text: guide.summary })) : null,
       h("p.chapter-lead", { text: chapter.body }),
+      chapter.slug === "land-and-people" ? h("figure.schematic-figure", null,
+        ui.liaoxiSchematic(),
+        h("figcaption", null,
+          h("b", { text: "辽西相对位置示意" }),
+          "牛河梁位于朝阳西南、凌源与建平之间，处在努鲁儿虎山地与大凌河上游河谷之中。",
+          h("span.media-boundary", { text: "本图由本站自绘，只表示相对方位关系，不表示真实距离、边界或比例，不可作为测绘或定位依据。" }))) : null,
+      chapter.slug === "discovery-and-redrawing" ? ui.strataFigure() : null,
       h("section.evidence-triad", null,
         h("article", null, ui.evidenceBadge("known"), h("h2", { text: "我们知道什么" }),
           h("ul", null, chapter.known.map(function (item) { return h("li", { text: item }); }))),
@@ -109,7 +116,7 @@
       ui.sourceLinks(chapter.sourceIds));
 
     return h("article", null,
-      h("header.chapter-hero", null,
+      h("header.chapter-hero.is-" + ui.imagePresentation(chapter.image), null,
         h("img", { src: ui.mediaUrl(chapter.image), alt: chapter.imageAlt, decoding: "async", fetchpriority: "high" }),
         h("div.chapter-hero__scrim", { "aria-hidden": "true" }),
         h("div.page.chapter-hero__copy.on-dark", null,

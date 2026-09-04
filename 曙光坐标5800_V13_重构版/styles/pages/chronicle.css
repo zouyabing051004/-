@@ -29,13 +29,31 @@
 .chapter-row__copy { display: grid; gap: var(--s-2); }
 .chapter-row__copy small { color: var(--muted); font-size: var(--fs-meta); }
 .chapter-row__copy b { font-family: var(--serif); font-size: clamp(22px, 2.4vw, 31px); font-weight: 600; line-height: 1.3; }
-.chapter-row__copy p { margin: 0; color: var(--ink-soft); font-size: var(--fs-meta); line-height: 1.7; }
+.chapter-row__copy p { margin: 0; color: var(--ink-soft); font-size: var(--fs-small-body); line-height: 1.7; }
 .chapter-row__go { color: var(--muted); font-family: var(--mono); font-size: 20px; }
 .chapter-row:hover .chapter-row__go { color: var(--cinnabar); }
 
 /* 章节详情 */
 .chapter-hero { position: relative; min-height: min(62svh, 560px); display: grid; align-items: end; background: var(--night); overflow: hidden; }
 .chapter-hero > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+/* 器物章节：左 45% 文字 / 右 55% 完整器物，避免玉器被放大成壁纸 */
+.chapter-hero.is-object {
+  align-items: stretch;
+  background-color: var(--night);
+  background-image: radial-gradient(110% 80% at 68% 42%, #23281F 0%, var(--night) 70%);
+}
+.chapter-hero.is-object > img {
+  inset: clamp(28px, 5vh, 56px) clamp(24px, 4vw, 72px) clamp(28px, 5vh, 56px) 48%;
+  width: auto; height: auto; max-width: 46%; margin-left: auto;
+  object-fit: contain;
+}
+.chapter-hero.is-object .chapter-hero__scrim { background: linear-gradient(90deg, rgba(20,23,20,.9) 0%, rgba(20,23,20,.4) 34%, rgba(20,23,20,0) 48%); }
+.chapter-hero.is-object .chapter-hero__copy { align-self: center; max-width: 46%; margin-inline: 0 auto; padding-left: clamp(16px, 3vw, 48px); }
+@media (max-width: 900px) {
+  .chapter-hero.is-object > img { inset: 24px 24px auto; max-width: calc(100% - 48px); max-height: 34svh; margin: 0 auto; }
+  .chapter-hero.is-object .chapter-hero__copy { max-width: 100%; margin-inline: auto; padding-left: 0; padding-top: calc(34svh + 40px); }
+  .chapter-hero.is-object .chapter-hero__scrim { background: linear-gradient(180deg, rgba(20,23,20,0) 26%, rgba(20,23,20,.9) 62%); }
+}
 .chapter-hero__scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(20,23,20,.55) 0%, rgba(20,23,20,.15) 38%, rgba(20,23,20,.88) 100%); }
 .chapter-hero__copy { position: relative; display: grid; gap: var(--s-3); padding-block: var(--s-8) var(--s-7); }
 .chapter-hero__copy .no { color: var(--dawn); font-family: var(--mono); font-size: var(--fs-meta); font-weight: 700; letter-spacing: .1em; }
@@ -49,13 +67,18 @@
 .chapter-brief p { margin: 0; font-size: var(--fs-body-lg); }
 .chapter-lead { font-size: var(--fs-body-lg); line-height: var(--lh-loose); }
 
+.schematic-figure { display: grid; gap: var(--s-3); padding: var(--s-5); background: var(--paper-bright); border: 1px solid var(--line-soft); border-radius: var(--r-sm); }
+.schematic-figure .schematic { width: 100%; height: auto; color: var(--ink-soft); }
+.schematic-figure figcaption { color: var(--ink-soft); font-size: var(--fs-small-body); line-height: 1.7; }
+.schematic-figure figcaption b { display: block; color: var(--ink); font-size: var(--fs-body); }
+
 .evidence-triad { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-5); }
 .evidence-triad article { display: grid; gap: var(--s-3); align-content: start; padding-top: var(--s-4); border-top: 2px solid var(--line); }
 .evidence-triad article:nth-child(1) { border-top-color: var(--jade); }
 .evidence-triad article:nth-child(2) { border-top-color: var(--cinnabar); }
 .evidence-triad h2 { font-size: var(--fs-h4); }
 .evidence-triad ul { display: grid; gap: var(--s-2); padding-left: 1.1em; }
-.evidence-triad li, .evidence-triad p { color: var(--ink-soft); font-size: var(--fs-meta); line-height: 1.7; margin: 0; }
+.evidence-triad li, .evidence-triad p { color: var(--ink-soft); font-size: var(--fs-small-body); line-height: 1.75; margin: 0; }
 
 .deep-reading { display: grid; gap: var(--s-6); }
 .deep-context { display: grid; gap: var(--s-5); }
@@ -65,11 +88,11 @@
 .deep-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-5); }
 .deep-pair article { display: grid; gap: var(--s-2); padding: var(--s-5); background: var(--paper-bright); border: 1px solid var(--line-soft); border-radius: var(--r-sm); }
 .deep-pair small { color: var(--muted); font-size: var(--fs-meta); }
-.deep-pair p { margin: 0; color: var(--ink-soft); font-size: var(--fs-meta); line-height: 1.7; }
+.deep-pair p { margin: 0; color: var(--ink-soft); font-size: var(--fs-small-body); line-height: 1.7; }
 .term-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-4); }
 .term-list article { display: grid; gap: var(--s-1); padding-top: var(--s-3); border-top: 1px solid var(--line); }
 .term-list b { font-size: var(--fs-body); }
-.term-list p { margin: 0; color: var(--muted); font-size: var(--fs-meta); line-height: 1.65; }
+.term-list p { margin: 0; color: var(--muted); font-size: var(--fs-small-body); line-height: 1.65; }
 
 .chapter-aside { position: sticky; top: calc(var(--header-h) + var(--s-5)); display: grid; gap: var(--s-4); padding: var(--s-5); background: var(--paper-bright); border: 1px solid var(--line-soft); border-radius: var(--r-sm); }
 .chapter-aside .label { margin: 0; color: var(--muted); font-size: var(--fs-meta); font-weight: 700; }
@@ -109,10 +132,86 @@
 }
 @media (max-width: 860px) {
   .chapter-row, .chapter-row:nth-child(even) { grid-template-columns: 56px minmax(0, 1fr); gap: var(--s-4); }
-  .chapter-row__no, .chapter-row:nth-child(even) .chapter-row__no { grid-column: 1; }
-  .chapter-row__copy, .chapter-row:nth-child(even) .chapter-row__copy { grid-column: 2; }
-  .chapter-row__media, .chapter-row__go { display: none; }
+  /* 移动端取消左右交错，但文化图片必须保留：章节号 → 标题 → 摘要 → 图片 */
+  .chapter-row, .chapter-row:nth-child(even) { grid-template-columns: 56px minmax(0, 1fr); gap: var(--s-3) var(--s-4); }
+  .chapter-row__no, .chapter-row:nth-child(even) .chapter-row__no { grid-column: 1; grid-row: 1; }
+  .chapter-row__copy, .chapter-row:nth-child(even) .chapter-row__copy { grid-column: 2; grid-row: 1; }
+  .chapter-row__media, .chapter-row:nth-child(even) .chapter-row__media {
+    grid-column: 2; grid-row: 2; aspect-ratio: 16 / 9; margin-top: var(--s-2);
+  }
+  .chapter-row__go { display: none; }
   .chapter-row__no { font-size: 30px; }
   .evidence-triad, .deep-pair { grid-template-columns: 1fr; }
 }
 @media (max-width: 560px) { .term-list { grid-template-columns: 1fr; } }
+
+/* ---------- 地层与测年教学示意（自绘，无位图） ---------- */
+.strata-figure {
+  display: grid; gap: var(--s-5);
+  margin: var(--s-7) 0;
+  padding: var(--s-6) var(--s-5);
+  background:
+    linear-gradient(180deg, var(--paper-ivory) 0%, var(--paper-bright) 62%, var(--paper-deep) 100%);
+  background-color: var(--paper-bright);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--r-sm);
+}
+.strata-figure__head b { display: block; margin-top: var(--s-2); font-size: var(--fs-h4); line-height: var(--lh-title); }
+
+.strata-figure__body { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: var(--s-4); align-items: stretch; }
+
+/* 年代轴：晚在上、早在下 */
+.strata-axis {
+  display: grid; grid-template-rows: auto 1fr auto; justify-items: center; gap: var(--s-2);
+  color: var(--dawn-ink); font-size: var(--fs-meta-sm); font-weight: 700; letter-spacing: .1em;
+}
+.strata-axis__line {
+  width: 1px; align-self: stretch;
+  background: linear-gradient(180deg, var(--dawn-ochre), color-mix(in srgb, var(--jade-ink) 55%, transparent));
+}
+
+/* 层位是一根连续的土柱：色带上下相接、不留缝，"下层早于上层"才读得出来 */
+.strata-stack { display: grid; gap: 0; list-style: none; margin: 0; padding: 0; }
+.strata-layer { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: var(--s-4); }
+.strata-layer__band { position: relative; }
+.strata-layer + .strata-layer .strata-layer__band::before {
+  content: ""; position: absolute; inset: 0 0 auto 0; height: 1px;
+  background: rgba(23, 26, 23, .30);
+}
+.strata-stack > :first-child .strata-layer__band { border-radius: var(--r-xs) var(--r-xs) 0 0; }
+.strata-stack > :last-child  .strata-layer__band { border-radius: 0 0 var(--r-xs) var(--r-xs); }
+.strata-layer__copy { padding: var(--s-4) 0; }
+.strata-layer + .strata-layer .strata-layer__copy { border-top: 1px dashed var(--line-soft); }
+
+/* 层位色带：土色梯度，越下越浅（生土），中间主文化层最深 */
+.strata-layer.is-top     .strata-layer__band { background: repeating-linear-gradient(112deg, #4A4438 0 5px, #565043 5px 10px); }
+.strata-layer.is-late    .strata-layer__band { background: repeating-linear-gradient(112deg, #7A5B3C 0 6px, #866647 6px 12px); }
+.strata-layer.is-main    .strata-layer__band { background: repeating-linear-gradient(112deg, #6B4B2E 0 4px, #7C5A39 4px 8px); box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--dawn-ochre) 62%, transparent); }
+.strata-layer.is-early   .strata-layer__band { background: repeating-linear-gradient(112deg, #A08055 0 6px, #AC8D63 6px 12px); }
+.strata-layer.is-sterile .strata-layer__band { background: repeating-linear-gradient(112deg, #CBB58C 0 7px, #D6C29D 7px 14px); }
+
+.strata-layer__copy { display: grid; gap: var(--s-2); align-content: start; }
+.strata-layer__copy > b { font-size: var(--fs-body); line-height: var(--lh-title); }
+.strata-layer__copy > span { color: var(--ink-soft); font-size: var(--fs-small-body); line-height: 1.7; }
+.strata-layer__sample {
+  padding: var(--s-3) var(--s-4);
+  color: var(--ink-soft) !important;
+  background: color-mix(in srgb, var(--dawn-ochre) 12%, var(--paper-bright));
+  border-left: 3px solid var(--dawn-ochre);
+  border-radius: 0 var(--r-xs) var(--r-xs) 0;
+}
+.strata-layer__sample em { display: block; margin-bottom: 2px; color: var(--dawn-ink); font-style: normal; font-weight: 700; font-size: var(--fs-meta); letter-spacing: .06em; }
+
+.strata-rules { display: grid; gap: var(--s-3); padding-top: var(--s-4); border-top: 1px solid var(--line); }
+.strata-rules p { margin: 0; color: var(--ink-soft); font-size: var(--fs-small-body); line-height: 1.7; }
+.strata-rules b { margin-right: .6em; color: var(--jade-ink); font-size: var(--fs-meta); letter-spacing: .06em; white-space: nowrap; }
+
+.strata-figure figcaption { color: var(--ink-soft); font-size: var(--fs-small-body); line-height: 1.7; }
+
+@media (min-width: 900px) {
+  .strata-figure { padding: var(--s-7) var(--s-6); }
+  .strata-rules { grid-template-columns: 1fr 1fr; gap: var(--s-5); }
+}
+@media (max-width: 520px) {
+  .strata-layer { grid-template-columns: 34px minmax(0, 1fr); gap: var(--s-3); }
+}

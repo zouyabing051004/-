@@ -6,7 +6,7 @@
 (function () {
   "use strict";
   var D = window.DC, h = D.h, ui = D.ui;
-  var PUBLIC_URL = "https://shuguang-5800.modymarylou7.chatgpt.site";
+  var PUBLIC_URL = D.site.canonicalUrl;   /* 唯一来源：scripts/site-config.js */
 
   var OPEN_QUESTIONS = [
     "建筑原貌与仪式过程，仍不能由现存材料完整补全。",
@@ -81,11 +81,11 @@
     ctx.fillStyle = MUTED; ctx.font = "22px " + SANS; ctx.fillText("这里记录你确认过的结论、仍保留的问题，以及下一步可以走向哪里。", X, 366);
     ctx.fillStyle = JADE; ctx.font = "600 160px " + SERIF; ctx.fillText("5800", X, 540);
     ctx.fillStyle = MUTED; ctx.font = "24px " + SANS;
-    ctx.fillText("知识检查 " + stats.score + " / 5　·　已收藏实验 " + stats.collected + " / 5　·　导览足迹 " + stats.visited + " / 7", X, 596);
+    ctx.fillText("知识检查 答对 " + stats.correct + " / 5（已答 " + stats.answered + " / 5）　·　已收藏实验 " + stats.collected + " / 5　·　导览足迹 " + stats.visited + " / 7", X, 596);
     rule(640);
 
     /* 01 我确认的结论 */
-    label("01", "我确认的结论", 704);
+    label("01", confirmed.length > 3 ? "我确认的结论（本次报告摘要 · 3 条代表性结论，共 " + confirmed.length + " 条）" : "我确认的结论", 704);
     var y = 764;
     if (confirmed.length) {
       confirmed.slice(0, 3).forEach(function (item, i) {
@@ -131,7 +131,7 @@
         resolve(finish());
       };
       qr.onerror = function () { resolve(finish()); };
-      qr.src = "assets/generated/site-qr.png";
+      qr.src = D.assetUrl("assets/generated/site-qr.png");
     });
   }
 
@@ -142,14 +142,16 @@
 
     function paint() {
       state = D.store.get();
-      var confirmed = state.collected.slice(0, 3)
+      var confirmed = state.collected.slice(0, 5)
         .map(function (id) { var lab = D.labs.find(function (l) { return l.id === id; }); return lab && lab.conclusion; })
         .filter(Boolean);
-      var score = D.knowledgeCheck.reduce(function (total, item, i) { return total + (state.answers[i] === item.answer ? 1 : 0); }, 0);
+      /* 两个指标必须分开：correct = 答对几题，answered = 已答几题。
+         此前封面与报告用 correct、顶部进度用 answered，会出现「知识检查 5/5」但实际只对 2 题。 */
+      var correct = D.knowledgeCheck.reduce(function (total, item, i) { return total + (state.answers[i] === item.answer ? 1 : 0); }, 0);
       var answered = Object.keys(state.answers).length;
       var hasProgress = state.visited.length > 0 || state.collected.length > 0 || answered > 0;
       var canGenerate = confirmed.length > 0;
-      var stats = { score: score, collected: state.collected.length, visited: state.visited.length };
+      var stats = { correct: correct, answered: answered, collected: state.collected.length, visited: state.visited.length };
 
       D.clear(root);
       root.appendChild(h("header.page-intro", null,
@@ -160,7 +162,10 @@
       root.appendChild(h("div.note-progress", { "aria-label": "当前学习进度" },
         h("article", null, h("small", { text: "导览足迹" }), h("b", null, String(state.visited.length), h("span", { text: "/ 7 幕" }))),
         h("article", null, h("small", { text: "完成实验" }), h("b", null, String(state.collected.length), h("span", { text: "/ 5 项" }))),
-        h("article", null, h("small", { text: "知识检查" }), h("b", null, String(answered), h("span", { text: "/ 5 题" })))));
+        h("article", null,
+          h("small", { text: "知识检查" }),
+          h("b", null, String(correct), h("span", { text: "/ 5 题答对" })),
+          h("em.note-progress__sub", { text: "已完成 " + answered + " / 5 题" }))));
 
       if (!hasProgress) {
         root.appendChild(h("section.first-run", null,
@@ -175,13 +180,14 @@
 
       /* 札记封面：独立视觉，不复用序厅图 */
       var cover = h("div.note-cover", null,
+        h("div.note-cover__paper", { "aria-hidden": "true" }),
         h("div.note-cover__head", null,
           h("small", { text: "FIELD NOTE · 个人学习档案" }),
           h("b", { text: "我的考古笔记" })),
         h("div", null,
           h("div.note-cover__num", { text: "5800" }),
           h("div.note-cover__stats", null,
-            h("span", { text: "知识检查　" + score + " / 5" }),
+            h("span", { text: "知识检查　答对 " + correct + " / 5　·　已答 " + answered + " / 5" }),
             h("span", { text: "已收藏实验　" + state.collected.length + " / 5" }),
             h("span", { text: "导览足迹　" + state.visited.length + " / 7" }))),
         ui.noteStamp());
@@ -221,7 +227,7 @@
       var shareBtn = h("button.btn.btn--ghost", { type: "button", text: "分享公开网站" });
       shareBtn.addEventListener("click", function () {
         if (navigator.share) {
-          navigator.share({ title: "曙光坐标·5800", text: "我正在用证据重新认识牛河梁文明。", url: PUBLIC_URL })
+          navigator.share({ title: D.site.name, text: D.site.shareText, url: PUBLIC_URL })
             .then(function () { shareBtn.textContent = "已打开分享"; })
             .catch(function () { shareBtn.textContent = "分享公开网站"; });
         } else if (navigator.clipboard) {

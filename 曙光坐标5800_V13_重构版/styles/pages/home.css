@@ -3,53 +3,74 @@
    首屏只有一个视觉主角、一个主标题、一句主张、两个入口、一句素材说明。
    ============================================================ */
 
-/* ---------- A. 序厅 Hero ---------- */
-.hero { position: relative; display: grid; align-items: end; min-height: min(88svh, 760px); overflow: hidden; }
-.hero__art { position: absolute; inset: 0; background: var(--night); }
-.hero__art img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 42%; }
+/* ---------- A. 序厅 Hero ----------
+   左 45% 文字栏立在宣纸上，右 55% 是晨光地景；
+   两者之间用一道地层线交接，文字不再整块压在图上。 */
+.hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 45fr) minmax(0, 55fr);
+  align-items: stretch;
+  min-height: min(84svh, 720px);
+  background: var(--paper-ivory);
+  overflow: hidden;
+}
+.hero__art { position: relative; grid-column: 2; grid-row: 1; overflow: hidden; background: var(--paper-sand); }
+.hero__picture, .hero__art img { width: 100%; height: 100%; }
+.hero__art img { object-fit: cover; object-position: 56% 52%; }
+/* 左缘做一道由纸到景的过渡，避免硬切 */
 .hero__scrim {
   position: absolute; inset: 0;
   background:
-    linear-gradient(180deg, rgba(20, 23, 20, .78) 0%, rgba(20, 23, 20, .35) 34%, rgba(20, 23, 20, .80) 78%, var(--night) 100%),
-    linear-gradient(90deg, rgba(20, 23, 20, .72) 0%, rgba(20, 23, 20, .10) 62%);
+    linear-gradient(90deg, var(--paper-ivory) 0%, rgba(251, 247, 239, .55) 9%, rgba(251, 247, 239, 0) 26%),
+    linear-gradient(180deg, rgba(251, 247, 239, .34) 0%, rgba(251, 247, 239, 0) 34%);
 }
-.hero__inner { position: relative; z-index: var(--z-base); padding-block: clamp(72px, 12vh, 132px) clamp(56px, 9vh, 96px); }
+
+.hero__inner { grid-column: 1; grid-row: 1; display: grid; align-content: center; padding-block: var(--rhythm-md); }
+.hero__copy {
+  width: min(560px, 100%);
+  margin-left: auto;
+  padding-right: clamp(24px, 3.4vw, 56px);
+  padding-left: clamp(16px, 3vw, 48px);
+}
 .hero__eyebrow {
   display: flex; align-items: center; gap: var(--s-3);
   margin: 0 0 var(--s-5);
-  color: var(--dawn-bright); font-size: var(--fs-meta); font-weight: 700; letter-spacing: .06em;
+  color: var(--jade-ink); font-size: var(--fs-meta); font-weight: 700; letter-spacing: .06em;
 }
-.hero__eyebrow::before { content: ""; width: 30px; height: 2px; background: var(--dawn); }
+.hero__eyebrow .seal { display: inline-flex; width: 28px; height: 28px; color: var(--jade); }
 .hero__title {
   margin: 0;
   max-width: 12em;
-  color: var(--on-night);
-  font-size: var(--fs-h1);
+  color: var(--ink);
+  font-size: clamp(40px, 4.6vw, 70px);   /* 分栏后收一档，避免在 45% 栏里被迫折行 */
   font-weight: 600;
 }
 .hero__title .tw { display: inline-block; }   /* 只允许在「曙光坐标」与「5800」之间换行 */
-.hero__title .dot { margin-inline: .06em; color: var(--dawn); }
+.hero__title .dot { margin-inline: .06em; color: var(--dawn-deep); }
 .hero__title .num { font-variant-numeric: tabular-nums; letter-spacing: .01em; }
 .hero__claim {
-  max-width: 15em;
+  max-width: 17em;
   margin: var(--s-5) 0 0;
-  color: var(--on-night);
+  color: var(--ink);
   font-family: var(--serif);
   font-size: var(--fs-quote);
-  line-height: 1.6;
+  line-height: 1.55;
+}
+.hero__lede {
+  max-width: 22em;
+  margin: var(--s-4) 0 0;
+  color: var(--ink-soft);
+  font-size: var(--fs-lede);
 }
 .hero__actions { display: flex; flex-wrap: wrap; gap: var(--s-3); margin-top: var(--s-6); }
 .hero__disclosure {
-  display: inline-flex; align-items: center; gap: .5em;
-  max-width: 36em;
+  display: flex; align-items: flex-start; gap: .6em;
+  max-width: 30em;
   margin: var(--s-7) 0 0;
-  color: var(--on-night-faint); font-size: var(--fs-meta); line-height: 1.6;
+  color: var(--muted); font-size: var(--fs-meta); line-height: 1.6;
 }
-.hero__disclosure::before { content: ""; flex: none; width: 16px; height: 1px; background: var(--on-night-faint); }
-
-/* 地层线与曙光弧：唯一的装饰母题，极轻 */
-.hero__strata { position: absolute; z-index: var(--z-base); right: clamp(16px, 4vw, 72px); bottom: clamp(20px, 4vh, 56px); width: min(38vw, 380px); color: var(--dawn); pointer-events: none; }
-.hero__strata svg { width: 100%; height: auto; opacity: .55; animation: dawn-breathe 9s var(--ease) infinite; }
+.hero__disclosure::before { content: ""; flex: none; width: 16px; height: 1px; margin-top: .8em; background: var(--stone); }
 
 /* ---------- B. 三个文明坐标 ---------- */
 .coordinates { background: var(--paper); }
@@ -112,10 +133,23 @@
 .preview-card .media--object { --plate-h: 236px; }
 .preview-card .no { margin-top: var(--s-2); color: var(--cinnabar); font-family: var(--mono); font-size: var(--fs-meta); font-weight: 700; letter-spacing: .06em; }
 .preview-card h3 { font-size: var(--fs-h3); }
-.preview-card p { margin: 0; color: var(--ink-soft); font-size: var(--fs-meta); line-height: 1.7; }
+.preview-card p { margin: 0; color: var(--ink-soft); font-size: var(--fs-small-body); line-height: 1.7; }
 
 /* ---------- E. 对象之证 ---------- */
-.object-spotlight { background: var(--paper-bright); }
+/* 对象之证：借用素材包展台照片的顶光，把这一段做成"展厅灯光"下的陈列区。
+   图片只作为氛围底光，上面压一层纸色罩，正文实际底色仍在 --paper-bright 附近。 */
+.object-spotlight {
+  background-color: var(--paper-bright);
+  background-image:
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--paper-bright) 80%, transparent) 0%,
+      color-mix(in srgb, var(--paper-bright) 94%, transparent) 50%,
+      var(--paper-bright) 88%),
+    url("../../assets/scene/stage-light.webp");
+  background-repeat: no-repeat, no-repeat;
+  background-position: center top, center top;
+  background-size: 100% 520px, 100% 520px;
+}
 .spotlight-grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: var(--s-6); }
 .spotlight-lead .media--object { --plate-h: min(58svh, 524px); }
 .spotlight-lead .media--scene { aspect-ratio: 4 / 3; }
@@ -130,8 +164,17 @@
 .spotlight-lead .spotlight-item b { font-size: var(--fs-h3); }
 
 /* ---------- F. 结语 ---------- */
-.closing { text-align: center; }
-.closing h2 { max-width: 11em; margin-inline: auto; }
+.closing { position: relative; text-align: center; overflow: hidden; }
+.closing::before {
+  content: ""; position: absolute; inset: auto 0 0; height: 62%;
+  background: url("../../assets/scene/band-cloudsea.webp") center bottom / cover no-repeat;
+  opacity: .22;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 62%);
+          mask-image: linear-gradient(180deg, transparent 0%, #000 62%);
+  pointer-events: none;
+}
+.closing > .page { position: relative; }
+.closing h2 { max-width: 15em; margin-inline: auto; }
 .closing p { max-width: 28em; margin: var(--s-4) auto 0; color: var(--ink-soft); font-size: var(--fs-lede); }
 .closing .actions { display: flex; flex-wrap: wrap; gap: var(--s-3); justify-content: center; margin-top: var(--s-6); }
 
@@ -145,15 +188,19 @@
   .coordinate { padding: var(--s-6) 0; }
   .chronicle-preview .preview-grid { grid-template-columns: 1fr; gap: var(--s-7); }
 }
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr; min-height: auto; }
+  .hero__art { grid-column: 1; grid-row: 1; aspect-ratio: 4 / 3; max-height: 46svh; }
+  .hero__inner { grid-row: 2; }
+  .hero__scrim { background: linear-gradient(180deg, rgba(251,247,239,0) 62%, var(--paper-ivory) 100%); }
+  .hero__inner { grid-column: 1; grid-row: 2; padding-block: var(--s-7) var(--s-8); }
+  .hero__copy { width: 100%; margin-left: 0; padding-inline: clamp(16px, 6vw, 48px); }
+}
 @media (max-width: 640px) {
-  .hero { min-height: auto; }
-  .hero__inner { padding-block: clamp(56px, 14vh, 96px) var(--s-8); }
-  .hero__strata { width: 62vw; opacity: .8; }
   .hero__actions .btn { flex: 1 1 auto; }
   .spotlight-rest { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-4); }
 }
 @media (max-width: 400px) {
-  .hero__strata { opacity: .55; }
 }
 @media (max-width: 380px) {
   .spotlight-rest { grid-template-columns: 1fr; }

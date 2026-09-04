@@ -60,6 +60,7 @@
   }
 
   function boot() {
+    window.__DC_BOOTED__ = true;   /* 通知 index.html 里的启动检测：一切正常 */
     D.store.load();
     shell = document.getElementById("app");
     headerSlot = h("div");

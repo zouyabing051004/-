@@ -14,7 +14,7 @@
 .lab-card__copy { display: grid; gap: var(--s-2); }
 .lab-card__copy .no { color: var(--dawn); font-family: var(--mono); font-size: var(--fs-meta); font-weight: 700; }
 .lab-card__copy h2 { font-size: var(--fs-h3); }
-.lab-card__copy p { margin: 0; color: var(--on-night-soft); font-size: var(--fs-meta); }
+.lab-card__copy p { margin: 0; color: var(--on-night-soft); font-size: var(--fs-small-body); }
 .lab-card__copy .promise { color: var(--jade-soft); font-size: var(--fs-meta); }
 .lab-card__go { color: var(--on-night-faint); font-family: var(--mono); font-size: 20px; }
 .lab-card:hover .lab-card__go { color: var(--dawn); }
@@ -32,7 +32,7 @@
 .lab-steps ol { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-5); margin: 0; padding: 0; list-style: none; }
 .lab-steps li { display: grid; gap: var(--s-2); padding-top: var(--s-3); border-top: 1px solid var(--line-night); }
 .lab-steps li span { color: var(--dawn); font-family: var(--mono); font-size: var(--fs-meta); font-weight: 700; }
-.lab-steps li p { margin: 0; color: var(--on-night-soft); font-size: var(--fs-meta); line-height: 1.7; }
+.lab-steps li p { margin: 0; color: var(--on-night-soft); font-size: var(--fs-small-body); line-height: 1.7; }
 
 /* 实验台：左画布 / 右读数 */
 .lab-stage { display: grid; grid-template-columns: 65% 35%; gap: 0; margin-block: var(--s-6) 0; border: 1px solid var(--line-night); border-radius: var(--r-sm); overflow: hidden; background: var(--night-2); }
@@ -40,7 +40,7 @@
 .lab-inspector { display: grid; align-content: start; gap: var(--s-4); padding: var(--s-6); background: var(--night-2); border-left: 1px solid var(--line-night); }
 .lab-inspector .label { margin: 0; color: var(--dawn); font-family: var(--mono); font-size: var(--fs-meta); font-weight: 700; letter-spacing: .08em; }
 .lab-inspector h3 { color: var(--on-night); font-size: var(--fs-h4); }
-.lab-inspector p { margin: 0; color: var(--on-night-soft); font-size: var(--fs-meta); line-height: 1.7; }
+.lab-inspector p { margin: 0; color: var(--on-night-soft); font-size: var(--fs-small-body); line-height: 1.75; }
 .lab-hint { color: var(--on-night-faint); font-size: var(--fs-meta); }
 
 .state-list { display: grid; gap: var(--s-3); }
@@ -136,11 +136,43 @@
 .metric-grid button.active b { color: var(--night); }
 .metric-grid button.active span { color: rgba(20, 23, 20, .78); }
 
-/* LAB 01 时间坐标 */
-.time-scene { position: absolute; inset: 0; display: grid; place-items: center; }
-.time-window { position: relative; display: grid; gap: var(--s-2); justify-items: center; padding: var(--s-6) var(--s-7); background: rgba(20, 23, 20, .58); border: 1px solid var(--line-night); border-radius: var(--r-sm); backdrop-filter: blur(8px); }
-.time-window b { color: var(--dawn-bright); font-family: var(--serif); font-size: clamp(56px, 8vw, 104px); font-weight: 600; line-height: 1; font-variant-numeric: tabular-nums; }
-.time-window small { color: var(--on-night-soft); font-size: var(--fs-meta); }
+/* LAB 01 时间坐标：同一条刻度上的三条区间带 */
+.time-scene { position: absolute; inset: 0; display: grid; place-items: center; padding: var(--s-6) var(--s-6) 68px; }
+.timeaxis {
+  position: relative; width: min(100%, 720px);
+  display: grid; gap: var(--s-4);
+  padding: var(--s-6) var(--s-5) var(--s-7);
+  background: rgba(20, 23, 20, .62);
+  border: 1px solid var(--line-night);
+  border-radius: var(--r-sm);
+  backdrop-filter: blur(8px);
+}
+.timeaxis__row { position: relative; height: 40px; }
+.timeaxis__row > i {
+  position: absolute; top: 0; height: 20px;
+  background: color-mix(in srgb, var(--jade-mist) 42%, transparent);
+  border: 1px solid color-mix(in srgb, var(--jade-mist) 62%, transparent);
+  border-radius: 2px;
+  transition: background var(--dur-2) var(--ease), border-color var(--dur-2) var(--ease);
+}
+/* 右端开放的区间：用渐隐表示「以后」，不画出一个并不存在的终点 */
+.timeaxis__row.is-open > i {
+  -webkit-mask-image: linear-gradient(90deg, #000 62%, transparent 100%);
+          mask-image: linear-gradient(90deg, #000 62%, transparent 100%);
+  border-right: 0;
+}
+.timeaxis__row > b {
+  position: absolute; top: 22px; left: 0;
+  color: var(--on-night-soft); font-family: var(--mono); font-size: var(--fs-meta); font-weight: 500;
+}
+.timeaxis__row.active > i { background: color-mix(in srgb, var(--dawn) 62%, transparent); border-color: var(--dawn); }
+.timeaxis__row.active > b { color: var(--dawn-bright); font-weight: 700; }
+.timeaxis__ticks { position: relative; height: 34px; margin-top: var(--s-2); border-top: 1px solid var(--line-night); }
+.timeaxis__ticks span { position: absolute; top: 0; transform: translateX(-50%); display: grid; justify-items: center; gap: 3px; }
+.timeaxis__ticks i { width: 1px; height: 6px; background: var(--on-night-faint); }
+.timeaxis__ticks em { color: var(--on-night-faint); font-family: var(--mono); font-size: var(--fs-meta-sm); font-style: normal; }
+.timeaxis__unit { margin: var(--s-2) 0 0; color: var(--on-night-faint); font-size: var(--fs-meta-sm); text-align: right; }
+
 .time-bands { display: grid; gap: 6px; }
 .time-bands button { display: grid; gap: 2px; min-height: 56px; padding: 10px 12px; text-align: left; background: var(--night-3); border: 1px solid transparent; border-radius: var(--r-sm); }
 .time-bands button b { color: var(--on-night); font-family: var(--mono); font-size: var(--fs-meta); font-weight: 700; }
@@ -148,6 +180,31 @@
 .time-bands button.active { background: var(--dawn); }
 .time-bands button.active b { color: var(--night); }
 .time-bands button.active span { color: rgba(20, 23, 20, .78); }
+.time-range { color: var(--dawn-bright); font-family: var(--mono); font-size: var(--fs-meta); font-weight: 700; }
+
+/* LAB 02 资料充分程度 */
+.node-legend { position: absolute; top: var(--s-5); right: var(--s-5); display: grid; gap: 4px; }
+.node-legend span { display: flex; align-items: center; gap: .5em; color: var(--on-night-faint); font-size: var(--fs-meta); }
+.node-legend i { width: 9px; height: 9px; border-radius: 50%; }
+.node-legend i.full { background: var(--dawn); }
+.node-legend i.thin { border: 1px solid var(--on-night-faint); }
+.node-grid button.has-detail { border-color: color-mix(in srgb, var(--dawn) 58%, transparent); }
+.lab-datalevel { display: inline-flex; align-items: center; gap: .5em; margin: 0 0 var(--s-2); color: var(--on-night-faint); font-size: var(--fs-meta); }
+.lab-datalevel i { width: 9px; height: 9px; border-radius: 50%; border: 1px solid currentColor; }
+.lab-datalevel.is-full { color: var(--dawn-bright); }
+.lab-datalevel.is-full i { background: currentColor; }
+
+/* LAB 04 图例 */
+.tomb-legend { display: grid; gap: var(--s-2); }
+.tomb-legend p { margin: 0; color: var(--on-night-soft); font-size: var(--fs-meta); }
+.tomb-legend ul { display: flex; flex-wrap: wrap; gap: var(--s-4); margin: 0; padding: 0; list-style: none; }
+.tomb-legend li { display: flex; align-items: center; gap: .5em; color: var(--on-night-soft); font-size: var(--fs-meta); }
+.tomb-legend .swatch { width: 14px; height: 14px; border-radius: 2px; }
+.tomb-legend .swatch.jade { background: color-mix(in srgb, var(--jade-soft) 82%, transparent); }
+.tomb-legend .swatch.plain { border: 1px solid rgba(240, 234, 223, .32); }
+
+/* LAB 05 认识层说明 */
+.survey-insight__note { display: block; margin-top: 6px; color: var(--on-night-faint); font-size: var(--fs-meta-sm); line-height: 1.5; }
 
 /* 结论区回到浅色 */
 .lab-debrief { color: var(--ink); background: var(--paper); }
@@ -173,6 +230,11 @@
   .lab-card { grid-template-columns: 1fr; gap: var(--s-4); }
   .lab-card__media { aspect-ratio: 16 / 9; }
   .node-grid { grid-template-columns: repeat(3, minmax(64px, 84px)); bottom: 72px; }
+  /* 方格布局本身不代表真实空间，因此允许按屏宽重排：桌面 11×6，手机 6×11 */
+  .tomb-matrix { grid-template-columns: repeat(6, minmax(0, 1fr)); max-width: 320px; }
+  .timeaxis { padding: var(--s-5) var(--s-4) var(--s-6); }
+  .timeaxis__ticks span:nth-child(even) { display: none; }
+  .tour__finale .quiz { grid-template-columns: 1fr; }
   .tomb-strip { grid-template-columns: 1fr; }
   .tomb-strip figure:last-child { display: none; }
   .metric-grid { grid-template-columns: 1fr; }

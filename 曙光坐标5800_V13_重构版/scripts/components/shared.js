@@ -10,11 +10,11 @@
     return String(src || "").replace(/^\/?media\//, "").replace(/^\//, "");
   }
 
-  /* 图像呈现方式：器物/对象完整显示（contain），景观/方法可裁切填充（cover）。
-     判定规则与 V12 一致，保证每张图的呈现身份不发生改变。 */
+  /* 图像呈现方式由 scripts/data/presentation.js 显式声明，不再用正则猜测。
+     object → 陈列台（contain，完整器形）；scene → 画框（cover）；diagram → 完整可读。 */
   function imagePresentation(src) {
-    return /maps_environment|environment_methods|generated\/(hero|survey|nine-platforms)|A020_hongshan_culture_museum/i.test(src)
-      ? "scene" : "object";
+    var kind = D.presentationOf ? D.presentationOf(src) : "scene";
+    return kind === "object" ? "object" : kind === "diagram" ? "diagram" : "scene";
   }
 
   /* 图像容器。真实文物与馆藏图一律原色，无任何统一滤镜。 */
@@ -122,6 +122,85 @@
       "</svg>");
   }
 
+  /* 辽西相对位置示意（自绘 SVG）
+     只表达「谁在谁的哪一侧」这一层关系，不画省界、不标距离、不设比例尺——
+     因此它无法被误读成测绘地图。上传素材中的 AI 辽宁地图把牛河梁画在朝阳东北、
+     且落在「红山文化区」之外，与事实不符，故不采用。 */
+  function liaoxiSchematic() {
+    return svg(
+      '<svg viewBox="0 0 460 260" role="img" aria-labelledby="lx-t lx-d" class="schematic">' +
+      '<title id="lx-t">辽西相对位置示意</title>' +
+      '<desc id="lx-d">示意图：牛河梁位于朝阳西南方向的凌源与建平之间，处在努鲁儿虎山地与大凌河上游河谷之中；' +
+      '图中只表示相对方位关系，不表示真实距离、边界或比例。</desc>' +
+      '<defs><marker id="lx-a" viewBox="0 0 8 8" refX="6" refY="4" markerWidth="6" markerHeight="6" orient="auto">' +
+      '<path d="M0 0 L8 4 L0 8 z" fill="currentColor" opacity=".5"/></marker></defs>' +
+      /* 山地带 */
+      '<path d="M28 150 q46-34 92 0 t92 0 t92 0 t92 0" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".28"/>' +
+      '<path d="M28 168 q46-34 92 0 t92 0 t92 0 t92 0" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".18"/>' +
+      '<text x="30" y="196" font-size="11" fill="currentColor" opacity=".6">努鲁儿虎山地</text>' +
+      /* 河谷 */
+      '<path d="M60 214 C150 200 250 226 420 206" fill="none" stroke="#44786B" stroke-width="1.6" opacity=".7"/>' +
+      '<text x="330" y="228" font-size="11" fill="#2F5A4E">大凌河上游</text>' +
+      /* 方位罗盘 */
+      '<g transform="translate(408 42)" opacity=".55">' +
+      '<circle r="15" fill="none" stroke="currentColor" stroke-width="1"/>' +
+      '<path d="M0-15 V15 M-15 0 H15" stroke="currentColor" stroke-width=".8"/>' +
+      '<text x="0" y="-19" font-size="9" text-anchor="middle" fill="currentColor">N</text></g>' +
+      /* 城镇与遗址：只表达相对方位 */
+      '<g font-size="12">' +
+      '<circle cx="300" cy="72" r="4" fill="currentColor" opacity=".6"/><text x="312" y="76" fill="currentColor">朝阳</text>' +
+      '<circle cx="196" cy="112" r="4" fill="currentColor" opacity=".6"/><text x="150" y="104" fill="currentColor">建平</text>' +
+      '<circle cx="128" cy="176" r="4" fill="currentColor" opacity=".6"/><text x="78" y="180" fill="currentColor">凌源</text>' +
+      '<circle cx="176" cy="150" r="8" fill="none" stroke="#A44A35" stroke-width="2"/>' +
+      '<circle cx="176" cy="150" r="3" fill="#A44A35"/>' +
+      '<text x="190" y="146" fill="#A44A35" font-weight="700">牛河梁</text>' +
+      '</g>' +
+      '<path d="M292 80 L188 142" stroke="currentColor" stroke-width="1" opacity=".35" marker-end="url(#lx-a)"/>' +
+      '<text x="214" y="104" font-size="10" fill="currentColor" opacity=".55">朝阳西南方向</text>' +
+      '</svg>');
+  }
+
+
+  /* 地层与测年教学示意（自绘 HTML，非位图）
+     上传素材里的 AI《考古地层剖面示意图》把彩陶罐、人像、玉璧画进了层位里，
+     放在牛河梁语境中会被读成"这些是牛河梁出土物"；其标注文字在移动端也小到不可读。
+     因此这里改为自绘：只讲两条方法规则，不描绘任何器物，文字是真文本、可缩放可朗读。 */
+  var STRATA = [
+    { key: "top",     name: "表土与扰动层", note: "现代耕作、植被与后期活动形成，年代最晚。" },
+    { key: "late",    name: "晚期堆积",     note: "遗物较少，常被后期活动打乱，边界不一定清晰。" },
+    { key: "main",    name: "主要文化层",   note: "遗物与活动遗迹集中，是判断这一阶段人类活动的主要依据。", sample: true },
+    { key: "early",   name: "早期堆积",     note: "位于主要文化层之下，因此年代更早。" },
+    { key: "sterile", name: "生土",         note: "未受人类活动影响的原生堆积，其上才开始出现文化层。" },
+  ];
+
+  function strataFigure() {
+    return h("figure.strata-figure", null,
+      h("div.strata-figure__head", null,
+        eyebrow("方法示意", "HOW DATING WORKS"),
+        h("b", { text: "年代是怎样被读出来的" })),
+      h("div.strata-figure__body", null,
+        h("div.strata-axis", { "aria-hidden": "true" },
+          h("span.strata-axis__late", { text: "晚" }),
+          h("span.strata-axis__line"),
+          h("span.strata-axis__early", { text: "早" })),
+        h("ol.strata-stack", null, STRATA.map(function (layer) {
+          return h("li.strata-layer.is-" + layer.key, null,
+            h("span.strata-layer__band", { "aria-hidden": "true" }),
+            h("span.strata-layer__copy", null,
+              h("b", { text: layer.name }),
+              h("span", { text: layer.note }),
+              layer.sample ? h("span.strata-layer__sample", null,
+                h("em", { text: "取样点" }),
+                "自这一层位取出炭样或骨样送测，得到的是这一层的年代范围。") : null));
+        }))),
+      h("div.strata-rules", null,
+        h("p", null, h("b", { text: "规则一 · 叠压" }), "在没有被扰动的堆积里，下层早于上层。层位关系先于任何数字。"),
+        h("p", null, h("b", { text: "规则二 · 范围" }), "一次测年得到的是一段年代范围，不是某一年；不同层位的范围还可能互相重叠。")),
+      h("figcaption", null,
+        "读懂一处遗址的年代，靠的是层位关系加上测年，而不是单独一个数字。",
+        boundary("本图由本站自绘，为通用教学示意：层数、厚度、颜色均为示意，不是牛河梁任一地点的实测剖面，也不描绘任何具体出土器物。")));
+  }
+
   /* 札记页的朱砂坐标戳 */
   function noteStamp() {
     return svg(
@@ -140,6 +219,7 @@
       evidenceBadge: evidenceBadge, sourceLinks: sourceLinks, boundaryPair: boundaryPair,
       link: link, goLink: goLink, eyebrow: eyebrow, sectionHead: sectionHead,
       brandSeal: brandSeal, strataMotif: strataMotif, noteStamp: noteStamp,
+      liaoxiSchematic: liaoxiSchematic, strataFigure: strataFigure,
     },
   });
 })();

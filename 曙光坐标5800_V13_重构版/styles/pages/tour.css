@@ -2,10 +2,36 @@
    公众导览 — 比赛现场演示主模式
    每幕只有：幕号 → 一个问题 → 一句结论 → 一个证据边界 → 下一步
    ============================================================ */
-.tour { display: grid; grid-template-columns: 62% 38%; min-height: calc(100svh - var(--header-h)); }
+.tour { display: grid; grid-template-columns: 62% 38%; align-items: start; min-height: calc(100svh - var(--header-h)); }
+/* 场景侧固定在视口内，右栏内容变长时标题不会被拖到底部 */
+.tour__stage { position: sticky; top: var(--header-h); height: calc(100svh - var(--header-h)); }
+/* 收尾页整幅展开，Quiz 不再挤在 38% 右栏 */
+.tour.is-finale { grid-template-rows: auto auto; }
+.tour.is-finale .tour__stage { grid-column: 1; grid-row: 1; }
+.tour.is-finale .tour__panel { grid-column: 2; grid-row: 1; }
+.tour__finale { grid-column: 1 / -1; grid-row: 2; background: var(--paper); border-top: 1px solid var(--line); }
+.tour__finale-inner { display: grid; gap: var(--s-7); padding-block: var(--rhythm-md); }
+.tour__finale-head { display: grid; gap: var(--s-3); max-width: 34em; }
+.tour__finale-head p { margin: 0; color: var(--ink-soft); font-size: var(--fs-lede); }
+.tour__finale .quiz { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.tour__finale-actions { display: flex; flex-wrap: wrap; gap: var(--s-3); }
+
+/* 快速路线收尾提示 */
+.tour__handoff { display: grid; gap: var(--s-2); padding: var(--s-5); background: var(--dawn-pale); border-left: 3px solid var(--dawn-ochre); border-radius: 0 var(--r-sm) var(--r-sm) 0; }
+.tour__handoff b { font-family: var(--serif); font-size: var(--fs-h4); }
+.tour__handoff p { margin: 0; color: var(--ink-soft); font-size: var(--fs-small-body); }
+.tour__restart { justify-content: center; }
 
 .tour__stage { position: relative; background: var(--night); overflow: hidden; }
 .tour__stage > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+/* 器物幕：放在深色陈列台上完整显示，不当成背景裁切 */
+.tour__stage.is-object { background-color: var(--night); background-image: radial-gradient(120% 90% at 50% 34%, #23281F 0%, var(--night) 68%); }
+.tour__stage.is-object > img {
+  inset: clamp(24px, 5vh, 64px) clamp(24px, 5vw, 96px) 42%;
+  width: auto; height: auto; max-width: calc(100% - 2 * clamp(24px, 5vw, 96px));
+  margin-inline: auto; object-fit: contain;
+}
+.tour__stage.is-object .tour__stage-scrim { background: linear-gradient(180deg, rgba(20,23,20,.2) 0%, rgba(20,23,20,.05) 34%, rgba(20,23,20,.92) 76%); }
 .tour__stage-scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(20,23,20,.62) 0%, rgba(20,23,20,.12) 40%, rgba(20,23,20,.86) 100%); }
 .tour__stage-copy { position: relative; display: grid; align-content: end; gap: var(--s-3); min-height: 100%; padding: clamp(28px, 4vw, 56px); }
 .tour__act { display: flex; align-items: baseline; gap: .5em; color: var(--dawn-bright); font-family: var(--mono); font-size: var(--fs-meta); font-weight: 700; }
@@ -30,7 +56,7 @@
 
 .tour__background { display: grid; gap: var(--s-3); }
 .tour__background b { font-size: var(--fs-meta); color: var(--muted); }
-.tour__background p { margin: 0; color: var(--ink-soft); font-size: var(--fs-meta); line-height: 1.7; }
+.tour__background p { margin: 0; color: var(--ink-soft); font-size: var(--fs-small-body); line-height: 1.75; }
 
 .tour__controls { display: flex; gap: var(--s-3); margin-top: var(--s-2); }
 .tour__controls .btn { flex: 1; }
@@ -41,20 +67,24 @@
 .tour__summary li b { color: var(--cinnabar); font-family: var(--serif); font-size: 22px; font-variant-numeric: tabular-nums; }
 .tour__summary li span { color: var(--ink-soft); font-size: var(--fs-meta); }
 
-.quiz { display: grid; gap: var(--s-5); }
+.quiz { display: grid; gap: var(--s-6); }
 .quiz fieldset { display: grid; gap: var(--s-2); margin: 0; padding: 0; border: 0; }
 .quiz legend { padding: 0 0 var(--s-2); font-size: var(--fs-body); font-weight: 700; }
-.quiz label { display: flex; gap: .6em; align-items: flex-start; min-height: 44px; padding: 8px 10px; font-size: var(--fs-meta); border: 1px solid var(--line-soft); border-radius: var(--r-sm); }
+.quiz label { display: flex; gap: .6em; align-items: flex-start; min-height: 44px; padding: 10px 12px; font-size: var(--fs-small-body); border: 1px solid var(--line-soft); border-radius: var(--r-sm); }
 .quiz label:hover { background: var(--paper); }
 .quiz input { margin-top: .35em; accent-color: var(--cinnabar); }
-.quiz .verdict { margin: var(--s-2) 0 0; padding: 10px 12px; font-size: var(--fs-meta); border-radius: var(--r-sm); }
+.quiz .verdict { margin: var(--s-2) 0 0; padding: 10px 12px; font-size: var(--fs-small-body); border-radius: var(--r-sm); }
 .quiz .verdict b { display: block; }
 .quiz .verdict.correct { color: var(--jade-ink); background: var(--jade-wash); }
 .quiz .verdict.incorrect { color: var(--cinnabar-deep); background: var(--cinnabar-wash); }
 
 @media (max-width: 1024px) { .tour { grid-template-columns: 56% 44%; } }
+@media (max-width: 1100px) { .tour__finale .quiz { grid-template-columns: 1fr; } }
 @media (max-width: 900px) {
   .tour { grid-template-columns: 1fr; }
-  .tour__stage { min-height: 48svh; }
+  /* 移动端回到普通文档流：场景不再吸顶 */
+  .tour__stage { position: static; height: auto; min-height: 48svh; }
   .tour__panel { border-left: 0; border-top: 1px solid var(--line); }
+  .tour.is-finale .tour__stage, .tour.is-finale .tour__panel { grid-column: 1; grid-row: auto; }
+  .tour__finale { grid-column: 1; grid-row: auto; }
 }

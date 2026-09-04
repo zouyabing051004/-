@@ -11,27 +11,32 @@
   function lab(slug) { return D.labs.find(function (l) { return l.slug === slug; }); }
   function chapter(slug) { return D.chapters.find(function (c) { return c.slug === slug; }); }
 
-  /* ---------- A. 序厅 ---------- */
+  /* ---------- A. 序厅 ----------
+     左 45% 文字 / 右 55% 地景，文字不再全部压在图上的左下角。
+     文化层级：曙光坐标5800 → 红山—牛河梁 → 一句主张 → 两个入口 → 素材身份。 */
   function hero() {
-    var art = h("picture", null,
-      h("source", { media: "(max-width: 640px)", srcset: "assets/generated/hero-strata-dawn-mobile.avif", type: "image/avif" }),
-      h("source", { srcset: "assets/generated/hero-strata-dawn-1280.avif", type: "image/avif" }),
-      h("img", { src: "assets/generated/hero-strata-dawn.webp", alt: "", width: 1672, height: 941, decoding: "async", fetchpriority: "high" }));
+    var art = h("picture.hero__picture", null,
+      h("source", { media: "(max-width: 900px)", srcset: "assets/scene/hero-dawn-portrait.webp" }),
+      h("img", { src: "assets/scene/hero-dawn-valley.webp", alt: "",
+        width: 2400, height: 1351, decoding: "async", fetchpriority: "high" }));
 
-    return h("section.hero.on-night", { "aria-labelledby": "home-title" },
-      h("div.hero__art.media.media--ambient", { "aria-hidden": "true" }, art),
-      h("div.hero__scrim", { "aria-hidden": "true" }),
-      h("div.hero__strata", { "aria-hidden": "true" }, ui.strataMotif()),
-      h("div.page.hero__inner", null,
-        h("p.hero__eyebrow", { text: "数字文明志 · 辽宁牛河梁" }),
-        h("h1#home-title.hero__title", null,
-          h("span.tw", { text: "曙光坐标" }),
-          h("span.tw", null, h("span.dot", { text: "·" }), h("span.num", { text: "5800" }))),
-        h("p.hero__claim", { text: "从牛河梁出发，看见中华文明曙光如何被证据一层层重新确认。" }),
-        h("div.hero__actions", null,
-          ui.link("/tour?mode=quick", "btn btn--primary", ["开始 3 分钟导览", h("span.btn__arrow", { "aria-hidden": "true", text: "→" })]),
-          ui.link("/chronicle", "btn btn--ghost", "进入九章文明长卷")),
-        h("p.hero__disclosure", { text: "序厅图为 AI 生成的地层与曙光策展意象，非遗址照片、非建筑复原。" })));
+    return h("section.hero", { "aria-labelledby": "home-title" },
+      h("div.hero__art.media.media--ambient", { "aria-hidden": "true" }, art,
+        h("div.hero__scrim", { "aria-hidden": "true" })),
+      h("div.hero__inner", null,
+        h("div.hero__copy", null,
+          h("p.hero__eyebrow", null,
+            h("span.seal", { "aria-hidden": "true" }, ui.brandSeal()),
+            h("span", { text: "红山—牛河梁　数字文明志" })),
+          h("h1#home-title.hero__title", null,
+            h("span.tw", { text: "曙光坐标" }),
+            h("span.tw", null, h("span.dot", { text: "·" }), h("span.num", { text: "5800" }))),
+          h("p.hero__claim", { text: "不是看一个答案，而是进入一条证据链。" }),
+          h("p.hero__lede", { text: "从牛河梁出发，看见中华文明曙光如何被证据一层层重新确认。" }),
+          h("div.hero__actions", null,
+            ui.link("/tour?mode=quick", "btn btn--primary", ["开始 3 分钟导览", h("span.btn__arrow", { "aria-hidden": "true", text: "→" })]),
+            ui.link("/chronicle", "btn btn--ghost", "进入九章文明长卷")),
+          h("p.hero__disclosure", { text: "序厅图为 AI 生成的晨光山谷意象，用于建立地景尺度；非牛河梁实景、非遗址复原。" }))));
   }
 
   /* ---------- B. 三个文明坐标 ---------- */

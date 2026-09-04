@@ -36,11 +36,21 @@
         : D.tourScenes.slice();
     }
 
-    function setMode(next) {
+    function setMode(next, startAt) {
       mode = next;
-      index = 0;
+      index = startAt || 0;
       D.router.replaceQuery("/tour?mode=" + next);
       paint();
+    }
+
+    /* 快速路线走完 T01/T03/T06 后，接着看的应该是还没看过的那 4 幕，
+       而不是从 T01 重头再来一遍。 */
+    function firstUnseenIndex() {
+      var seen = D.store.get().visited;
+      for (var i = 0; i < D.tourScenes.length; i++) {
+        if (seen.indexOf(D.tourScenes[i].id) === -1) return i;
+      }
+      return 0;
     }
 
     /* 每当一幕被显示，就记入导览足迹（包含进入页面时的第一幕） */
@@ -70,7 +80,9 @@
       D.clear(root);
 
       /* 左：一张强视觉图 */
-      root.appendChild(h("div.tour__stage", null,
+      /* 器物幕不再被当成背景裁切：玉器、塑像放在深色陈列台上完整显示 */
+      var kind = ui.imagePresentation(current.image);
+      root.appendChild(h("div.tour__stage.is-" + kind, null,
         h("img", { src: ui.mediaUrl(current.image), alt: current.alt, decoding: "async", fetchpriority: "high" }),
         h("div.tour__stage-scrim", { "aria-hidden": "true" }),
         h("div.tour__stage-copy.on-dark", null,
@@ -118,6 +130,11 @@
 
       /* 快速路线结尾：三个坐标小结 */
       if (mode === "quick" && last) {
+        var seenCount = D.store.get().visited.length;
+        var restCount = Math.max(0, D.tourScenes.length - seenCount);
+        panel.appendChild(h("div.tour__handoff", null,
+          h("b", { text: "你已经完成 " + Math.min(seenCount, D.tourScenes.length) + " 幕快速导览" }),
+          h("p", { text: restCount > 0 ? "还有 " + restCount + " 幕可以继续探索。" : "七幕都已看过，可以任选一幕回看。" })));
         panel.appendChild(h("div.tour__summary", null,
           h("p.label", { text: "你已经获得的三个坐标", style: { margin: 0, color: "var(--muted)", fontSize: "var(--fs-meta)", fontWeight: "700" } }),
           h("ol", null,
@@ -131,7 +148,7 @@
       /* 完整路线结尾：五个知识检查 */
       if (mode === "full" && last) {
         var answers = Object.assign({}, D.store.get().answers);
-        var quiz = h("div.quiz", null, h("p.label", { text: "五个知识检查", style: { margin: 0, color: "var(--muted)", fontSize: "var(--fs-meta)", fontWeight: "700" } }));
+        var quiz = h("div.quiz", null);
         D.knowledgeCheck.forEach(function (item, qi) {
           var verdict = h("p.verdict", { role: "status" });
           function paintVerdict() {
@@ -156,7 +173,19 @@
           paintVerdict();
           quiz.appendChild(set);
         });
-        panel.appendChild(quiz);
+        /* 收尾不再挤在右栏：整幅展开「走完七幕 → 五道检查 → 生成笔记」 */
+        root.classList.add("is-finale");
+        var finale = h("section.tour__finale", null,
+          h("div.page.tour__finale-inner", null,
+            h("header.tour__finale-head", null,
+              ui.eyebrow("完整导览 · 07 / 07"),
+              h("h2", { text: "你已经走完七幕", style: { marginTop: "12px" } }),
+              h("p", { text: "下面五道检查不评分，只用来确认几个最容易被读错的口径。答完即可生成属于你的考古笔记。" })),
+            quiz,
+            h("div.tour__finale-actions", null,
+              ui.link("/notebook", "btn btn--primary", "生成我的考古笔记 →"),
+              ui.link("/lab", "btn btn--ghost", "去证据实验室亲手验证"))));
+        root.appendChild(finale);
       }
 
       /* 下一步 */
@@ -165,7 +194,16 @@
       if (!last) {
         controls.appendChild(h("button.btn.btn--primary", { type: "button", text: "下一幕 →", onclick: function () { go(index + 1); } }));
       } else if (mode === "quick") {
-        controls.appendChild(h("button.btn.btn--primary", { type: "button", text: "继续完整导览 →", onclick: function () { setMode("full"); } }));
+        var jump = firstUnseenIndex();
+        var rest = D.tourScenes.length - D.store.get().visited.length;
+        controls.appendChild(h("button.btn.btn--primary", {
+          type: "button",
+          text: rest > 0 ? "继续补完其余 " + rest + " 幕 →" : "进入完整导览 →",
+          onclick: function () { setMode("full", jump); },
+        }));
+        controls.appendChild(h("button.btn.btn--quiet.tour__restart", {
+          type: "button", text: "从头查看完整 7 幕", onclick: function () { setMode("full", 0); },
+        }));
       } else {
         controls.appendChild(ui.link("/notebook", "btn btn--primary", "生成我的考古笔记 →"));
       }

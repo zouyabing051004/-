@@ -13,6 +13,12 @@
   ];
   var NAV_EXTRA = [["/notebook", "我的考古笔记"], ["/sources", "来源与方法"]];
 
+  /* ESC 关闭移动端菜单：全局只绑定一次（P2-06） */
+  var activeMenuClose = null;
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape" && activeMenuClose) activeMenuClose();
+  });
+
   function header(route) {
     var open = false;
     var nav = h("nav#primary-navigation.primary-nav", { "aria-label": "主要导航" });
@@ -37,7 +43,8 @@
         label, Object.assign({ onclick: function () { setOpen(false); } }, active ? { "aria-current": "page" } : {})));
     });
 
-    document.addEventListener("keydown", function (event) { if (event.key === "Escape" && open) setOpen(false); });
+    /* 只登记当前菜单的关闭函数；监听器全局挂一次，避免路由切换不断累积 */
+    activeMenuClose = function () { if (open) setOpen(false); };
 
     return h("header.site-header", null,
       ui.link("/", "brand", [

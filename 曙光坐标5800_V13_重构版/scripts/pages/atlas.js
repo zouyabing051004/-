@@ -44,7 +44,6 @@
         return (asset.id + asset.title + asset.source.institution + asset.editorial.factBoundary).toLowerCase().indexOf(needle) !== -1;
       }).sort(function (a, b) {
         if (sort === "title") return a.title.localeCompare(b.title, "zh-CN");
-        if (sort === "quality") return a.quality.grade.localeCompare(b.quality.grade);
         return a.id.localeCompare(b.id);
       });
       var seen = {};
@@ -64,11 +63,11 @@
           h("img", { src: asset.file.url, alt: asset.alt, width: asset.file.width, height: asset.file.height, loading: "lazy", decoding: "async" }),
           asset.id === "AX035" ? h("em.atlas-card__views", { text: "正反两面" }) : null),
         h("span.atlas-card__copy", null,
-          h("span.atlas-card__meta", null,
-            h("span", { text: asset.id }),
-            h("span.grade", { title: "展示等级 " + asset.quality.grade, text: asset.quality.grade })),
           h("b", { text: asset.title.replace("（芝加哥艺术博物馆·正面）", "（芝加哥艺术博物馆）") }),
-          h("em", { text: asset.source.institution || "来源机构资料未载" })),
+          h("em", { text: asset.source.institution || "来源机构资料未载" }),
+          h("span.atlas-card__meta", null,
+            h("span.kind", { text: asset.groupLabel }),
+            h("span.id", { text: asset.id }))),
       ]);
     }
 
@@ -141,8 +140,7 @@
             onchange: function (event) { sort = event.target.value; visible = 36; paint(); },
           },
             h("option", { value: "id", text: "资产编号", selected: sort === "id" }),
-            h("option", { value: "title", text: "对象名称", selected: sort === "title" }),
-            h("option", { value: "quality", text: "展示等级", selected: sort === "quality" })))),
+            h("option", { value: "title", text: "对象名称", selected: sort === "title" })))),
 
       resultHead, grid, moreWrap);
 
@@ -165,24 +163,51 @@
     var caption = h("p.media-boundary");
     var tools = h("div.segmented", { "aria-label": "对象查看模式" });
     var mode = "whole";
+    var zoomBtn = null;
+
+    /* ---------- 真正的文物查看器（原生 <dialog>）----------
+       ESC / 遮罩 / 关闭按钮均可退出，关闭后焦点回到「放大」按钮。 */
+    function openLightbox(item) {
+      var img = h("img", { src: item.file.url, alt: item.alt, decoding: "async" });
+      var zoomed = false;
+      var closeBtn = h("button.lightbox__close", { type: "button", "aria-label": "关闭查看器" }, "✕");
+      var scaleBtn = h("button.lightbox__scale", { type: "button", "aria-pressed": "false" }, "放大 2×");
+      var dlg = h("dialog.lightbox", { "aria-label": item.title + "　放大查看" },
+        h("div.lightbox__bar", null,
+          h("p.lightbox__title", null, h("b", { text: item.title }), h("span", { text: item.id + "　·　" + (item.source.institution || "来源机构资料未载") })),
+          h("div.lightbox__tools", null, scaleBtn, closeBtn)),
+        h("div.lightbox__stage", null, img),
+        h("p.lightbox__note", { text: "只放大原图，不补纹、不补缺、不改变器形。" + (item.editorial.factBoundary || "") }));
+
+      function close() { if (dlg.open) dlg.close(); }
+      closeBtn.addEventListener("click", close);
+      scaleBtn.addEventListener("click", function () {
+        zoomed = !zoomed;
+        dlg.classList.toggle("is-zoomed", zoomed);
+        scaleBtn.setAttribute("aria-pressed", zoomed ? "true" : "false");
+        scaleBtn.textContent = zoomed ? "还原 1×" : "放大 2×";
+      });
+      /* 点击遮罩关闭：只在点到 dialog 本体（而非内容）时触发 */
+      dlg.addEventListener("click", function (e) { if (e.target === dlg) close(); });
+      dlg.addEventListener("close", function () {
+        dlg.remove();
+        if (zoomBtn) zoomBtn.focus();
+      });
+      document.body.appendChild(dlg);
+      if (typeof dlg.showModal === "function") dlg.showModal(); else dlg.setAttribute("open", "");
+      closeBtn.focus();
+    }
 
     function paintMedia() {
       D.clear(frame);
-      frame.classList.remove("zoom");
       if (mode === "compare" && compareAsset) {
         frame.appendChild(h("div.record__compare", null,
           h("figure", null, ui.media({ src: asset.file.url, alt: asset.alt }), h("figcaption", { text: asset.id + " · 当前对象" })),
           h("figure", null, ui.media({ src: compareAsset.file.url, alt: compareAsset.alt }), h("figcaption", { text: compareAsset.id + " · 同组比较" }))));
         caption.textContent = "同组并置不代表同一遗址或同一年代";
       } else {
-        var img = h("img", { src: asset.file.url, alt: asset.alt, width: asset.file.width, height: asset.file.height, decoding: "async" });
-        frame.appendChild(img);
-        if (mode === "detail") {
-          frame.classList.add("zoom");
-          caption.textContent = "放大模式只放大原图，不补纹、不补缺、不改变器形";
-        } else {
-          caption.textContent = "按原图比例完整显示，色彩为原图原色";
-        }
+        frame.appendChild(h("img", { src: asset.file.url, alt: asset.alt, width: asset.file.width, height: asset.file.height, decoding: "async" }));
+        caption.textContent = "按原图比例完整显示，色彩为原图原色";
       }
       Array.prototype.forEach.call(tools.children, function (btn) {
         var on = btn.dataset.mode === mode;
@@ -190,17 +215,20 @@
         btn.setAttribute("aria-pressed", on ? "true" : "false");
       });
     }
-    [["whole", "整体"], ["detail", "放大"], ["compare", "比较"]].forEach(function (item) {
+    [["whole", "整体"], ["compare", "比较"]].forEach(function (item) {
       tools.appendChild(h("button", {
         type: "button", dataset: { mode: item[0] }, text: item[1],
         disabled: item[0] === "compare" && !compareAsset,
         onclick: function () { mode = item[0]; paintMedia(); },
       }));
     });
+    zoomBtn = h("button.btn.btn--ghost.record__zoom", { type: "button",
+      onclick: function () { openLightbox(mode === "compare" && compareAsset ? compareAsset : asset); } },
+      "放大查看", h("span", { "aria-hidden": "true", text: "⤢" }));
     paintMedia();
 
     return h("section.page.record", null,
-      h("div.record__media", null, tools, frame, caption),
+      h("div.record__media", null, h("div.record__toolbar", null, tools, zoomBtn), frame, caption),
       h("div.record__copy", null,
         ui.link("/atlas", "go-link", [h("span", { "aria-hidden": "true", text: "←" }), "返回完整图鉴"]),
         h("p.eyebrow", null, "对象档案", h("span.en", { text: asset.id })),

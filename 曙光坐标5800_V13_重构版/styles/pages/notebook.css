@@ -8,6 +8,7 @@
 .note-progress small { color: var(--muted); font-size: var(--fs-meta); }
 .note-progress b { display: flex; align-items: baseline; gap: .3em; font-family: var(--serif); font-size: 40px; font-weight: 600; font-variant-numeric: tabular-nums; }
 .note-progress b span { color: var(--muted); font-family: var(--sans); font-size: var(--fs-meta); font-weight: 400; }
+.note-progress__sub { color: var(--muted); font-size: var(--fs-meta); font-style: normal; }
 
 .first-run { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--s-6); align-items: center; margin-bottom: var(--s-7); padding: var(--s-6); background: var(--paper-bright); border: 1px solid var(--line-soft); border-radius: var(--r-sm); }
 /* 引导块是次级提示，字级不与页面主标题竞争 */
@@ -24,6 +25,15 @@
   background:
     repeating-linear-gradient(180deg, transparent 0 27px, var(--line-soft) 27px 28px),
     var(--paper-bright);
+}
+/* 纸面纹理压到很低的透明度：只提供纤维感，不制造古风模板 */
+.note-cover__paper {
+  position: absolute; inset: 0; z-index: 0;
+  background: url("../../assets/scene/note-paper.webp") center / cover no-repeat;
+  opacity: .16; mix-blend-mode: multiply; pointer-events: none;
+}
+.note-cover > *:not(.note-cover__paper) { position: relative; z-index: 1; }
+.note-cover--x {
   border: 1px solid var(--line);
   border-radius: var(--r-sm);
   overflow: hidden;

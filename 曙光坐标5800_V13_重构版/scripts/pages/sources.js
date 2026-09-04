@@ -85,40 +85,54 @@
       h("header.page-intro", null,
         ui.eyebrow("来源、版权与方法", "SOURCES & METHOD"),
         h("h1", { text: "来源与方法", tabindex: "-1" }),
-        h("p", { text: "把证据等级、限定词、图片版权和 AI 使用范围公开，是本站内容的一部分，而不是页脚免责。" })),
+        h("p", { text: "把证据等级、限定词、图片版权和 AI 使用范围公开，是本站内容的一部分，而不是页脚免责。" }),
+        h("p.note-strip", null, h("span", null, h("b", { text: "关于外链：" }),
+          "带 ↗ 的条目指向外部机构网站，打开需要联网。站内的事实、图片与开放数据全部随页面本地提供，断网时仍可查阅。"))),
 
-      h("section", null, ui.sectionHead({ eyebrow: "三条工作原则", title: "我们如何决定写什么、不写什么", split: true, lede: "越是想让公众记住，越要说明这句话是怎么来的。" }), principles()),
+      h("nav.appendix-toc", { "aria-label": "本页目录" },
+        [["principles", "工作原则"], ["claims", "证据卡"], ["register", "来源清单"],
+         ["glossary", "公众术语"], ["workbook", "开放数据"]].map(function (item) {
+          return h("a", { href: "#sec-" + item[0], text: item[1],
+            onclick: function (e) {
+              e.preventDefault();
+              var el = document.getElementById("sec-" + item[0]);
+              if (el) { el.scrollIntoView({ block: "start" }); el.focus({ preventScroll: true }); }
+            } });
+        })),
 
-      h("section", null,
+      h("section#sec-principles", { tabindex: "-1" }, ui.sectionHead({ eyebrow: "三条工作原则", title: "我们如何决定写什么、不写什么", split: true, lede: "越是想让公众记住，越要说明这句话是怎么来的。" }), principles()),
+
+      h("section#sec-claims", { tabindex: "-1" },
         ui.sectionHead({ eyebrow: "核心证据卡", eyebrowEn: "20 VERIFIED CLAIMS", title: "每一句结论，都带着它的边界", split: true,
           lede: "20 张卡片同时回答「我们如何知道」和「它不能证明什么」。" }),
         claims()),
 
-      h("section", null,
+      h("section#sec-register", { tabindex: "-1" },
         ui.sectionHead({ eyebrow: "核心来源", eyebrowEn: "SOURCE REGISTER", title: "可以逐条回查的来源清单", split: true,
           lede: "完整 50 条事实、20 项文化来源、8 项技术来源与 8 组口径冲突，可在开放数据文件中继续核验。" }),
         h("div.source-register", null, D.sources.map(function (source) {
-          return h("a", { href: source.url, target: "_blank", rel: "noreferrer" },
+          return h("a", { href: source.url, target: "_blank", rel: "noreferrer",
+              title: "外部来源，打开需联网" },
             h("span.id", { text: source.id }),
             h("b", { text: source.title }),
             h("em", { text: source.publisher }),
-            h("span.grade", { text: source.grade + " ↗" }));
+            h("span.grade", null, source.grade, h("span.ext", { "aria-label": "外部来源，需联网", text: " ↗" })));
         }))),
 
-      h("section", null,
+      h("section#sec-glossary", { tabindex: "-1" },
         ui.sectionHead({ eyebrow: "公众阅读术语", eyebrowEn: "READING TOOLS", title: "术语是工具，不是门槛", split: true,
           lede: "它们帮助你识别一句话属于事实、解释，还是仍然开放的问题。" }),
         h("div.glossary-grid", null, GLOSSARY.map(function (item) {
           return h("article", null, h("b", { text: item[0] }), h("p", { text: item[1] }));
         }))),
 
-      h("section.workbook", { "aria-labelledby": "workbook-title" },
+      h("section#sec-workbook.workbook", { "aria-labelledby": "workbook-title", tabindex: "-1" },
         h("div.workbook__head", null,
           h("div", null,
             ui.eyebrow("开放研究数据表", "OPEN RESEARCH WORKBOOK · V12"),
             h("h2#workbook-title", { text: "一个可筛选的完整工作簿", style: { margin: "12px 0 8px" } }),
             h("p", { text: "将本站的事实、来源、口径、图片许可与 AI 说明统一收进一个 Excel 工作簿。适合公众核验、教师备课与评审审查。", style: { margin: 0, color: "var(--ink-soft)" } })),
-          h("a.workbook__dl", { href: "downloads/曙光坐标5800_开放研究数据_v12.xlsx", download: "" },
+          h("a.workbook__dl", { href: "downloads/shuguang5800_open_research_v12.xlsx", download: "曙光坐标5800_开放研究数据_v12.xlsx" },
             h("span", { text: "XLSX · 约 103 KB" }), h("b", { text: "下载完整工作簿 ↓" }))),
         h("table.sheet-table", null,
           h("thead", null, h("tr", null, h("th", { text: "工作表" }), h("th", { text: "包含内容" }), h("th", { text: "公开记录" }))),

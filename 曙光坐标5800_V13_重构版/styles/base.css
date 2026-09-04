@@ -120,6 +120,10 @@ table { border-collapse: collapse; width: 100%; }
    仅 .media--ambient（序厅氛围图）允许一次轻度压暗，以保证叠字对比度。 */
 .media { position: relative; }
 
+/* diagram：带标注的示意图，必须完整可读，不得裁掉文字 */
+.media--diagram { display: grid; place-items: center; background: var(--paper-bright); border: 1px solid var(--line-soft); border-radius: var(--r-sm); }
+.media--diagram > img { width: 100%; height: auto; object-fit: contain; }
+
 .media--scene, .media--ambient {
   overflow: hidden;
   background: var(--paper-deep);

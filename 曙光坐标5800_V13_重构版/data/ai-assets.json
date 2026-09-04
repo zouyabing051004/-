@@ -1,7 +1,7 @@
 {
   "version": "1.0",
-  "updatedAt": "2026-07-16",
-  "disclosure": "AI生成资产只用于非证据性策展视觉和研究性概念模型，不作为遗址实景、文物照片、地图或考古结论。",
+  "updatedAt": "2026-09-04",
+  "disclosure": "AI生成资产只用于非证据性策展视觉和研究性概念模型，不作为遗址实景、文物照片、地图或考古结论。外部 AI 素材经逐张核查后使用；与事实不符、会伪造空间／数量关系或属于禁用装饰母题的，一律剔除并改为站内自绘示意。",
   "assets": [
     {
       "id": "AI-001",
@@ -33,7 +33,12 @@
       "label": "研究性概念模型／设计示意",
       "aiGenerated": true,
       "factRole": "interpretive-only",
-      "factReferences": ["CLM-005", "CLM-006", "CLM-007", "SRC-02"],
+      "factReferences": [
+        "CLM-005",
+        "CLM-006",
+        "CLM-007",
+        "SRC-02"
+      ],
       "promptSummary": "只表现辽西山脊上的低矮土石台基基础、夯土层和测绘线，不出现屋顶、宫殿、人物或仪式。",
       "negativeConstraints": "不对应实际台基位置、数量和比例；禁止上部建筑、生活场景、伪文字与地图。",
       "alt": "AI生成的土石台基研究性概念模型"
@@ -50,7 +55,10 @@
       "label": "AI生成材料模型／设计示意",
       "aiGenerated": true,
       "factRole": "interpretive-only",
-      "factReferences": ["CLM-012", "SRC-09"],
+      "factReferences": [
+        "CLM-012",
+        "SRC-09"
+      ],
       "promptSummary": "以国际考古博物馆实体模型摄影语言表现三重同心土石环、夯土和材料纹理，不出现建筑、人物或仪式。",
       "negativeConstraints": "不对应遗址测绘、保存状态和建筑原貌；禁止文字、比例尺、文物与生活场景。",
       "alt": "AI生成的三重环形土石材料模型设计示意"
@@ -67,14 +75,23 @@
       "label": "AI生成理论地景模型／设计示意",
       "aiGenerated": true,
       "factRole": "interpretive-only",
-      "factReferences": ["CLM-018", "CLM-019", "CLM-020", "CLM-021", "CLM-022", "SRC-01"],
+      "factReferences": [
+        "CLM-018",
+        "CLM-019",
+        "CLM-020",
+        "CLM-021",
+        "CLM-022",
+        "SRC-01"
+      ],
       "promptSummary": "辽西山脊河谷的实体地形模型，以克制的材料变化表达调查带来密度认识，不画真实地图边界。",
       "negativeConstraints": "不表达518个网格的真实位置和5个聚落群的真实边界；禁止地图、文字、建筑与聚落复原。",
       "alt": "AI生成的辽西山地调查地景材料模型"
     },
     {
       "id": "AI-005",
-      "files": ["/og.png"],
+      "files": [
+        "/og.png"
+      ],
       "tool": "GPT Image / Image 2 + deterministic SVG typography",
       "generatedAt": "2026-07-15",
       "use": "网站社交分享预览图",
@@ -87,12 +104,54 @@
     },
     {
       "id": "GEN-QR-001",
-      "files": ["/media/assets/generated/site-qr.png"],
+      "files": [
+        "/media/assets/generated/site-qr.png"
+      ],
       "tool": "QuickChart QR generator",
       "generatedAt": "2026-07-15",
       "use": "个人考古笔记报告与提交材料中的公开网址二维码",
       "aiGenerated": false,
       "encodes": "https://shuguang-5800.modymarylou7.chatgpt.site"
+    },
+    {
+      "id": "AI-006",
+      "files": [
+        "/assets/scene/hero-dawn-valley.webp",
+        "/assets/scene/hero-dawn-portrait.webp",
+        "/assets/scene/band-cloudsea.webp",
+        "/assets/scene/lab01-valley.webp",
+        "/assets/scene/note-paper.webp",
+        "/assets/scene/stage-light.webp"
+      ],
+      "tool": "外部提供的 AI 素材包（4K 场景图），站内二次裁切与压缩",
+      "generatedAt": "2026-09-04",
+      "use": "序厅主视觉、章节／区块之间的过渡带、实验页氛围底图、札记纸面、对象之证区块的展厅顶光",
+      "label": "AI生成氛围视觉",
+      "aiGenerated": true,
+      "factRole": "none",
+      "promptSummary": "山脊晨光、云海、河谷、纸面与展台顶光等无主体的氛围底图，用作版面材质与光线，不承担任何事实。",
+      "negativeConstraints": "不表现遗址实景、文物、人物、建筑复原、地图、地层剖面或任何考古数据；不作为证据层图片，不进入开放图鉴。",
+      "alt": "AI生成的晨光、云海、河谷、纸面与展厅顶光氛围底图",
+      "reviewNote": "stage-light.webp 由素材包展台图裁出被照亮的展墙部分，去掉台座与山水；其余为原图压缩。"
+    },
+    {
+      "id": "AI-REJ-001",
+      "files": [
+        "(未采用) 辽宁红山文化区地图",
+        "(未采用) 九节点关系图谱",
+        "(未采用) AI 矩阵图 / AI 时间线",
+        "(未采用) 考古地层剖面示意图",
+        "(未采用) 山水祥云纸面 wash-landscape",
+        "(未采用) 金线暗底 lab-dark"
+      ],
+      "tool": "外部提供的 AI 素材包",
+      "generatedAt": "2026-09-04",
+      "use": "经核查后未采用，不随成品发布",
+      "label": "已核查并剔除",
+      "aiGenerated": true,
+      "factRole": "none",
+      "reviewNote": "地图把牛河梁画在朝阳东北、并落在所标「红山文化区」之外，与事实不符；九节点图谱、矩阵图与时间线会伪造 LAB02／04／05 明确声明为「不表示真实位置与密度」的空间与数量关系；地层剖面图把彩陶罐、人像、玉璧画进层位，在牛河梁语境中会被读成出土物，且其标注文字在移动端不可读；wash-landscape 与 lab-dark 带祥云团花与金线暗底，属于本站明令回避的「国潮模板」母题。前两类改由站内自绘：辽西相对位置示意（SVG）与地层测年教学示意（HTML/CSS），均为真文本、可缩放、不描绘任何器物。",
+      "alt": ""
     }
   ]
 }
