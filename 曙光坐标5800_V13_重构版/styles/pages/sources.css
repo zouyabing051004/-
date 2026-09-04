@@ -6,22 +6,30 @@
 
 .principle-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-6); }
 .principle { display: grid; gap: var(--s-3); align-content: start; }
-.principle .media { aspect-ratio: 16 / 10; border-radius: var(--r-sm); }
+.principle .media--scene { aspect-ratio: 16 / 10; }
+.principle .media--object { --plate-h: 200px; }
 .principle .no { color: var(--cinnabar); font-family: var(--mono); font-size: var(--fs-meta); font-weight: 700; }
 .principle h3 { font-size: var(--fs-h4); }
 .principle p { margin: 0; color: var(--ink-soft); font-size: var(--fs-meta); line-height: 1.7; }
 
 /* 证据卡：图小、文字为主，避免又一轮大图卡片 */
 .claim-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-5); }
-.claim { display: grid; grid-template-columns: 132px minmax(0, 1fr); gap: var(--s-4); padding: var(--s-4); background: var(--paper-bright); border: 1px solid var(--line-soft); border-radius: var(--r-sm); }
-.claim .media { aspect-ratio: 4 / 5; border-radius: var(--r-xs); }
+.claim { display: grid; grid-template-columns: 146px minmax(0, 1fr); gap: var(--s-5); align-items: start; padding: var(--s-5); background: var(--paper-bright); border: 1px solid var(--line-soft); border-radius: var(--r-sm); }
+.claim .media--scene { aspect-ratio: 1; }
+.claim .media--object {
+  --plate-h: 146px; align-items: center; padding-bottom: 0;
+  background: var(--paper-deep); border-radius: var(--r-xs);
+}
+.claim .media--object > img { padding: var(--s-2); }
+.claim .media--object::after { display: none; }
 .claim__copy { display: grid; gap: var(--s-2); align-content: start; }
-.claim__copy .ids { color: var(--muted); font-family: var(--mono); font-size: var(--fs-meta-sm); }
+.claim__copy .ids { color: var(--muted); font-family: var(--mono); font-size: var(--fs-meta-sm); letter-spacing: .04em; }
 .claim__copy h3 { font-size: var(--fs-body-lg); }
 .claim__copy p { margin: 0; color: var(--ink-soft); font-size: var(--fs-meta); line-height: 1.7; }
 .claim__limit { padding-left: var(--s-3); border-left: 2px solid var(--cinnabar); }
 .claim__limit b { display: block; color: var(--cinnabar); font-size: var(--fs-meta); }
-.claim__kind { position: absolute; left: 6px; bottom: 6px; padding: 2px 6px; color: var(--paper-bright); font-size: var(--fs-meta-sm); background: rgba(20, 23, 20, .86); border-radius: var(--r-xs); }
+.claim__plate { display: grid; gap: var(--s-2); }
+.claim__kind { justify-self: start; padding: 2px 8px; color: var(--muted); font-size: var(--fs-meta-sm); background: var(--paper-deep); border-radius: var(--r-xs); }
 
 /* 来源登记 */
 .source-register { display: grid; border-top: 1px solid var(--line); }
@@ -57,7 +65,8 @@
 
 /* 无障碍页 */
 .a11y-example { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: clamp(28px, 4vw, 56px); align-items: center; }
-.a11y-example .media { aspect-ratio: 3 / 2; border: 1px solid var(--line-soft); border-radius: var(--r-sm); }
+.a11y-example .media--scene { aspect-ratio: 3 / 2; }
+.a11y-example .media--object { --plate-h: min(40svh, 360px); }
 
 @media (max-width: 1024px) { .principle-grid { grid-template-columns: 1fr; } .claim-grid { grid-template-columns: 1fr; } }
 @media (max-width: 860px) {

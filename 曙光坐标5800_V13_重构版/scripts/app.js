@@ -29,32 +29,6 @@
     return route.name === "home" ? "曙光坐标·5800｜红山—牛河梁文明交互志" : title + "｜曙光坐标·5800";
   }
 
-  /* 进场动效：区块进入视口时淡入（尊重 reduced-motion） */
-  var observer = null;
-  var revealSupported = "IntersectionObserver" in window &&
-    !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (revealSupported) document.documentElement.classList.add("has-reveal");
-
-  function revealAll(scope) {
-    Array.prototype.forEach.call(scope.querySelectorAll(".reveal"), function (node) { node.classList.add("is-in"); });
-  }
-
-  function observeReveals(scope) {
-    var nodes = scope.querySelectorAll(".reveal");
-    if (!nodes.length) return;
-    if (!revealSupported) { revealAll(scope); return; }
-    if (!observer) {
-      observer = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting) { entry.target.classList.add("is-in"); observer.unobserve(entry.target); }
-        });
-      }, { rootMargin: "0px 0px -8% 0px", threshold: .08 });
-    }
-    Array.prototype.forEach.call(nodes, function (node) { observer.observe(node); });
-    /* 兜底：任何原因导致观察器未回调时，1.2 秒后强制显示，内容永远不会被动效吃掉 */
-    window.setTimeout(function () { revealAll(scope); }, 1200);
-  }
-
   function viewFor(route) {
     var pages = D.pages;
     if (route.name === "tour") return pages.tour(route);
@@ -71,7 +45,6 @@
     D.clear(headerSlot).appendChild(D.chrome.header(route));
     D.clear(main).appendChild(viewFor(route));
     document.title = documentTitle(route);
-    observeReveals(main);
     if (!firstPaint) {
       window.scrollTo({ top: 0, behavior: "instant" });
       /* 把焦点交给新页面的主标题，键盘与读屏用户不会停留在上一页 */

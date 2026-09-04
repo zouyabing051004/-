@@ -107,16 +107,59 @@ table { border-collapse: collapse; width: 100%; }
 
 ::selection { color: var(--paper-bright); background: var(--cinnabar); }
 
-/* ---------- 图像呈现规则 ----------
-   .media--object 器物 / 馆藏 / 对象：完整显示器形，不裁掉关键形态，原色。
-   .media--scene  景观 / 方法 / 场景：可裁切填充，仍为原色。
-   仅 .media--ambient（序厅氛围图）允许轻度压暗，以保证叠字对比度。 */
-.media { position: relative; overflow: hidden; background: var(--paper-deep); }
-.media > img { width: 100%; height: 100%; }
-.media--object { background: var(--paper-bright); }
-.media--object > img { object-fit: contain; }
-.media--scene > img { object-fit: cover; }
-.media--ambient > img { object-fit: cover; filter: brightness(.86); }
+/* ---------- 图像的两种身份 ----------
+   一张图要么是「一件器物」，要么是「一张照片」，页面用两种呈现方式把这件事说清楚：
+
+   .media--object  器物 / 馆藏对象 → 陈列台版式
+       按原始比例呈现，底边对齐同一条陈列基线，不套底板方框。
+       器形四周的留白因此是展台，而不是「没填满的框」。
+   .media--scene   地景 / 方法 / 研究模型 → 画框版式
+       作为一张照片满幅呈现在画框内。
+
+   两者都保持原色：全站没有任何统一滤镜。
+   仅 .media--ambient（序厅氛围图）允许一次轻度压暗，以保证叠字对比度。 */
+.media { position: relative; }
+
+.media--scene, .media--ambient {
+  overflow: hidden;
+  background: var(--paper-deep);
+  border-radius: var(--r-sm);
+}
+.media--scene > img, .media--ambient > img { width: 100%; height: 100%; object-fit: cover; }
+.media--ambient > img { filter: brightness(.86); }
+
+.media--object {
+  --plate-h: 220px;              /* 各处按版面覆盖这一个变量即可 */
+  display: grid;
+  align-items: end;
+  justify-items: center;
+  height: var(--plate-h);        /* 固定台高，一行之内基线必然对齐 */
+  padding-bottom: var(--s-3);
+}
+.media--object > img {
+  width: auto; height: auto;
+  max-width: 100%;
+  /* 用确定值而不是百分比：网格项的百分比高度在这里不可靠 */
+  max-height: calc(var(--plate-h) - var(--s-3));
+  object-fit: contain;
+}
+/* 陈列基线：让形状各异的器物落在同一条线上 */
+.media--object::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0;
+  height: 1px; background: var(--line);
+}
+.on-night .media--object::after, .on-dark .media--object::after { background: var(--line-night); }
+
+/* 小缩略图：尺寸不足以撑起一座陈列台，改用居中软垫 */
+.media--object.is-thumb {
+  align-items: center;
+  padding-bottom: 0;
+  background: var(--paper-deep);
+  border-radius: var(--r-xs);
+}
+.media--object.is-thumb > img { max-height: var(--plate-h); padding: var(--s-2); }
+.media--object.is-thumb::after { display: none; }
+.on-night .media--object.is-thumb, .on-dark .media--object.is-thumb { background: var(--night-3); }
 
 /* 图片身份边界标签：任何图片旁都必须能读到它「是什么 / 不能代表什么」 */
 .media-boundary {

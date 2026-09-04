@@ -10,9 +10,9 @@
 .tour__stage-copy { position: relative; display: grid; align-content: end; gap: var(--s-3); min-height: 100%; padding: clamp(28px, 4vw, 56px); }
 .tour__act { display: flex; align-items: baseline; gap: .5em; color: var(--dawn-bright); font-family: var(--mono); font-size: var(--fs-meta); font-weight: 700; }
 .tour__act em { color: var(--on-night-faint); font-style: normal; }
-.tour__stage-copy h1 { max-width: 16ch; color: var(--on-night); font-size: clamp(30px, 3.6vw, 52px); }
-.tour__question { max-width: 32ch; margin: 0; color: var(--on-night); font-family: var(--serif); font-size: var(--fs-quote); line-height: 1.55; }
-.tour__stage .media-boundary { max-width: 44ch; margin-top: var(--s-4); }
+.tour__stage-copy h1 { max-width: 14em; color: var(--on-night); font-size: clamp(30px, 3.6vw, 52px); }
+.tour__question { max-width: 20em; margin: 0; color: var(--on-night); font-family: var(--serif); font-size: var(--fs-quote); line-height: 1.55; }
+.tour__stage .media-boundary { max-width: 34em; margin-top: var(--s-4); }
 
 .tour__panel { display: grid; align-content: start; gap: var(--s-5); padding: clamp(24px, 3vw, 44px); background: var(--paper-bright); border-left: 1px solid var(--line); }
 .tour__topline { display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); color: var(--muted); font-size: var(--fs-meta); }

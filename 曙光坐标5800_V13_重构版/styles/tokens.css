@@ -61,15 +61,15 @@
   --fs-nav:      15px;
   --fs-body:     17px;
   --fs-body-lg:  18px;
-  --fs-lede:     clamp(18px, 1.35vw, 20px);
+  --fs-lede:     clamp(17px, 1.25vw, 19px);
   --fs-quote:    clamp(20px, 1.9vw, 26px);
   --fs-h4:       clamp(17px, 1.4vw, 20px);
   --fs-h3:       clamp(21px, 2.1vw, 27px);
-  --fs-h2:       clamp(32px, 4.4vw, 58px);
+  --fs-h2:       clamp(30px, 3.9vw, 52px);
   --fs-h1:       clamp(46px, 6.2vw, 92px);
   --fs-numeral:  clamp(52px, 7.4vw, 104px);   /* 三个坐标的数字 */
 
-  --lh-tight:    1.14;
+  --lh-tight:    1.12;
   --lh-title:    1.24;
   --lh-body:     1.75;
   --lh-loose:    1.8;
@@ -91,8 +91,14 @@
   --s-6:  32px;
   --s-7:  48px;
   --s-8:  64px;
-  --s-9:  clamp(72px, 9vw, 120px);   /* 区块纵向节奏：桌面 96–120 / 移动 64–80 */
+  --s-9:  clamp(72px, 9vw, 120px);
   --s-10: clamp(96px, 12vw, 160px);
+
+  /* 纵向节奏分三级：叙事段落最松，同族相邻区块最紧。
+     全站不再是一律 120px 的等距堆叠。 */
+  --rhythm-lg: clamp(88px, 10vw, 136px);
+  --rhythm-md: clamp(68px, 7.6vw, 104px);
+  --rhythm-sm: clamp(48px, 5.4vw, 76px);
 
   /* ---------- 形状与阴影 ---------- */
   --r-xs: 2px;

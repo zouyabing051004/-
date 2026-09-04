@@ -2,20 +2,25 @@
    Motion — 只保留有叙事意义的动效
    ============================================================ */
 
-/* 进场：区块进入视口时 260–420ms 淡入 + 小位移
-   只有在脚本确认 IntersectionObserver 可用、且用户未要求减少动效时，
-   才会给 <html> 加上 .has-reveal —— 因此任何异常情况下内容都保持可见，绝不会「消失」。 */
-.has-reveal .reveal { opacity: 0; transform: translateY(14px); }
-.has-reveal .reveal.is-in {
-  opacity: 1; transform: none;
-  transition: opacity var(--dur-3) var(--ease), transform var(--dur-3) var(--ease);
-}
+/* 页面静止时即完整可读：不使用「先隐藏、滚动到才出现」的进场动画。
+   需要的一点点生气交给 hover 与序厅的曙光呼吸，内容本身永远不等动效。 */
 
-/* 文物 hover 最多 1.02，避免夸张缩放 */
+/* hover 反馈按元素角色分配，而不是给所有东西盖同一个阴影：
+   有实体面的卡片微微抬起；陈列台上的器物则是「被拿近一点看」——
+   器物轻抬、陈列基线转为朱砂。 */
 .hover-lift { transition: transform var(--dur-2) var(--ease), box-shadow var(--dur-2) var(--ease); }
-.hover-lift:hover { transform: translateY(-2px); box-shadow: var(--shadow-1); }
+.hover-lift:hover { transform: translateY(-2px); }
+.card.hover-lift:hover { box-shadow: var(--shadow-1); }
+
 .hover-zoom > img { transition: transform var(--dur-3) var(--ease); }
 .hover-zoom:hover > img { transform: scale(1.02); }
+
+.plate-hover .media--object > img,
+.plate-hover .media--object::after { transition: transform var(--dur-2) var(--ease), background var(--dur-2) var(--ease); }
+.plate-hover:hover .media--object > img { transform: translateY(-4px); }
+.plate-hover:hover .media--object::after { background: var(--cinnabar); }
+.plate-hover .media--scene > img { transition: transform var(--dur-3) var(--ease); }
+.plate-hover:hover .media--scene > img { transform: scale(1.02); }
 
 /* 序厅地层线与曙光的极轻呼吸 */
 @keyframes dawn-breathe {
@@ -32,6 +37,6 @@
     transition-duration: .001ms !important;
     scroll-behavior: auto !important;
   }
-  .reveal { opacity: 1; transform: none; }
-  .hover-lift:hover, .hover-zoom:hover > img { transform: none; }
+  .hover-lift:hover, .hover-zoom:hover > img,
+  .plate-hover:hover .media--object > img, .plate-hover:hover .media--scene > img { transform: none; }
 }

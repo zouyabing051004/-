@@ -7,15 +7,27 @@
 #main-content:focus { outline: none; }
 
 .page { width: var(--page); margin-inline: auto; }
-.section { padding-block: var(--s-9); }
-.section--tight { padding-block: var(--s-8); }
+.section { padding-block: var(--rhythm-md); }
+.section--lg { padding-block: var(--rhythm-lg); }
+.section--sm { padding-block: var(--rhythm-sm); }
 .section--flush-top { padding-top: 0; }
 
-/* 分区标题：中文为主，英文只作极小副标 */
-.section-head { display: grid; gap: var(--s-4); margin-bottom: var(--s-7); }
-.section-head--split { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: var(--s-7); align-items: end; }
-.section-head h2 { max-width: 18ch; }
-.section-head p { max-width: 56ch; margin: 0; color: var(--ink-soft); font-size: var(--fs-lede); }
+/* 分区标题＝一条编辑式抬头带：顶边细线定住栏目，
+   标题在左、导语在右，中间的空白因此属于版面结构而不是没排满。 */
+.section-head {
+  display: grid; gap: var(--s-4);
+  margin-bottom: var(--s-7);
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--line);
+}
+.section-head--split {
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 30em);
+  gap: var(--s-6) var(--s-7);
+  align-items: end;
+}
+.section-head h2 { max-width: 16em; }
+.section-head p { max-width: 30em; margin: 0; color: var(--ink-soft); font-size: var(--fs-lede); }
+.on-night .section-head, .on-dark .section-head { border-top-color: var(--line-night); }
 
 .eyebrow {
   display: flex; align-items: center; gap: var(--s-3);

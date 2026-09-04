@@ -62,14 +62,16 @@
   function claims() {
     return h("div.claim-grid", null, D.evidenceCards.map(function (card) {
       var assetId = card.image.assetId;
-      var figure = h("span.media.media--" + (card.image.fit === "contain" ? "object" : "scene"), null,
+      var kind = card.image.fit === "contain" ? "object" : "scene";
+      var figure = h("span.media.media--" + kind, null,
         h("img", { src: ui.mediaUrl(card.image.src), alt: card.image.alt, loading: "lazy", decoding: "async",
-          style: card.image.objectPosition ? { objectPosition: card.image.objectPosition } : null }),
-        h("span.claim__kind", { text: card.image.kind }));
-      return h("article.claim", null,
+          style: card.image.objectPosition ? { objectPosition: card.image.objectPosition } : null }));
+      var plate = h("div.claim__plate", null,
         assetId ? ui.link("/atlas/" + assetId, "", figure, { "aria-label": "在开放图鉴查看 " + assetId + " 的图片资料" }) : figure,
+        h("span.claim__kind", { text: card.image.kind }));
+      return h("article.claim", null, plate,
         h("div.claim__copy", null,
-          h("span.ids", { text: card.id + " · " + card.claimIds.join(" + ") }),
+          h("span.ids", { text: card.id + "　" + card.claimIds.join(" + ") }),
           h("h3", { text: card.title }),
           h("p", { text: card.statement }),
           h("div.claim__limit", null, h("b", { text: "不要误读" }), h("p", { text: card.boundary })),

@@ -328,7 +328,7 @@
         h("div.lab-cards", null, D.labs.map(function (lab, i) {
           var guide = D.labGuides[lab.id];
           return ui.link("/lab/" + lab.slug, "lab-card", [
-            h("span.media.media--" + ui.imagePresentation(lab.image) + ".lab-card__media", { "aria-hidden": "true" },
+            h("span.media.media--scene.lab-card__media", { "aria-hidden": "true" },
               h("img", { src: ui.mediaUrl(lab.image), alt: "", loading: i === 0 ? "eager" : "lazy", decoding: "async", style: lab.objectPosition ? { objectPosition: lab.objectPosition } : null })),
             h("span.lab-card__copy", null,
               h("span.no", { text: lab.no + " · " + guide.duration + " · " + guide.interaction }),

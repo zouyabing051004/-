@@ -19,7 +19,7 @@
             h("small", { text: chapter.eyebrow + "　·　" + (guide ? guide.readingTime : "") }),
             h("b", { text: chapter.title }),
             h("p", { text: guide ? guide.summary : chapter.thesis })),
-          h("span.media.media--" + ui.imagePresentation(chapter.image) + ".chapter-row__media", { "aria-hidden": "true" },
+          h("span.media.media--scene.chapter-row__media", { "aria-hidden": "true" },
             h("img", { src: ui.mediaUrl(chapter.image), alt: "", loading: "lazy", decoding: "async" })),
           h("span.chapter-row__go", { "aria-hidden": "true", text: "→" }),
         ]);

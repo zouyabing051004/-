@@ -10,6 +10,8 @@
 .note-progress b span { color: var(--muted); font-family: var(--sans); font-size: var(--fs-meta); font-weight: 400; }
 
 .first-run { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--s-6); align-items: center; margin-bottom: var(--s-7); padding: var(--s-6); background: var(--paper-bright); border: 1px solid var(--line-soft); border-radius: var(--r-sm); }
+/* 引导块是次级提示，字级不与页面主标题竞争 */
+.first-run h2 { max-width: 16em; font-size: var(--fs-h3); }
 .first-run .actions { display: flex; flex-wrap: wrap; gap: var(--s-3); }
 
 .note-layout { display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: clamp(28px, 4vw, 56px); align-items: start; }

@@ -41,7 +41,7 @@
       { num: "09",   label: "九台营造", en: "SCALE", text: scene("T03").conclusion, to: "/lab/nine-platforms", cta: "查看工程证据" },
       { num: "2026", label: "调查重绘", en: "REDRAW", text: lab("survey-redraw").conclusion, to: "/lab/survey-redraw", cta: "打开调查网格" },
     ];
-    return h("section.section.coordinates", { "aria-labelledby": "coord-title" },
+    return h("section.section.section--lg.coordinates", { "aria-labelledby": "coord-title" },
       h("div.page", null,
         ui.sectionHead({
           split: true, id: "coord-title", eyebrow: "三个文明坐标",
@@ -49,7 +49,7 @@
           lede: "它们分别回答「什么时候」「有多大」「我们的认识为什么还在变」。每个坐标都可以点开，亲手核对它成立的条件。",
         }),
         h("ol.coordinate-grid", null, items.map(function (item, index) {
-          return h("li.coordinate.reveal", null,
+          return h("li.coordinate", null,
             h("span.coordinate__num", { text: item.num }),
             h("span.coordinate__label", null, h("b", { text: item.label }), h("span", { text: item.en })),
             h("p", { text: item.text }),
@@ -141,7 +141,7 @@
   /* ---------- D. 九章预览（只展示 3 章） ---------- */
   function chroniclePreview() {
     var picks = ["jade-and-belief", "ritual-architecture", "discovery-and-redrawing"];
-    return h("section.section.chronicle-preview", { "aria-labelledby": "chron-title" },
+    return h("section.section.section--lg.chronicle-preview", { "aria-labelledby": "chron-title" },
       h("div.page", null,
         ui.sectionHead({
           split: true, id: "chron-title", eyebrow: "九章文明长卷",
@@ -151,9 +151,8 @@
         h("div.preview-grid", null, picks.map(function (slug) {
           var item = chapter(slug);
           var guide = D.chapterGuides[slug];
-          return ui.link("/chronicle/" + slug, "preview-card reveal hover-lift", [
-            h("span.media.media--" + ui.imagePresentation(item.image) + ".hover-zoom", { "aria-hidden": "true", style: { aspectRatio: "4 / 3", borderRadius: "3px" } },
-              h("img", { src: ui.mediaUrl(item.image), alt: "", loading: "lazy", decoding: "async" })),
+          return ui.link("/chronicle/" + slug, "preview-card plate-hover", [
+            ui.media({ src: item.image, alt: "" }),
             h("span.no", { text: item.no + " · " + guide.readingTime }),
             h("h3", { text: item.title }),
             h("p", { text: guide.summary }),
@@ -176,7 +175,7 @@
     if (!picks.length) return null;
 
     function item(asset, lead) {
-      return ui.link("/atlas/" + asset.id, "spotlight-item hover-lift", [
+      return ui.link("/atlas/" + asset.id, "spotlight-item plate-hover", [
         ui.media({ src: asset.file.url, alt: asset.alt, width: asset.file.width, height: asset.file.height, class: "hover-zoom" }),
         h("span", null,
           h("span.id", { text: asset.id + " · " + asset.groupLabel }),
@@ -200,7 +199,7 @@
 
   /* ---------- F. 结语 ---------- */
   function closing() {
-    return h("section.section.closing", null,
+    return h("section.section.section--lg.closing", null,
       h("div.page", null,
         ui.eyebrow("下一站"),
         h("h2", { text: "不只记住一个答案，带走一条你亲自确认过的证据。", style: { marginTop: "16px" } }),

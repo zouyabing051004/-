@@ -59,13 +59,14 @@
 
     function card(asset) {
       var kind = ui.imagePresentation(asset.file.url);
-      return ui.link("/atlas/" + asset.id, "atlas-card is-" + kind + " hover-lift", [
-        h("span.media.media--" + kind, { "aria-hidden": "false" },
+      return ui.link("/atlas/" + asset.id, "atlas-card is-" + kind + " plate-hover", [
+        h("span.media.media--" + kind, null,
           h("img", { src: asset.file.url, alt: asset.alt, width: asset.file.width, height: asset.file.height, loading: "lazy", decoding: "async" }),
-          h("span.atlas-card__grade", { title: "展示等级 " + asset.quality.grade, text: asset.quality.grade }),
           asset.id === "AX035" ? h("em.atlas-card__views", { text: "正反两面" }) : null),
         h("span.atlas-card__copy", null,
-          h("small", { text: asset.id + " · " + asset.groupLabel }),
+          h("span.atlas-card__meta", null,
+            h("span", { text: asset.id }),
+            h("span.grade", { title: "展示等级 " + asset.quality.grade, text: asset.quality.grade })),
           h("b", { text: asset.title.replace("（芝加哥艺术博物馆·正面）", "（芝加哥艺术博物馆）") }),
           h("em", { text: asset.source.institution || "来源机构资料未载" })),
       ]);
@@ -115,11 +116,14 @@
         h("h1", { text: "开放图鉴" }),
         h("p", { text: "全部 " + assets.length + " 张图片按开放许可使用，逐张保留身份、来源、许可与事实边界。第一次来可以先按问题进入；需要核验时再用关键词与分类检索。" })),
 
-      h("nav.preview-grid", { "aria-label": "按公众问题进入", style: { display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: "16px", marginBottom: "32px" } },
+      h("nav.atlas-paths", { "aria-label": "按公众问题进入" },
         [["/chronicle/ritual-architecture", "工程如何被看见", "从台、庙、坛与冢开始"],
          ["/chronicle/jade-and-belief", "玉如何进入秩序", "比较器形、墓序与语境"],
          ["/chronicle/discovery-and-redrawing", "认识为何仍在改变", "进入调查与方法图像"]].map(function (item) {
-          return ui.link(item[0], "card hover-lift", [h("small", { text: item[1], style: { color: "var(--muted)" } }), h("b", { text: item[2] }), h("span.go-link", { "aria-hidden": "true", text: "→" })]);
+          return ui.link(item[0], "atlas-path", [
+            h("small", { text: item[1] }),
+            h("span.row", null, h("b", { text: item[2] }), h("span.arrow", { "aria-hidden": "true", text: "→" })),
+          ]);
         })),
 
       h("div.atlas-tools", null,
@@ -232,7 +236,7 @@
         related.length ? h("section.record__related", null,
           h("header", null, ui.eyebrow("继续比较"), h("p", { text: "同组对象", style: { margin: "6px 0 0", color: "var(--muted)", fontSize: "var(--fs-meta)" } })),
           h("div.record__related-grid", null, related.map(function (item) {
-            return ui.link("/atlas/" + item.id, "hover-lift", [
+            return ui.link("/atlas/" + item.id, "plate-hover", [
               ui.media({ src: item.file.url, alt: "" }),
               h("small", { text: item.id }),
               h("b", { text: item.title }),
