@@ -1,7 +1,10 @@
 /* ============================================================
    文明长卷 — 数字展览画册（浅色编辑排版）
    ============================================================ */
-.page-intro { display: grid; gap: var(--s-4); padding-block: var(--rhythm-md) var(--s-7); max-width: 34em; }
+.page-intro { display: grid; gap: var(--s-4); padding-block: var(--rhythm-md) var(--s-7); max-width: 40em; }
+/* 手机首屏很短：页头上方留 100px 空白等于把 14% 的第一屏花在什么都没有的地方 */
+@media (max-width: 680px) { .page-intro { padding-block: var(--s-6) var(--s-6); } }
+.page-intro p { max-width: 34em; }
 .page-intro h1 { font-size: clamp(38px, 5.4vw, 72px); }
 .page-intro p { margin: 0; color: var(--ink-soft); font-size: var(--fs-lede); }
 
@@ -20,14 +23,14 @@
 .chapter-row__copy { grid-column: 2; }
 .chapter-row__media { grid-column: 3; }
 .chapter-row__go { grid-column: 4; }
-/* 图片左右交替形成阅读节奏；两侧列宽固定一致，避免「为设计而不齐」 */
-.chapter-row:nth-child(even) { grid-template-columns: 76px 296px minmax(0, 1fr) auto; }
-.chapter-row:nth-child(even) .chapter-row__media { grid-column: 2; }
-.chapter-row:nth-child(even) .chapter-row__copy { grid-column: 3; }
+/* 图片曾左右交替：九行读下来，标题左缘在 278px 与 598px 之间来回跳。
+   目录是用来扫的，扫描轴稳定比"版式有变化"更重要——章号、标题、摘要
+   因此固定在同一条左轴上，节奏交给图片本身。 */
 .chapter-row__no { color: var(--cinnabar); font-family: var(--serif); font-size: 34px; font-weight: 600; line-height: 1.2; font-variant-numeric: tabular-nums; }
 .chapter-row__media { aspect-ratio: 16 / 10; }
 .chapter-row__copy { display: grid; gap: var(--s-2); }
-.chapter-row__copy small { color: var(--muted); font-size: var(--fs-meta); }
+.chapter-row__copy small { display: flex; flex-wrap: wrap; gap: .35em 1.6em; color: var(--muted); font-size: var(--fs-meta); }
+.chapter-row__copy small em { font-style: normal; color: var(--muted); font-size: var(--fs-meta); }
 .chapter-row__copy b { font-family: var(--serif); font-size: clamp(22px, 2.4vw, 31px); font-weight: 600; line-height: 1.3; }
 .chapter-row__copy p { margin: 0; color: var(--ink-soft); font-size: var(--fs-small-body); line-height: 1.7; }
 .chapter-row__go { color: var(--muted); font-family: var(--mono); font-size: 20px; }

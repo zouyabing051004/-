@@ -111,7 +111,6 @@
 
     var section = h("section.page", null,
       h("header.page-intro", null,
-        ui.eyebrow("开放图鉴", "OPEN COLLECTION"),
         h("h1", { text: "开放图鉴" }),
         h("p", { text: "全部 " + assets.length + " 张图片按开放许可使用，逐张保留身份、来源、许可与事实边界。第一次来可以先按问题进入；需要核验时再用关键词与分类检索。" })),
 
@@ -174,7 +173,7 @@
       var scaleBtn = h("button.lightbox__scale", { type: "button", "aria-pressed": "false" }, "放大 2×");
       var dlg = h("dialog.lightbox", { "aria-label": item.title + "　放大查看" },
         h("div.lightbox__bar", null,
-          h("p.lightbox__title", null, h("b", { text: item.title }), h("span", { text: item.id + "　·　" + (item.source.institution || "来源机构资料未载") })),
+          h("p.lightbox__title", null, h("b", { text: item.title }), h("span", null, h("span", { text: item.id }), h("span", { text: item.source.institution || "来源机构资料未载" }))),
           h("div.lightbox__tools", null, scaleBtn, closeBtn)),
         h("div.lightbox__stage", null, img),
         h("p.lightbox__note", { text: "只放大原图，不补纹、不补缺、不改变器形。" + (item.editorial.factBoundary || "") }));

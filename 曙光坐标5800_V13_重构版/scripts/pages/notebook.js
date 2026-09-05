@@ -155,7 +155,6 @@
 
       D.clear(root);
       root.appendChild(h("header.page-intro", null,
-        ui.eyebrow("我的学习档案", "FIELD NOTE"),
         h("h1", { text: "我的考古笔记", tabindex: "-1" }),
         h("p", { text: "这里不奖励「记住标准答案」，而是记录你确认过的结论、仍保留的问题，以及可以继续走向哪里。内容只保存在当前浏览器。" })));
 
@@ -198,7 +197,7 @@
           confirmSection.appendChild(h("div.note-item", null, h("b", { text: "0" + (i + 1) }), h("p", { text: item })));
         });
       } else {
-        confirmSection.appendChild(ui.link("/lab", "note-empty", ["完成一个证据实验，第一条结论会出现在这里", h("span", { "aria-hidden": "true", text: "→" })]));
+        confirmSection.appendChild(ui.link("/lab", "note-empty", "完成一个证据实验，第一条结论会出现在这里"));
       }
 
       var reportBtn = h("button.btn.btn--primary", {
@@ -242,7 +241,7 @@
           confirmSection,
           h("section.note-section.note-open", null,
             h("p.label", { text: "02 · 仍然开放的问题" }),
-            OPEN_QUESTIONS.map(function (q) { return h("blockquote", { text: q }); })),
+            OPEN_QUESTIONS.map(function (q) { return h("blockquote", { text: D.stop(q) }); })),
           h("section.note-section", null,
             h("p.label", { text: "03 · 我的下一站" }),
             ui.goLink(state.collected.length < 5 ? "/lab" : "/atlas",

@@ -9,7 +9,7 @@
    有实体面的卡片微微抬起；陈列台上的器物则是「被拿近一点看」——
    器物轻抬、陈列基线转为朱砂。 */
 .hover-lift { transition: transform var(--dur-2) var(--ease), box-shadow var(--dur-2) var(--ease); }
-.hover-lift:hover { transform: translateY(-2px); }
+.hover-lift:hover { border-color: var(--line-strong); }
 .card.hover-lift:hover { box-shadow: var(--shadow-1); }
 
 .hover-zoom > img { transition: transform var(--dur-3) var(--ease); }

@@ -42,10 +42,9 @@
   content: ""; width: 26px; height: 2px; flex: none;
   background: linear-gradient(90deg, var(--cinnabar), var(--dawn));
 }
-.eyebrow .en {
-  color: var(--muted); font-family: var(--mono); font-size: var(--fs-meta-sm);
-  font-weight: 500; letter-spacing: var(--ls-label); text-transform: uppercase;
-}
+/* 眉标的第二段：只在它是真正的标准名（例如 WCAG 2.2 AA）时才出现。
+   不再做成加宽字距的全大写等宽小标签——那是模板腔，不是信息。 */
+.eyebrow .en { color: var(--muted); font-weight: 500; }
 
 .rule { height: 1px; border: 0; margin: 0; background: var(--line); }
 

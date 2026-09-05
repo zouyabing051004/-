@@ -59,7 +59,7 @@
       h("div.canvas-art", { "aria-hidden": "true" }, h("img", { src: "assets/scene/lab01-valley.webp", alt: "" })),
       h("div.canvas-scrim", { "aria-hidden": "true" }),
       h("div.time-scene", null, chart),
-      h("p.canvas-note", { text: "背景为 AI 生成晨光地景意象；时间带按公开年代口径等比绘制，不代表任何单次测年结果。" }));
+      h("p.canvas-note", { text: D.stop("背景为 AI 生成晨光地景意象；时间带按公开年代口径等比绘制，不代表任何单次测年结果。") }));
 
     function paint() {
       var band = bands[active];
@@ -82,7 +82,7 @@
 
     var inspector = h("div.lab-inspector", null,
       h("p.label", { text: "选择一个时间口径" }),
-      h("p.lab-hint", { text: "三条时间带画在同一条刻度上：它们互相重叠，但回答的问题并不相同。" }),
+      h("p.lab-hint", { text: D.stop("三条时间带画在同一条刻度上：它们互相重叠，但回答的问题并不相同。") }),
       tabs, reading);
     paint();
     return { canvas: canvas, inspector: inspector };
@@ -121,7 +121,7 @@
       panel.appendChild(h("p", { text: record.fact, style: { marginBottom: "16px" } }));
       panel.appendChild(h("div.state-list", null, record.metrics.map(function (m) { return stateRow(m[0], m[1]); })));
       panel.appendChild(h("div", { style: { marginTop: "16px" } }, ui.boundaryPair(record.confirm, record.boundary)));
-      if (record.why) panel.appendChild(h("p.lab-hint", { text: record.why, style: { marginTop: "12px" } }));
+      if (record.why) panel.appendChild(h("p.lab-hint", { text: D.stop(record.why), style: { marginTop: "12px" } }));
       Array.prototype.forEach.call(grid.children, function (btn, i) {
         var on = platform === i + 1;
         btn.classList.toggle("selected", on);
@@ -147,18 +147,17 @@
           h("img", { src: "assets/generated/nine-platforms-study.webp", alt: "" }))),
       h("div.canvas-scrim", { "aria-hidden": "true" }),
       h("div.canvas-title", null,
-        h("small", { text: "RELATION MATRIX" }),
         h("b", { text: "九台关系档案" }),
         h("span", { text: "3 × 3 仅为交互索引，不表达真实空间位置" })),
       grid,
       h("div.node-legend", { "aria-hidden": "true" },
         h("span", null, h("i.full"), "公开资料较充分"),
         h("span", null, h("i.thin"), "当前公开资料有限")),
-      h("p.canvas-note", { text: "AI生成材料模型／设计示意｜不表达台基真实位置、数量比例与建筑原貌" }));
+      h("p.canvas-note", { text: D.stop("AI生成材料模型／设计示意｜不表达台基真实位置、数量比例与建筑原貌") }));
 
     var inspector = h("div.lab-inspector", null,
       h("p.label", { text: "当前节点" }),
-      h("p.lab-hint", { text: "点击任一台基，这里会更新可确认的信息。" }),
+      h("p.lab-hint", { text: D.stop("点击任一台基，这里会更新可确认的信息。") }),
       panel);
     paint();
     return { canvas: canvas, inspector: inspector };
@@ -193,7 +192,7 @@
       panel.appendChild(h("h3", { text: current.label }));
       panel.appendChild(h("p", { text: current.text, style: { marginBottom: "16px" } }));
       panel.appendChild(h("div.state-list", null, current.cues.map(function (c) { return stateRow(c[0], c[1]); })));
-      panel.appendChild(h("p.lab-hint", { text: "这不是分数表。镜片越向解释移动，限定词、来源与尚未回答的问题越重要。", style: { marginTop: "16px" } }));
+      panel.appendChild(h("p.lab-hint", { text: D.stop("这不是分数表。镜片越向解释移动，限定词、来源与尚未回答的问题越重要。"), style: { marginTop: "16px" } }));
       Array.prototype.forEach.call(tabs.children, function (btn, i) {
         btn.classList.toggle("active", i === layer);
         btn.setAttribute("aria-pressed", i === layer ? "true" : "false");
@@ -212,7 +211,7 @@
           h("img", { src: "assets/artifacts_sites/A014_pregnant_female_torso_national_museum_china.webp", alt: "中国国家博物馆陈列的红山文化陶塑比较标本" }),
           veil)),
       stack,
-      h("p.canvas-note", { text: "A014 · 国家博物馆史前女性陶塑比较标本｜不是牛河梁女神庙出土塑像" }));
+      h("p.canvas-note", { text: D.stop("A014 · 国家博物馆史前女性陶塑比较标本｜不是牛河梁女神庙出土塑像") }));
 
     var inspector = h("div.lab-inspector", null,
       h("p.label", { text: "切换证据镜片" }), tabs, panel);
@@ -283,7 +282,7 @@
       h("div.state-list", null,
         h("div", null, h("span", { text: "N16M4" }), h("em.supported", { text: "墓葬规格较高" })),
         h("div", null, h("span", { text: "N2Z1M21" }), h("em.direct", { text: "玉器20件 · 最多" }))),
-      h("p.lab-hint", { text: "「玉器件数最多」与「墓葬规格较高」是两个不同结论，不能互相替代。" }),
+      h("p.lab-hint", { text: D.stop("「玉器件数最多」与「墓葬规格较高」是两个不同结论，不能互相替代。") }),
       h("table.data-table", { style: { marginTop: "8px" } },
         h("caption", { text: "图形的文字等价内容" }),
         h("thead", null, h("tr", null, h("th", { text: "分类" }), h("th", { text: "数量" }), h("th", { text: "口径" }))),
@@ -358,11 +357,11 @@
       field,
       h("div.survey-toggle", null, toggle),
       insight,
-      h("p.canvas-note", { text: "AI生成理论地景＋抽样概念示意｜深浅方格不表达数量、密度或真实位置，非调查底图" }));
+      h("p.canvas-note", { text: D.stop("AI生成理论地景＋抽样概念示意｜深浅方格不表达数量、密度或真实位置，非调查底图") }));
 
     var inspector = h("div.lab-inspector", null,
       h("p.label", { text: "点击一个数字" }),
-      h("p.lab-hint", { text: "数字必须带着统计口径出现。" }),
+      h("p.lab-hint", { text: D.stop("数字必须带着统计口径出现。") }),
       grid, detail);
     paint();
     return { canvas: canvas, inspector: inspector };
@@ -375,19 +374,24 @@
     return h("div.lab-page.on-night", null,
       h("section.page.lab-index", null,
         h("header.page-intro", null,
-          ui.eyebrow("五个证据实验", "EVIDENCE LAB"),
           h("h1", { text: "证据实验室" }),
-          h("p", { text: "每个实验都从一个公众问题开始，经过操作、判断、解释与边界，最后回到来源。" })),
+          h("p", { text: "每个实验都从一个公众问题开始，经过操作、判断、解释与边界，最后回到来源" })),
         h("div.lab-cards", null, D.labs.map(function (lab, i) {
           var guide = D.labGuides[lab.id];
           return ui.link("/lab/" + lab.slug, "lab-card", [
             h("span.media.media--scene.lab-card__media", { "aria-hidden": "true" },
               h("img", { src: ui.mediaUrl(lab.image), alt: "", loading: i === 0 ? "eager" : "lazy", decoding: "async", style: lab.objectPosition ? { objectPosition: lab.objectPosition } : null })),
             h("span.lab-card__copy", null,
-              h("span.no", { text: lab.no + " · " + guide.duration + " · " + guide.interaction }),
+              h("span.no", null,
+                h("b", { text: lab.no }),
+                h("span", { text: guide.duration }),
+                h("span", { text: guide.interaction })),
               h("h2", { text: lab.title }),
-              h("p", { text: lab.question }),
-              h("span.promise", { text: guide.promise }),
+              h("p", { text: lab.question })),
+            /* 右栏承接「你会学到什么」和图片身份：
+               此前这两行挤在左栏，而右侧三分之一整片留白，箭头孤零零悬在尽头 */
+            h("span.lab-card__rail", null,
+              h("span.promise", { text: D.stop(guide.promise) }),
               ui.boundary(lab.imageLabel)),
             h("span.lab-card__go", { "aria-hidden": "true", text: "→" }),
           ]);
@@ -425,9 +429,9 @@
             h("blockquote", { text: lab.question })),
           h("section.lab-steps", { "aria-label": "实验开始说明" },
             h("div.lab-steps__meta", null,
-              h("small", { text: guide.duration + " · " + guide.interaction }),
+              h("small", null, h("span", { text: guide.duration }), h("span", { text: guide.interaction })),
               h("b", { text: "你会得到什么" }),
-              h("p", { text: guide.promise })),
+              h("p", { text: D.stop(guide.promise) })),
             h("ol", null, guide.steps.map(function (step, i) {
               return h("li", null, h("span", { text: "0" + (i + 1) }), h("p", { text: step }));
             }))),

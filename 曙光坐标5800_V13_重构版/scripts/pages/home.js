@@ -31,20 +31,20 @@
           h("h1#home-title.hero__title", null,
             h("span.tw", { text: "曙光坐标" }),
             h("span.tw", null, h("span.dot", { text: "·" }), h("span.num", { text: "5800" }))),
-          h("p.hero__claim", { text: "不是看一个答案，而是进入一条证据链。" }),
-          h("p.hero__lede", { text: "从牛河梁出发，看见中华文明曙光如何被证据一层层重新确认。" }),
+          h("p.hero__claim", { text: "不是看一个答案，而是进入一条证据链" }),
+          h("p.hero__lede", { text: "从牛河梁出发，看见中华文明曙光如何被证据一层层重新确认" }),
           h("div.hero__actions", null,
-            ui.link("/tour?mode=quick", "btn btn--primary", ["开始 3 分钟导览", h("span.btn__arrow", { "aria-hidden": "true", text: "→" })]),
+            ui.link("/tour?mode=quick", "btn btn--primary", "开始 3 分钟导览"),
             ui.link("/chronicle", "btn btn--ghost", "进入九章文明长卷")),
-          h("p.hero__disclosure", { text: "序厅图为 AI 生成的晨光山谷意象，用于建立地景尺度；非牛河梁实景、非遗址复原。" }))));
+          h("p.hero__disclosure", { text: "序厅图为 AI 生成的晨光山谷意象，用于建立地景尺度；非牛河梁实景、非遗址复原" }))));
   }
 
   /* ---------- B. 三个文明坐标 ---------- */
   function coordinates() {
     var items = [
-      { num: "5800", label: "时间坐标", en: "TIME", text: scene("T01").conclusion, to: "/lab/coordinate", cta: "校准时间口径" },
-      { num: "09",   label: "九台营造", en: "SCALE", text: scene("T03").conclusion, to: "/lab/nine-platforms", cta: "查看工程证据" },
-      { num: "2026", label: "调查重绘", en: "REDRAW", text: lab("survey-redraw").conclusion, to: "/lab/survey-redraw", cta: "打开调查网格" },
+      { num: "5800", label: "时间坐标", text: scene("T01").conclusion, to: "/lab/coordinate", cta: "校准时间口径" },
+      { num: "09",   label: "九台营造", text: scene("T03").conclusion, to: "/lab/nine-platforms", cta: "查看工程证据" },
+      { num: "2026", label: "调查重绘", text: lab("survey-redraw").conclusion, to: "/lab/survey-redraw", cta: "打开调查网格" },
     ];
     return h("section.section.section--lg.coordinates", { "aria-labelledby": "coord-title" },
       h("div.page", null,
@@ -56,7 +56,7 @@
         h("ol.coordinate-grid", null, items.map(function (item, index) {
           return h("li.coordinate", null,
             h("span.coordinate__num", { text: item.num }),
-            h("span.coordinate__label", null, h("b", { text: item.label }), h("span", { text: item.en })),
+            h("span.coordinate__label", null, h("b", { text: item.label })),
             h("p", { text: item.text }),
             ui.goLink(item.to, item.cta));
         }))));
@@ -128,7 +128,7 @@
       h("div.page.lab-showcase__inner", null,
         miniLab,
         h("div.lab-showcase__copy", null,
-          ui.eyebrow("证据实验室", "EVIDENCE LAB"),
+          ui.eyebrow("证据实验室"),
           h("h2#lab-showcase-title", { text: "证据可以被亲手操作", style: { marginTop: "12px" } }),
           h("p", { text: "五个实验把考古结论拆回它的材料：你先动手比较，再读到「现有证据支持什么」和「现有证据还不能说明什么」。左侧就是其中之一，不需要先读说明书。" }),
           h("div.lab-picks", null, picks.map(function (pick) {
@@ -136,7 +136,8 @@
             var guide = D.labGuides[item.id];
             return ui.link("/lab/" + item.slug, "", [
               h("span.no", { text: pick.no }),
-              h("span", null, h("b", { text: item.title.split("：")[0] }), h("small", { text: guide.duration + " · " + guide.interaction })),
+              h("span", null, h("b", { text: item.title.split("：")[0] }),
+                h("small", null, h("span", { text: guide.duration }), h("span", { text: guide.interaction }))),
               h("span.arrow", { "aria-hidden": "true", text: "→" }),
             ]);
           })),
@@ -158,7 +159,7 @@
           var guide = D.chapterGuides[slug];
           return ui.link("/chronicle/" + slug, "preview-card plate-hover", [
             ui.media({ src: item.image, alt: "" }),
-            h("span.no", { text: item.no + " · " + guide.readingTime }),
+            h("span.no", null, h("b", { text: item.no }), h("span", { text: guide.readingTime })),
             h("h3", { text: item.title }),
             h("p", { text: guide.summary }),
             ui.boundary(item.imageLabel),
@@ -183,7 +184,7 @@
       return ui.link("/atlas/" + asset.id, "spotlight-item plate-hover", [
         ui.media({ src: asset.file.url, alt: asset.alt, width: asset.file.width, height: asset.file.height, class: "hover-zoom" }),
         h("span", null,
-          h("span.id", { text: asset.id + " · " + asset.groupLabel }),
+          h("span.id", null, h("span", { text: asset.id }), h("span", { text: asset.groupLabel })),
           h("b", { text: asset.title }),
           h("small", { text: lead ? asset.editorial.factBoundary : (asset.source.institution || "来源机构资料未载") })),
       ]);
@@ -207,10 +208,10 @@
     return h("section.section.section--lg.closing", null,
       h("div.page", null,
         ui.eyebrow("下一站"),
-        h("h2", { text: "不只记住一个答案，带走一条你亲自确认过的证据。", style: { marginTop: "16px" } }),
+        h("h2", { text: "不只记住一个答案，带走一条你亲自确认过的证据", style: { marginTop: "16px" } }),
         h("p", { text: "三分钟建立坐标，五个实验建立方法，九章长卷建立脉络。你的每一步都会留在「我的考古笔记」里，并且只保存在这台设备上。" }),
         h("div.actions", null,
-          ui.link("/tour?mode=quick", "btn btn--primary", ["开始 3 分钟导览", h("span.btn__arrow", { "aria-hidden": "true", text: "→" })]),
+          ui.link("/tour?mode=quick", "btn btn--primary", "开始 3 分钟导览"),
           ui.link("/notebook", "btn btn--ghost", "打开我的考古笔记"))));
   }
 

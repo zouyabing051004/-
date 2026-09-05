@@ -8,7 +8,6 @@
   function index() {
     return h("section.page", null,
       h("header.page-intro", null,
-        ui.eyebrow("九章文明长卷", "CHRONICLE"),
         h("h1", { text: "文明长卷" }),
         h("p", { text: "从环境、生活和工艺进入礼仪、墓序与当代保护。每一章都把「已知／推断／未知」放在同一视野里。" })),
       h("div.chapter-list", null, D.chapters.map(function (chapter) {
@@ -16,7 +15,11 @@
         return ui.link("/chronicle/" + chapter.slug, "chapter-row", [
           h("span.chapter-row__no", { text: chapter.no }),
           h("span.chapter-row__copy", null,
-            h("small", { text: chapter.eyebrow + "　·　" + (guide ? guide.readingTime : "") }),
+            /* 眉标本身就用「·」分隔词组，再用「·」接阅读时长会出现四个点。
+               改成两段文本＋间距，分隔靠留白，不靠又一个符号。 */
+            h("small", null,
+              h("span", { text: chapter.eyebrow }),
+              guide ? h("em", { text: guide.readingTime }) : null),
             h("b", { text: chapter.title }),
             h("p", { text: guide ? guide.summary : chapter.thesis })),
           h("span.media.media--scene.chapter-row__media", { "aria-hidden": "true" },
@@ -73,7 +76,7 @@
     var next = D.chapters[(D.chapters.indexOf(chapter) + 1) % D.chapters.length];
 
     var essay = h("div.chapter-essay", null,
-      guide ? h("div.chapter-brief", null, h("small", { text: "一分钟先懂" }), h("p", { text: guide.summary })) : null,
+      guide ? h("div.chapter-brief", null, h("small", { text: "一分钟先懂" }), h("p", { text: D.stop(guide.summary) })) : null,
       h("p.chapter-lead", { text: chapter.body }),
       chapter.slug === "land-and-people" ? h("figure.schematic-figure", null,
         ui.liaoxiSchematic(),
@@ -90,7 +93,7 @@
 
     if (guide) {
       essay.appendChild(h("section.deep-reading", { "aria-label": "本章深度阅读" },
-        h("header", null, ui.eyebrow("深度阅读", "DEEP READING"), h("h2", { text: "把一句结论，放回证据与上下文", style: { marginTop: "12px" } })),
+        h("header", null, ui.eyebrow("深度阅读"), h("h2", { text: "把一句结论，放回证据与上下文", style: { marginTop: "12px" } })),
         h("div.deep-context", null, guide.context.map(function (paragraph, i) {
           return h("article", null, h("span", { text: "0" + (i + 1) }), h("p", { text: paragraph }));
         })),
@@ -98,9 +101,9 @@
           h("article", null, h("small", { text: "我们如何知道" }), h("h3", { text: guide.method.title }), h("p", { text: guide.method.body })),
           h("article", null, h("small", { text: "为什么与今天有关" }), h("h3", { text: guide.today.title }), h("p", { text: guide.today.body }))),
         h("div", null,
-          h("header", { style: { marginBottom: "16px" } }, ui.eyebrow("本章术语"), h("p", { text: "术语是阅读工具，不是需要背诵的答案。", style: { margin: "8px 0 0", color: "var(--muted)", fontSize: "var(--fs-meta)" } })),
+          h("header", { style: { marginBottom: "16px" } }, ui.eyebrow("本章术语"), h("p", { text: "术语是阅读工具，不是需要背诵的答案", style: { margin: "8px 0 0", color: "var(--muted)", fontSize: "var(--fs-meta)" } })),
           h("div.term-list", null, guide.terms.map(function (item) {
-            return h("article", null, h("b", { text: item.term }), h("p", { text: item.definition }));
+            return h("article", null, h("b", { text: item.term }), h("p", { text: D.stop(item.definition) }));
           }))),
         h("nav.deep-pair", { "aria-label": "本章相关内容" },
           ui.link("/lab/" + guide.relatedLab.slug, "card hover-lift", [
@@ -122,7 +125,7 @@
         h("div.page.chapter-hero__copy.on-dark", null,
           h("p.no", { text: chapter.no + "　" + chapter.eyebrow }),
           h("h1", { text: chapter.title, tabindex: "-1" }),
-          h("blockquote", { text: chapter.thesis }),
+          h("blockquote", { text: D.stop(chapter.thesis) }),
           ui.boundary(chapter.imageLabel))),
       h("div.page.chapter-body", null, essay, aside),
       gallery(chapter.secondaryImages),

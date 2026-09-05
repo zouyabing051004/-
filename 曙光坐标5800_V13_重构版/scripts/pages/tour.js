@@ -88,7 +88,7 @@
         h("div.tour__stage-copy.on-dark", null,
           h("p.tour__act", null,
             "第 " + String(index + 1).padStart(2, "0") + " 幕",
-            h("em", { text: "／共 " + String(list.length).padStart(2, "0") + " 幕 · " + current.duration })),
+            h("em", null, h("span", { text: "／共 " + String(list.length).padStart(2, "0") + " 幕" }), h("span", { text: current.duration }))),
           h("h1", { text: current.title, tabindex: "-1" }),
           h("p.tour__question", { text: current.question }),
           ui.boundary(BOUNDARIES[current.id] || "开放许可图片｜身份与事实边界见来源页"))));
@@ -116,7 +116,7 @@
 
         h("div.tour__takeaway", { "aria-live": "polite" },
           h("b", { text: "本幕结论" }),
-          h("blockquote", { text: current.conclusion })),
+          h("blockquote", { text: D.stop(current.conclusion) })),
 
         h("div.tour__background", null,
           h("b", { text: "一分钟背景" }),

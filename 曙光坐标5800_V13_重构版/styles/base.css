@@ -40,6 +40,21 @@ h3 { font-size: var(--fs-h3); }
 h4 { font-size: var(--fs-h4); }
 
 p, li, dd, blockquote { text-wrap: pretty; }
+
+/* ---------- 中文西文混排的两处细节 ----------
+   1) text-autospace：在汉字与拉丁字母／数字之间补一个四分空。
+      本站正文密集出现「2号台基南北方向长64.61米」这类混排，补空之后
+      数字不再"粘"在汉字上。不支持的浏览器忽略该声明，版面不受影响。
+   2) 展示级文本（主张、导语、题词、承诺行）改用 balance：
+      让两行长度接近，而不是第一行撑满、第二行只剩三个字。 */
+html { text-autospace: normal; }
+/* balance 只给"短的展示行"用。
+   中文没有词间空格，浏览器可以在任意两个汉字之间断开；对成段的导语用 balance，
+   它会为了两行等长而把整块文字压窄，断点还常落在词中间（"每|一章"）。
+   导语因此回到自然填充——第一行占满、第二行接着走，这也是中文的常规排法。 */
+.hero__claim, blockquote, .promise, figcaption > b, .lab-hint, .canvas-note {
+  text-wrap: balance;
+}
 p { margin: 0 0 1em; }
 p:last-child { margin-bottom: 0; }
 ul, ol { margin: 0; padding-left: 1.25em; }

@@ -42,7 +42,12 @@
   background: var(--jade-ink); border-radius: var(--r-xs);
 }
 .atlas-card__copy { display: grid; align-content: start; gap: 5px; }
-.atlas-card__copy b { font-size: var(--fs-small-body); font-weight: 600; line-height: 1.5; }   /* 器物名称＝卡片主信息 */
+/* 器物名称＝卡片主信息。名称有一行也有两行；不给它固定两行的高度，
+   同一排卡片的机构名与标签行就会各自错开一档。 */
+.atlas-card__copy b {
+  font-size: var(--fs-small-body); font-weight: 600; line-height: 1.5;
+  min-height: 3em;                     /* 恰好两行 */
+}
 .atlas-card__copy em { color: var(--ink-soft); font-size: var(--fs-meta); font-style: normal; line-height: 1.5; }
 .atlas-card__meta { display: flex; align-items: baseline; gap: .6em; color: var(--muted); font-size: var(--fs-meta-sm); }
 .atlas-card__meta .kind { padding: 1px 7px; background: var(--paper-deep); border-radius: var(--r-xs); }
@@ -65,7 +70,7 @@
 .lightbox__bar { display: flex; flex-wrap: wrap; gap: var(--s-4); align-items: center; justify-content: space-between; padding: var(--s-4) var(--s-5); border-bottom: 1px solid var(--line-night); }
 .lightbox__title { margin: 0; display: grid; gap: 2px; }
 .lightbox__title b { font-family: var(--serif); font-size: var(--fs-h4); font-weight: 600; }
-.lightbox__title span { color: var(--on-night-faint); font-size: var(--fs-meta); }
+.lightbox__title span { display: flex; flex-wrap: wrap; gap: .3em 1.2em; color: var(--on-night-faint); font-size: var(--fs-meta); }
 .lightbox__tools { display: flex; gap: var(--s-2); }
 .lightbox__scale, .lightbox__close {
   min-height: 44px; min-width: 44px; padding: 8px 16px;

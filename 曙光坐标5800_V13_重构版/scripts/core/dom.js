@@ -63,6 +63,18 @@
     return holder.firstElementChild;
   }
 
+  /* 句末标点规则（版面用）
+     作为版面元素出现的文本——标题、题词、眉标、图注、词条释义、卡片承诺行——
+     不带句末句号；成段阅读的正文与「不要误读」保留句号。
+     问号和感叹号一律保留：它们承担语气，去掉会改变读法。
+     只在渲染时去掉句号，事实主数据本身一个字都不动。 */
+  function stop(text) {
+    if (typeof text !== "string") return text;
+    var t = text.replace(/\s+$/, "");
+    /* 只处理单句：多句文本若只去掉最后一个句号，前面的句号会显得不一致 */
+    return /。$/.test(t) && t.indexOf("。") === t.length - 1 ? t.slice(0, -1) : text;
+  }
+
   function clear(node) { while (node.firstChild) node.removeChild(node.firstChild); return node; }
 
   function frag() {
@@ -71,5 +83,5 @@
     return f;
   }
 
-  window.DC = Object.assign(window.DC || {}, { h: h, svg: svg, clear: clear, frag: frag, assetUrl: assetUrl });
+  window.DC = Object.assign(window.DC || {}, { h: h, svg: svg, clear: clear, frag: frag, assetUrl: assetUrl, stop: stop });
 })();

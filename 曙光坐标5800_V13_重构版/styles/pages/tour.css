@@ -35,7 +35,7 @@
 .tour__stage-scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(20,23,20,.62) 0%, rgba(20,23,20,.12) 40%, rgba(20,23,20,.86) 100%); }
 .tour__stage-copy { position: relative; display: grid; align-content: end; gap: var(--s-3); min-height: 100%; padding: clamp(28px, 4vw, 56px); }
 .tour__act { display: flex; align-items: baseline; gap: .5em; color: var(--dawn-bright); font-family: var(--mono); font-size: var(--fs-meta); font-weight: 700; }
-.tour__act em { color: var(--on-night-faint); font-style: normal; }
+.tour__act em { display: inline-flex; flex-wrap: wrap; gap: .3em 1.1em; color: var(--on-night-faint); font-style: normal; }
 .tour__stage-copy h1 { max-width: 14em; color: var(--on-night); font-size: clamp(30px, 3.6vw, 52px); }
 .tour__question { max-width: 20em; margin: 0; color: var(--on-night); font-family: var(--serif); font-size: var(--fs-quote); line-height: 1.55; }
 .tour__stage .media-boundary { max-width: 34em; margin-top: var(--s-4); }

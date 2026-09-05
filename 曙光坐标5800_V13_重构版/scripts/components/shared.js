@@ -37,7 +37,7 @@
   /* 图片身份边界：说明「这是什么 / 不能代表什么」 */
   function boundary(text, tag) {
     if (!text) return null;
-    return h((tag || "span") + ".media-boundary", { text: text });
+    return h((tag || "span") + ".media-boundary", { text: D.stop(text) });
   }
 
   var EV_COPY = {
@@ -78,20 +78,25 @@
   }
 
   function goLink(path, label) {
-    return link(path, "go-link", [label, h("span", { "aria-hidden": "true", text: "→" })]);
+    return link(path, "go-link", label);
   }
 
-  function eyebrow(cn, en) {
-    return h("p.eyebrow", null, cn, en ? h("span.en", { text: en }) : null);
+  /* 眉标：可带序号。首页六段依次编号，读者随时知道自己走到叙事的第几站——
+     与素材板上「01 / 02 / 03」那种编号栏目条是同一套语言。 */
+  function eyebrow(cn, en, no) {
+    return h("p.eyebrow" + (no ? ".has-no" : ""), null,
+      no ? h("span.no", { text: no }) : null,
+      h("span.cn", { text: cn }),
+      en ? h("span.en", { text: en }) : null);
   }
 
   function sectionHead(options) {
     var head = h("div.section-head" + (options.split ? ".section-head--split" : ""));
     var left = h("div", null,
-      options.eyebrow ? eyebrow(options.eyebrow, options.eyebrowEn) : null,
+      options.eyebrow ? eyebrow(options.eyebrow, options.eyebrowEn, options.no) : null,
       options.title ? h("h2", { id: options.id, text: options.title, style: { marginTop: "12px" } }) : null);
     head.appendChild(left);
-    if (options.lede) head.appendChild(h("p", { text: options.lede }));
+    if (options.lede) head.appendChild(h("p", { text: D.stop(options.lede) }));
     return head;
   }
 
@@ -188,7 +193,7 @@
             h("span.strata-layer__band", { "aria-hidden": "true" }),
             h("span.strata-layer__copy", null,
               h("b", { text: layer.name }),
-              h("span", { text: layer.note }),
+              h("span", { text: D.stop(layer.note) }),
               layer.sample ? h("span.strata-layer__sample", null,
                 h("em", { text: "取样点" }),
                 "自这一层位取出炭样或骨样送测，得到的是这一层的年代范围。") : null));

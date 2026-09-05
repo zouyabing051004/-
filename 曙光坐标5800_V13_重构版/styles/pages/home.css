@@ -28,7 +28,7 @@
 
 .hero__inner { grid-column: 1; grid-row: 1; display: grid; align-content: center; padding-block: var(--rhythm-md); }
 .hero__copy {
-  width: min(560px, 100%);
+  width: min(624px, 100%);
   margin-left: auto;
   padding-right: clamp(24px, 3.4vw, 56px);
   padding-left: clamp(16px, 3vw, 48px);
@@ -50,7 +50,7 @@
 .hero__title .dot { margin-inline: .06em; color: var(--dawn-deep); }
 .hero__title .num { font-variant-numeric: tabular-nums; letter-spacing: .01em; }
 .hero__claim {
-  max-width: 17em;
+  max-width: 19em;
   margin: var(--s-5) 0 0;
   color: var(--ink);
   font-family: var(--serif);
@@ -58,7 +58,7 @@
   line-height: 1.55;
 }
 .hero__lede {
-  max-width: 22em;
+  max-width: 28em;
   margin: var(--s-4) 0 0;
   color: var(--ink-soft);
   font-size: var(--fs-lede);
@@ -66,7 +66,7 @@
 .hero__actions { display: flex; flex-wrap: wrap; gap: var(--s-3); margin-top: var(--s-6); }
 .hero__disclosure {
   display: flex; align-items: flex-start; gap: .6em;
-  max-width: 30em;
+  max-width: 34em;
   margin: var(--s-7) 0 0;
   color: var(--muted); font-size: var(--fs-meta); line-height: 1.6;
 }
@@ -101,7 +101,7 @@
 .lab-picks a:hover { background: var(--night-2); }
 .lab-picks .no { color: var(--dawn); font-family: var(--mono); font-size: var(--fs-meta); }
 .lab-picks b { color: var(--on-night); font-family: var(--serif); font-size: var(--fs-h4); font-weight: 600; }
-.lab-picks small { display: block; color: var(--on-night-faint); font-size: var(--fs-meta); }
+.lab-picks small { display: flex; flex-wrap: wrap; gap: .3em 1.2em; color: var(--on-night-faint); font-size: var(--fs-meta); }
 .lab-picks .arrow { color: var(--on-night-faint); font-family: var(--mono); }
 .lab-picks a:hover .arrow { color: var(--dawn); }
 
@@ -131,7 +131,8 @@
    器物仍用陈列台、照片仍用画框，两种身份不混淆。 */
 .preview-card .media--scene { aspect-ratio: auto; height: 236px; }
 .preview-card .media--object { --plate-h: 236px; }
-.preview-card .no { margin-top: var(--s-2); color: var(--cinnabar); font-family: var(--mono); font-size: var(--fs-meta); font-weight: 700; letter-spacing: .06em; }
+.preview-card .no { display: flex; flex-wrap: wrap; align-items: baseline; gap: .3em 1.1em; margin-top: var(--s-2); color: var(--muted); font-size: var(--fs-meta); }
+.preview-card .no b { color: var(--cinnabar); font-family: var(--mono); font-weight: 700; letter-spacing: .06em; }
 .preview-card h3 { font-size: var(--fs-h3); }
 .preview-card p { margin: 0; color: var(--ink-soft); font-size: var(--fs-small-body); line-height: 1.7; }
 
@@ -158,7 +159,8 @@
 .spotlight-rest .media--scene { aspect-ratio: auto; height: 178px; }
 .spotlight-item { display: grid; grid-template-rows: auto 1fr; gap: var(--s-4); align-content: start; }
 .spotlight-item > span:last-child { display: grid; gap: 4px; }
-.spotlight-item .id { display: block; color: var(--muted); font-family: var(--mono); font-size: var(--fs-meta-sm); letter-spacing: .04em; }
+.spotlight-item .id { display: flex; flex-wrap: wrap; gap: .3em 1.1em; color: var(--muted); font-size: var(--fs-meta-sm); }
+.spotlight-item .id > :first-child { font-family: var(--mono); letter-spacing: .04em; }
 .spotlight-item b { display: block; font-family: var(--serif); font-size: var(--fs-h4); font-weight: 600; line-height: 1.45; }
 .spotlight-item small { display: block; color: var(--muted); font-size: var(--fs-meta); line-height: 1.6; }
 .spotlight-lead .spotlight-item b { font-size: var(--fs-h3); }
