@@ -89,7 +89,16 @@
 .coordinate .go-link { margin-top: var(--s-2); }
 
 /* ---------- C. 证据实验室（深色 · 首页内嵌真实互动） ---------- */
-.lab-showcase { padding-block: var(--s-9); }
+/* 深色段落同样给一道方向：上方略暖（曙光一侧），下方更深（地层一侧）。
+   平底色是通用深色模式的样子，有方向的暗面才像这个题材。 */
+.lab-showcase {
+  padding-block: var(--s-9);
+  background-color: var(--night);
+  background-image: linear-gradient(180deg,
+    color-mix(in srgb, var(--dawn-deep) 6%, var(--night)) 0%,
+    var(--night) 46%,
+    color-mix(in srgb, #000 22%, var(--night)) 100%);
+}
 .lab-showcase__inner { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: clamp(32px, 5vw, 72px); align-items: center; }
 .lab-showcase__copy h2 { max-width: 12em; }
 .lab-showcase__copy > p { max-width: 24em; margin-top: var(--s-4); font-size: var(--fs-lede); }
@@ -98,7 +107,7 @@
 
 .lab-picks { display: grid; gap: 1px; margin: var(--s-6) 0 var(--s-5); background: var(--line-night); border-block: 1px solid var(--line-night); }
 .lab-picks a { display: grid; grid-template-columns: auto 1fr auto; gap: var(--s-4); align-items: center; padding: var(--s-4) var(--s-1); background: var(--night); transition: background var(--dur-1) var(--ease); }
-.lab-picks a:hover { background: var(--night-2); }
+.lab-picks a:hover { background: var(--night-lift); }
 .lab-picks .no { color: var(--dawn); font-family: var(--mono); font-size: var(--fs-meta); }
 .lab-picks b { color: var(--on-night); font-family: var(--serif); font-size: var(--fs-h4); font-weight: 600; }
 .lab-picks small { display: flex; flex-wrap: wrap; gap: .3em 1.2em; color: var(--on-night-faint); font-size: var(--fs-meta); }

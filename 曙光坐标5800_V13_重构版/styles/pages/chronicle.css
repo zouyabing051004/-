@@ -61,16 +61,36 @@
 .chapter-hero__copy { position: relative; display: grid; gap: var(--s-3); padding-block: var(--s-8) var(--s-7); }
 .chapter-hero__copy .no { color: var(--dawn); font-family: var(--mono); font-size: var(--fs-meta); font-weight: 700; letter-spacing: .1em; }
 .chapter-hero__copy h1 { max-width: 16em; color: var(--on-night); }
-.chapter-hero__copy blockquote { max-width: 24em; color: var(--on-night); font-family: var(--serif); font-size: var(--fs-quote); line-height: 1.6; }
+.chapter-hero__copy blockquote { max-width: 28em; color: var(--on-night); font-family: var(--serif); font-size: var(--fs-quote); line-height: 1.6; }
 
 .chapter-body { display: grid; grid-template-columns: minmax(0, 1fr) 264px; gap: clamp(32px, 5vw, 72px); padding-block: var(--s-8); align-items: start; }
-.chapter-essay { max-width: 38em; display: grid; gap: var(--s-7); }
+/* 正文栏 984px，但文章整块此前被 max-width:38em 压到 646px，
+   右边 338px 一直空着；而三分栏的「已知/推断/未知」、术语表又被挤到
+   每栏 199px（约 13 个字一行）。
+   改为编辑版式的常规做法：**成段文字保持阅读行宽，图表与结构化区块占满整栏**。 */
+.chapter-essay { display: grid; gap: var(--s-7); }
+.chapter-essay > p,
+.chapter-brief,
+.deep-context { max-width: 38em; }
+/* 区段大标题不受阅读行宽限制：52px 的十四个字需要 728px，
+   压在 646px 里只能折行，balance 还会把「放|回」拆开 */
+.deep-reading > header h2 { max-width: none; }
 .chapter-brief { display: grid; gap: var(--s-2); padding: var(--s-5); background: var(--paper-bright); border-left: 3px solid var(--jade); border-radius: 0 var(--r-sm) var(--r-sm) 0; }
 .chapter-brief small { color: var(--jade-ink); font-size: var(--fs-meta); font-weight: 700; }
 .chapter-brief p { margin: 0; font-size: var(--fs-body-lg); }
 .chapter-lead { font-size: var(--fs-body-lg); line-height: var(--lh-loose); }
 
-.schematic-figure { display: grid; gap: var(--s-3); padding: var(--s-5); background: var(--paper-bright); border: 1px solid var(--line-soft); border-radius: var(--r-sm); }
+/* 示意图占满整栏后，SVG 按比例撑到 530px 高，画面稀疏。
+   改成图版式：图在左、图注在右，两边各自拿到合适的宽度。 */
+.schematic-figure {
+  display: grid; gap: var(--s-3);
+  padding: var(--s-6); background: var(--paper-bright);
+  border: 1px solid var(--line-soft); border-radius: var(--r-sm);
+}
+@media (min-width: 1000px) {
+  .schematic-figure { grid-template-columns: minmax(0, 1fr) minmax(230px, 292px); gap: var(--s-7); align-items: end; }
+  .schematic-figure figcaption { align-self: end; padding-bottom: var(--s-2); }
+}
 .schematic-figure .schematic { width: 100%; height: auto; color: var(--ink-soft); }
 .schematic-figure figcaption { color: var(--ink-soft); font-size: var(--fs-small-body); line-height: 1.7; }
 .schematic-figure figcaption b { display: block; color: var(--ink); font-size: var(--fs-body); }
@@ -81,6 +101,7 @@
 .evidence-triad article:nth-child(2) { border-top-color: var(--cinnabar); }
 .evidence-triad h2 { font-size: var(--fs-h4); }
 .evidence-triad ul { display: grid; gap: var(--s-2); padding-left: 1.1em; }
+.evidence-triad article > p { max-width: 22em; }
 .evidence-triad li, .evidence-triad p { color: var(--ink-soft); font-size: var(--fs-small-body); line-height: 1.75; margin: 0; }
 
 .deep-reading { display: grid; gap: var(--s-6); }
@@ -92,10 +113,27 @@
 .deep-pair article { display: grid; gap: var(--s-2); padding: var(--s-5); background: var(--paper-bright); border: 1px solid var(--line-soft); border-radius: var(--r-sm); }
 .deep-pair small { color: var(--muted); font-size: var(--fs-meta); }
 .deep-pair p { margin: 0; color: var(--ink-soft); font-size: var(--fs-small-body); line-height: 1.7; }
-.term-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-4); }
+.term-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-4) var(--s-6); }
 .term-list article { display: grid; gap: var(--s-1); padding-top: var(--s-3); border-top: 1px solid var(--line); }
 .term-list b { font-size: var(--fs-body); }
 .term-list p { margin: 0; color: var(--muted); font-size: var(--fs-small-body); line-height: 1.65; }
+
+/* 章末的两条相关链接是导线，不是内容卡：
+   原先各占 200px 高的方框、箭头吊在左下角。改成一行标签＋一行去向的紧凑条目。 */
+.deep-reading nav.deep-pair article,
+.deep-reading nav.deep-pair > a {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center;
+  gap: var(--s-2) var(--s-4);
+  padding: var(--s-5) var(--s-5);
+  background: transparent;
+  border: 0; border-top: 1px solid var(--line);
+  border-radius: 0;
+}
+.deep-reading nav.deep-pair > a > small { grid-column: 1; color: var(--muted); font-size: var(--fs-meta); }
+.deep-reading nav.deep-pair > a > b { grid-column: 1; grid-row: 2; font-family: var(--serif); font-size: var(--fs-h4); font-weight: 600; }
+.deep-reading nav.deep-pair > a > .go-link { grid-column: 2; grid-row: 1 / span 2; align-self: center; min-height: 0; color: var(--muted); text-decoration: none; }
+.deep-reading nav.deep-pair > a:hover { background: var(--paper-bright); }
+.deep-reading nav.deep-pair > a:hover > .go-link { color: var(--cinnabar); }
 
 .chapter-aside { position: sticky; top: calc(var(--header-h) + var(--s-5)); display: grid; gap: var(--s-4); padding: var(--s-5); background: var(--paper-bright); border: 1px solid var(--line-soft); border-radius: var(--r-sm); }
 .chapter-aside .label { margin: 0; color: var(--muted); font-size: var(--fs-meta); font-weight: 700; }

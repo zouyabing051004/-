@@ -2,7 +2,13 @@
    证据实验室 — 全站唯一长期使用的深色沉浸模式
    标准布局：左 65% 交互画布 / 右 35% 题目与实时判断；操作后进入浅色结论区。
    ============================================================ */
-.lab-page { background: var(--night); }
+.lab-page {
+  background-color: var(--night);
+  background-image: linear-gradient(180deg,
+    color-mix(in srgb, var(--dawn-deep) 5%, var(--night)) 0%,
+    var(--night) 38%,
+    color-mix(in srgb, #000 26%, var(--night)) 100%);
+}
 .lab-index { padding-block: var(--s-7) var(--s-8); }
 @media (max-width: 680px) { .lab-index { padding-block: 0 var(--s-7); } }
 .lab-index .page-intro h1, .lab-index .page-intro p { color: var(--on-night); }
@@ -10,17 +16,18 @@
 
 /* 实验索引：图 / 题 / 承诺 三栏并排，箭头收在固定的右轨上。
    旧版把承诺行与图片身份也塞进中栏，右边三分之一整片空着，箭头孤悬在尽头。 */
-.lab-cards { display: grid; gap: 1px; background: var(--line-night); border-block: 1px solid var(--line-night); }
+.lab-cards { display: grid; border-block: 1px solid var(--line-night); }
 .lab-card {
   display: grid;
   grid-template-columns: 232px minmax(0, 1.08fr) minmax(0, .92fr) 32px;
   gap: var(--s-6);
   align-items: center;
   padding: var(--s-6) 0;
-  background: var(--night);
   transition: background var(--dur-2) var(--ease);
 }
-.lab-card:hover { background: var(--night-2); }
+.lab-card { background: transparent; }
+.lab-card + .lab-card { border-top: 1px solid var(--line-night); }
+.lab-card:hover { background: var(--night-lift); }
 .lab-card__media { aspect-ratio: 16 / 10; background: var(--night-3); }
 
 .lab-card__copy { display: grid; gap: var(--s-3); }
