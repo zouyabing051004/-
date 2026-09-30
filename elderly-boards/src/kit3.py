@@ -58,7 +58,7 @@ def tx(x, y, w, html, size=None, extra=''):
 def hero(name, h, pos='50% 50%', eyebrow='', title='', sub='', extra_html='', title_size=34):
     o = f'<div class="abs" style="left:0;top:0;width:594mm;height:{h}mm;overflow:hidden">'
     o += f'<div class="img" style="left:0;top:0;width:594mm;height:{h}mm"><img src="{REN}{name}.jpg" style="object-position:{pos}"></div>'
-    o += f'<div class="abs" style="left:0;top:0;width:594mm;height:{h}mm;background:linear-gradient(90deg,rgba(28,20,12,.58) 0%,rgba(28,20,12,.18) 46%,rgba(28,20,12,0) 68%),linear-gradient(0deg,rgba(28,20,12,.42) 0%,rgba(28,20,12,0) 34%)"></div>'
+    o += f'<div class="abs" style="left:0;top:0;width:594mm;height:{h}mm;background:linear-gradient(90deg,rgba(28,20,12,.40) 0%,rgba(28,20,12,.10) 42%,rgba(28,20,12,0) 62%),linear-gradient(0deg,rgba(28,20,12,.30) 0%,rgba(28,20,12,0) 30%)"></div>'
     o += f'<div class="abs" style="left:20mm;top:16mm;font-size:3.3mm;letter-spacing:1.4mm;color:rgba(255,255,255,.85)">{eyebrow}</div>'
     o += f'<div class="abs serif" style="left:19mm;bottom:38mm;font-size:{title_size}mm;font-weight:700;letter-spacing:1.4mm;color:#fff;line-height:1.1;text-shadow:0 .6mm 3mm rgba(0,0,0,.25)">{title}</div>'
     o += f'<div class="abs serif" style="left:21mm;bottom:24mm;font-size:7.4mm;font-weight:600;letter-spacing:1mm;color:rgba(255,255,255,.95)">{sub}</div>'
