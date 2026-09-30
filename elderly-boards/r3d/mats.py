@@ -19,13 +19,13 @@ def wood(name,c1,c2,scale=3.0,rough=.42,planks=False,plank_w=.16,plank_l=1.2,coa
     nt.links.new(tc.outputs['Object'],mp.inputs['Vector'])
     mp.inputs['Scale'].default_value=(1,1,1)
     wv=nt.nodes.new('ShaderNodeTexWave'); wv.wave_type='BANDS'; wv.bands_direction='X'
-    wv.inputs['Scale'].default_value=scale*1.2; wv.inputs['Distortion'].default_value=1.6; wv.inputs['Detail'].default_value=2; wv.inputs['Detail Scale'].default_value=1.5
+    wv.inputs['Scale'].default_value=scale*9; wv.inputs['Distortion'].default_value=5; wv.inputs['Detail'].default_value=4; wv.inputs['Detail Scale'].default_value=2
     nt.links.new(mp.outputs['Vector'],wv.inputs['Vector'])
     ns=nt.nodes.new('ShaderNodeTexNoise'); ns.inputs['Scale'].default_value=scale*30; nt.links.new(mp.outputs['Vector'],ns.inputs['Vector'])
-    mix=nt.nodes.new('ShaderNodeMixRGB'); mix.blend_type='MULTIPLY'; mix.inputs['Fac'].default_value=.15
+    mix=nt.nodes.new('ShaderNodeMixRGB'); mix.blend_type='MULTIPLY'; mix.inputs['Fac'].default_value=.08
     nt.links.new(wv.outputs['Color'],mix.inputs['Color1']); nt.links.new(ns.outputs['Color'],mix.inputs['Color2'])
     cr=nt.nodes.new('ShaderNodeValToRGB'); cr.color_ramp.elements[0].color=(*c1,1); cr.color_ramp.elements[1].color=(*c2,1)
-    cr.color_ramp.elements[0].position=.25; cr.color_ramp.elements[1].position=.85
+    cr.color_ramp.elements[0].position=.35; cr.color_ramp.elements[1].position=.75
     nt.links.new(mix.outputs['Color'],cr.inputs['Fac'])
     col=cr.outputs['Color']
     if planks:

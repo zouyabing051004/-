@@ -34,15 +34,33 @@ def armchair(w=.72,d=.72,mat='terra',z=0):
         for sy in (-1,1): cyl(sx*(w/2-.07),sy*(d/2-.09),z+.1,.022,.2,'oak',seg=10,name='leg',r2=.014)
 def sidetable(r=.25,h=.5,z=0):
     cyl(0,0,z+h,r,.03,'oak_light',seg=28,name='top'); cyl(0,0,z+h/2,.02,h,'oak',seg=8,name='stem'); cyl(0,0,z+.02,r*.6,.03,'oak',seg=20,name='foot')
+def leaf(x0,y0,z0,az,elev,length,width,mat,bend=55,n=7):
+    """arched leaf blade: starts at (x0,y0,z0) heading az (rad, local plane), elevation elev deg, bending down by `bend` deg."""
+    import random
+    pts_c=[];x,y,z=x0,y0,z0
+    for i in range(n+1):
+        t=i/n; pts_c.append((x,y,z,t))
+        e=math.radians(elev-bend*t); ds=length/n
+        x+=math.cos(az)*math.cos(e)*ds; y+=math.sin(az)*math.cos(e)*ds; z+=math.sin(e)*ds
+    sx,sy=-math.sin(az),math.cos(az)
+    verts=[];faces=[]
+    for (px,py,pz,t) in pts_c:
+        w=width*(math.sin(math.pi*min(1,t*.92+.06))**.8)*0.5
+        for sgn in (-1,1):
+            X,Y=TT.pt(px+sx*w*sgn,py+sy*w*sgn); verts.append((X,Y,pz+TT.zoff))
+    for i in range(n):
+        a=2*i;faces.append((a,a+1,a+3,a+2))
+    if TT.flip(): faces=[tuple(reversed(f)) for f in faces]
+    return mesh_obj('leaf',verts,faces,mat,smooth=True)
 def plant(r=.3,h=1.0,z=0,pot=.22):
-    cyl(0,0,z+pot/2,pot*.62,pot,'pot',seg=18,name='pot',r2=pot*.5)
+    cyl(0,0,z+pot/2,pot*.62,pot,'pot',seg=24,name='pot',r2=pot*.5)
+    cyl(0,0,z+pot-.005,pot*.5,.02,'walnut',seg=24,name='soil')
     import random; rnd=random.Random(int(abs(TT.stack[-1][0]*100+TT.stack[-1][1]*37)))
-    for i in range(26):
-        a=rnd.uniform(0,6.28); t=rnd.uniform(.15,1.0); d=t*r*rnd.uniform(.5,1.0)
-        hh=pot+ t*h*rnd.uniform(.55,1.0)
-        sphere(math.cos(a)*d,math.sin(a)*d,z+hh,rnd.uniform(.07,.13)*(1+r),'leaf' if i%3 else 'leaf2',sx=1.2,sy=.7,sz=1.6,seg=8,name='leaf')
-    for k in range(5):
-        a=k*1.25; cyl(math.cos(a)*r*.25,math.sin(a)*r*.25,z+pot+h*.3,.008,h*.6,'leaf',seg=5,name='stem')
+    n=int(14+h*10)
+    for i in range(n):
+        az=rnd.uniform(0,6.283); el=rnd.uniform(48,88); ln=rnd.uniform(.5,1.0)*(h*.75+.15); wd=ln*rnd.uniform(.22,.32)
+        d=rnd.uniform(0,r*.25)
+        leaf(math.cos(az)*d,math.sin(az)*d,z+pot,az,el,ln,wd,'leaf' if i%3 else 'leaf2',bend=rnd.uniform(35,80))
 def floorlamp(h=1.55,z=0):
     cyl(0,0,z+.015,.14,.03,'steel',seg=18,name='base'); cyl(0,0,z+h/2,.012,h,'steel',seg=8,name='pole')
     cyl(0,0,z+h-.1,.2,.28,'lamp_shade',seg=22,name='shade',r2=.15)
@@ -72,6 +90,7 @@ def sofa(w=2.0,d=.9,mat='sage',z=0):
     n=max(2,round(w/.7))
     for i in range(n): box(-w/2+.18+(w-.36)*(i+.5)/n,-.04,z+.45,(w-.36)/n-.02,d-.28,.14,mat+'_l' if mat+'_l' in __import__('geo')._mats else mat,bevel=.05,name='cushion')
     for sx in (-1,1): box(sx*(w/2-.09),-d/2+.02,z+.06,.05,.05,.1,'oak',name='sofa_leg')
+    box(-w*.3,d/2-.22,z+.62,.42,.14,.4,'terra_l',yaw=.12,bevel=.06,name='pillow'); box(w*.3,d/2-.22,z+.62,.42,.14,.4,'cream',yaw=-.1,bevel=.06,name='pillow')
 def pillow(mat='terra_l'): box(0,0,0,.4,.12,.4,mat,bevel=.05,name='pillow',yaw=0)
 def chair(z=0,mat='terra'):
     box(0,0,z+.44,.44,.42,.05,mat,bevel=.02,name='chair_seat'); box(0,.2,z+.7,.44,.04,.42,'oak',bevel=.015,name='chair_back')
@@ -79,6 +98,11 @@ def chair(z=0,mat='terra'):
         for sy in (-1,1): box(sx*.19,sy*.18,z+.21,.035,.035,.42,'oak',name='chair_leg')
 def table_round(d=1.2,h=.75,z=0,mat='oak_light',n=0,chair_mat='terra'):
     cyl(0,0,z+h,d/2,.04,mat,seg=36,name='table_top'); cyl(0,0,z+h/2,.05,h,'oak',seg=10,name='ped'); cyl(0,0,z+.02,.28,.03,'oak',seg=18,name='foot')
+    if d>.8:
+        cyl(0,0,z+h+.13,.05,.22,'glass',seg=16,name='vase',r2=.035)
+        for k in range(6):
+            a=k*1.05; sphere(math.cos(a)*.05,math.sin(a)*.05,z+h+.3+.02*(k%3),.05,'yellow' if k%2 else 'cream',seg=8,name='flower')
+        sphere(0,0,z+h+.28,.09,'leaf2',sz=.7,seg=8,name='foliage')
     for i in range(n):
         a=2*math.pi*i/n; TT.push(math.sin(a)*(d/2+.24),math.cos(a)*(d/2+.24),-a+math.pi); chair(z,chair_mat); TT.pop()
 def table_rect(w=1.4,d=.8,h=.75,z=0,mat='oak_light'):

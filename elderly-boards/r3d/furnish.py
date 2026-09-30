@@ -174,3 +174,14 @@ def rails_and_lights(f):
     TT.pop()
     ox,oy=P(*W(560,44.5)); TT.push(ox,oy,-math.radians(40)); TT.push(8.5,0,0); F.cove(17.,'x',z0+2.83,.10); TT.pop(); TT.pop()
     TT.zoff=0.0
+
+
+def south_curtains(f,units=range(8),extra=((372,1.6),(393,1.4))):
+    TT.zoff=lvl(f); yy=-(Y_US/10)+.20
+    wins=[((AX[k]+AX[k+1])/20,1.8) for k in units]+[(x/10,w) for x,w in extra]
+    for cx,w in wins:
+        cx=cx if cx<100 else cx
+        for sgn in (-1,1):
+            TT.push(cx+sgn*(w/2+.22),yy,0); F.box(0,0,1.4,.42,.07,2.75,'curtain',bevel=.02,name='curtain'); TT.pop()
+        TT.push(cx,yy,0); F.box(0,0,2.78,w+.9,.03,.03,'steel',name='rod'); TT.pop()
+    TT.zoff=0.0

@@ -38,6 +38,7 @@ def build_all(furnished=True):
     if furnished:
         FU.rooms_misc_1f(); FU.rehab_1f(); FU.canteen_1f(); FU.hall_frame(FU.hall_1f)
         FU.bedrooms_2f()
+        FU.south_curtains(1); FU.south_curtains(2,units=(),extra=((372,1.6),(393,1.4)))
         FU.rails_and_lights(1); FU.rails_and_lights(2)
 
 def landscape():
