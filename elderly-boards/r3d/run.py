@@ -69,11 +69,13 @@ def render(name,res=(1800,1200),samples=64,exposure=0.0):
 def V(f,pos,tgt,lens,exp=1.0):
     z=lvl(f); return dict(pos=(pos[0],pos[1],pos[2]+z),tgt=(tgt[0],tgt[1],tgt[2]+z),lens=lens,exp=exp)
 VIEWS={
- 'bedroom':V(2,pp(AX[2]+18,Y_UN+26,1.4),pp(AX[2]+20,Y_UN+74,0.95),14,0.6),
+ 'bedroom':V(2,pp(AX[2]+12.5,Y_UN+29,1.42),pp(AX[2]+19,Y_UN+73,1.0),15,0.5),
  'bath':V(2,pp(AX[2]+16.2,Y_UN+14,1.45),pp(AX[2]+2,Y_UN+16,1.0),14,0.2),
  'hall2':V(2,pp(345,437,1.55),pp(398,490,1.0),16,0.55),
  'corridor2':V(2,pp(84,425,1.5),pp(300,425,1.45),22,0.6),
  'nurse2':V(2,pp(226,432,1.5),pp(226,395,1.05),15,1.3),
+ 'lobby1b':V(1,pp(356,505,1.5),pp(372,445,1.25),15,0.6),
+ 'lobby1c':V(1,pp(346,446,1.55),pp(402,496,1.15),16,0.6),
  'lobby1':V(1,pp(353,503,1.55),pp(392,455,1.15),16,0.6),
  'rehab1':V(1,pp(AX[2]+5,Y_UN+34,1.6),pp(AX[3]+22,Y_UN+70,0.8),16,0.6),
  'canteen1':V(1,pp(AX[6]+5,Y_UN+34,1.6),pp(AX[7]+18,Y_UN+68,0.8),16,0.6),
