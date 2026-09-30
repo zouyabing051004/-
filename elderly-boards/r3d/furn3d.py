@@ -86,7 +86,7 @@ def shower_seat(z=0): box(0,0,z+.46,.5,.45,.04,'oak_light',bevel=.01,name='seat'
 def sofa(w=2.0,d=.9,mat='sage',z=0):
     box(0,0,z+.22,w,d,.30,mat,bevel=.05,name='sofa_base')
     box(0,d/2-.1,z+.6,w,.2,.55,mat,bevel=.07,name='sofa_back')
-    for sx in (-1,1): box(sx*(w/2-.09),0,z+.45,.18,d,.35,mat,bevel=.06,name='sofa_arm')
+    for sx in (-1,1): box(sx*(w/2-.09),.02,z+.45,.18,d-.04,.35,mat,bevel=.035,name='sofa_arm')
     n=max(2,round(w/.7))
     for i in range(n): box(-w/2+.18+(w-.36)*(i+.5)/n,-.04,z+.45,(w-.36)/n-.02,d-.28,.14,mat+'_l' if mat+'_l' in __import__('geo')._mats else mat,bevel=.05,name='cushion')
     for sx in (-1,1): box(sx*(w/2-.09),-d/2+.02,z+.06,.05,.05,.1,'oak',name='sofa_leg')
