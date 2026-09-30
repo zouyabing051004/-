@@ -13,7 +13,7 @@ def base(name,color,rough=.6,metal=0,spec=.5,emit=None,es=0,sheen=0,alpha=None,c
         b.inputs['Emission Color'].default_value=(*emit,1); b.inputs['Emission Strength'].default_value=es
     if alpha is not None: b.inputs['Alpha'].default_value=alpha
     return register(name,m)
-def wood(name,c1,c2,scale=3.0,rough=.42,planks=False,plank_w=.16,plank_l=1.2,coat=.15):
+def wood(name,c1,c2,scale=3.0,rough=.42,planks=False,plank_w=.16,plank_l=1.2,coat=.03):
     m=bpy.data.materials.new(name); m.use_nodes=True; nt=m.node_tree; b=_bsdf(m)
     tc=nt.nodes.new('ShaderNodeTexCoord'); mp=nt.nodes.new('ShaderNodeMapping')
     nt.links.new(tc.outputs['Object'],mp.inputs['Vector'])
@@ -65,8 +65,8 @@ def all_mats():
     base('ground',(.34,.5,.24),1)
     base('paving',(.7,.66,.6),.85)
     wood('oak_floor',(.74,.58,.42),(.82,.67,.5),scale=4,planks=True,rough=.34)
-    wood('oak',(.6,.44,.28),(.72,.55,.36),scale=5,rough=.4)
-    wood('oak_light',(.84,.7,.53),(.9,.78,.6),scale=5,rough=.45)
+    wood('oak',(.6,.44,.28),(.72,.55,.36),scale=5,rough=.5)
+    wood('oak_light',(.84,.7,.53),(.9,.78,.6),scale=5,rough=.55)
     wood('walnut',(.3,.18,.1),(.4,.25,.14),scale=5,rough=.4)
     wood('slat',(.7,.5,.3),(.82,.62,.4),scale=10,rough=.5)
     tile('tile_bath',c=(.66,.64,.58),w=.3,h=.3,rough=.35); tile('tile_floor',c=(.8,.8,.76),w=.6,h=.6,rough=.3)

@@ -47,7 +47,7 @@ def bedroom(blanket='sage',door_mat='door0'):
     at(F.sidetable,2.3,6.5,0)
     at(F.plant,2.9,6.95,0,h=1.1)
     at(F.floorlamp,0.4,3.1,0)
-    at(F.art_frame,3.20,4.55,90,w=1.0,h=.65,z=1.55)
+    at(F.art_frame,3.20,4.55,90,w=1.0,h=.65,z=1.55,mat='cream')
     # curtains at south window (x centre 1.65, width 1.8)
     for x in (.62,2.68): TT.push(x,-7.42,0); F.box(0,0,1.3,.34,.05,2.5,'curtain',bevel=.015,name='curtain'); TT.pop()
     TT.push(1.65,-7.44,0); F.box(0,0,2.6,2.6,.03,.03,'steel',name='rod'); TT.pop()
