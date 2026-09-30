@@ -129,14 +129,14 @@ def pbars(l=3.0,w=.75,h=.9,z=0):
     for sx in (-1,1):
         for sy in (-1,1): cyl(sx*(l/2-.05),sy*w/2,z+h/2,.02,h,'steel',seg=10,name='ppost')
 def therapy_bed(w=.75,l=1.95,z=0):
-    box(0,0,z+.25,w,l,.1,'blue',bevel=.04,name='tbed'); box(0,0,z+.15,w-.1,l-.15,.3,'steel',name='tbase'); box(0,l/2-.25,z+.32,w-.15,.32,.06,'white',bevel=.03,name='tpillow')
+    box(0,0,z+.25,w,l,.1,'blue',bevel=.04,name='tbed'); box(0,0,z+.145,w-.1,l-.15,.29,'steel',name='tbase'); box(0,l/2-.25,z+.32,w-.15,.32,.06,'white',bevel=.03,name='tpillow')
 def wall_bars(w=.9,h=2.3,z=0):
     box(0,0,z+h/2,w,.06,h,'oak_light',bevel=.01,name='wb_frame')
     for i in range(1,int(h/.15)): cyl(0,-.05,z+i*.15,.015,w-.06,'oak',axis='x',seg=8,name='wb_rung')
 def stairs_train(w=1.5,d=.9,z=0):
     for i in range(4): box(0,-d/2+ (i+.5)*d/4,z+.06+i*.12,w,d/4,.12*(i+1),'oak_light',bevel=.01,name='step')
 def bike(z=0):
-    box(0,0,z+.45,.5,.9,.1,'gloss_white',bevel=.03,name='bike_body'); cyl(0,.15,z+.55,.16,.06,'steel',axis='x',seg=18,name='flywheel'); box(0,-.25,z+.7,.28,.1,.3,'black',name='bike_seat'); box(0,.3,z+.85,.4,.04,.04,'steel',name='bike_bar')
+    box(0,0,z+.45,.5,.9,.1,'gloss_white',bevel=.03,name='bike_body'); cyl(0,.15,z+.55,.16,.06,'steel',axis='x',seg=18,name='flywheel'); box(0,-.25,z+.7,.28,.1,.3,'steel',name='bike_seat'); box(0,.3,z+.85,.4,.04,.04,'steel',name='bike_bar')
 def massage(w=.7,l=1.9,z=0):
     box(0,0,z+.38,w,l,.16,'terra_l',bevel=.06,name='mbed'); box(0,0,z+.18,w-.1,l-.1,.35,'oak',name='mbase')
 def hotbox(w=.8,d=.5,z=0): box(0,0,z+.1,w,d,.2,'steel',bevel=.02,name='hotbox'); box(0,0,z+.22,w-.06,d-.06,.04,'glass',name='hotlid')
