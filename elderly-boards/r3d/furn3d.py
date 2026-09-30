@@ -84,9 +84,9 @@ def grab(L=.6,h=.8,z=0,axis='x',mat='door0'):
     cyl(0,0,z+h,.017,L,mat,axis=axis,seg=10,name='grab')
 def shower_seat(z=0): box(0,0,z+.46,.5,.45,.04,'oak_light',bevel=.01,name='seat'); box(0,.2,z+.23,.04,.04,.46,'steel',name='sleg')
 def sofa(w=2.0,d=.9,mat='sage',z=0):
-    box(0,0,z+.22,w,d,.30,mat,bevel=.05,name='sofa_base')
-    box(0,d/2-.1,z+.6,w,.2,.55,mat,bevel=.07,name='sofa_back')
-    for sx in (-1,1): box(sx*(w/2-.09),.02,z+.45,.18,d-.04,.35,mat,bevel=.035,name='sofa_arm')
+    box(0,0,z+.22,w-.03,d-.02,.30,mat,bevel=.05,name='sofa_base')
+    box(0,d/2-.1,z+.6,w-.03,.2,.55,mat,bevel=.07,name='sofa_back')
+    for sx in (-1,1): box(sx*(w/2-.085),.0,z+.45,.19,d,.35,mat,bevel=.035,name='sofa_arm')
     n=max(2,round(w/.7))
     for i in range(n): box(-w/2+.18+(w-.36)*(i+.5)/n,-.04,z+.45,(w-.36)/n-.02,d-.28,.14,mat+'_l' if mat+'_l' in __import__('geo')._mats else mat,bevel=.05,name='cushion')
     for sx in (-1,1): box(sx*(w/2-.09),-d/2+.02,z+.06,.05,.05,.1,'oak',name='sofa_leg')
@@ -99,7 +99,7 @@ def chair(z=0,mat='terra'):
 def table_round(d=1.2,h=.75,z=0,mat='oak_light',n=0,chair_mat='terra'):
     cyl(0,0,z+h,d/2,.04,mat,seg=36,name='table_top'); cyl(0,0,z+h/2,.05,h,'oak',seg=10,name='ped'); cyl(0,0,z+.02,.28,.03,'oak',seg=18,name='foot')
     if d>.8:
-        cyl(0,0,z+h+.13,.05,.22,'glass',seg=16,name='vase',r2=.035)
+        cyl(0,0,z+h+.13,.05,.22,'white',seg=16,name='vase',r2=.035)
         for k in range(6):
             a=k*1.05; sphere(math.cos(a)*.05,math.sin(a)*.05,z+h+.3+.02*(k%3),.05,'yellow' if k%2 else 'cream',seg=8,name='flower')
         sphere(0,0,z+h+.28,.09,'leaf2',sz=.7,seg=8,name='foliage')
