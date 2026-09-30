@@ -62,7 +62,7 @@ def all_mats():
     base('white',(.95,.95,.94),.5)
     base('gloss_white',(.95,.95,.95),.15,spec=.6)
     base('concrete',(.62,.6,.57),.9)
-    base('ground',(.34,.5,.24),1)
+    base('ground',(.2,.36,.15),1)
     base('paving',(.7,.66,.6),.85)
     wood('oak_floor',(.74,.58,.42),(.82,.67,.5),scale=4,planks=True,rough=.34)
     wood('oak',(.6,.44,.28),(.72,.55,.36),scale=5,rough=.5)

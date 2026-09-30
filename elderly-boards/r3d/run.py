@@ -22,6 +22,9 @@ def setup_scene():
     sky=nt.nodes.new('ShaderNodeTexSky'); sky.sky_type='MULTIPLE_SCATTERING'; sky.sun_elevation=math.radians(32); sky.sun_rotation=math.radians(200); sky.sun_disc=False
     bg=nt.nodes.new('ShaderNodeBackground'); bg.inputs['Strength'].default_value=2.2; out=nt.nodes.new('ShaderNodeOutputWorld')
     nt.links.new(sky.outputs['Color'],bg.inputs['Color']); nt.links.new(bg.outputs['Background'],out.inputs['Surface'])
+    rgbn=nt.nodes.new('ShaderNodeRGB'); rgbn.outputs[0].default_value=(0.9,0.93,0.97,1)
+    global SKYN,RGBN
+    SKYN,RGBN=sky,rgbn
     # sun
     sun=bpy.data.lights.new('sun','SUN'); sun.energy=12.0; sun.color=(1,.96,.9); sun.angle=math.radians(1.2)
     so=bpy.data.objects.new('sun',sun); sc.collection.objects.link(so)
@@ -84,8 +87,8 @@ def Vw(f,pos_uv,tgt_uv,zc,zt,lens,exp=1.2):
     a=W(*pos_uv); b=W(*tgt_uv); z=lvl(f)
     return dict(pos=(*P(*a),zc+z),tgt=(*P(*b),zt+z),lens=lens,exp=exp)
 VIEWS['activity1']=Vw(1,(641,84),(692,120),1.6,0.8,16,0.6)
-VIEWS['aerial1']=dict(pos=(-3,-88,42),tgt=(33,-45,1.5),lens=58,exp=-0.4,mode='aerial1')
-VIEWS['aerial2']=dict(pos=(-3,-88,46),tgt=(33,-45,3.5),lens=58,exp=-0.4,mode='aerial2')
+VIEWS['aerial1']=dict(pos=(9,-97,44),tgt=(33,-45,1.5),lens=48,exp=-0.5,mode='aerial1')
+VIEWS['aerial2']=dict(pos=(9,-97,48),tgt=(33,-45,3.5),lens=48,exp=-0.5,mode='aerial2')
 def hide_above(z):
     for ob in bpy.data.objects:
         if ob.type=='MESH':
@@ -97,8 +100,11 @@ def ortho_top(cx,cy,scale,z=80):
     bpy.context.scene.camera=co
 def set_mode(mode):
     sun=bpy.data.lights['sun']; bg=bpy.context.scene.world.node_tree.nodes['Background']
-    if mode.startswith('aerial'): sun.energy=4.0; bg.inputs['Strength'].default_value=0.9
-    else: sun.energy=12.0; bg.inputs['Strength'].default_value=2.2
+    nt=bpy.context.scene.world.node_tree
+    if mode.startswith('aerial'):
+        sun.energy=3.2; bg.inputs['Strength'].default_value=0.75; nt.links.new(RGBN.outputs[0],bg.inputs['Color'])
+    else:
+        sun.energy=12.0; bg.inputs['Strength'].default_value=2.2; nt.links.new(SKYN.outputs['Color'],bg.inputs['Color'])
     for ob in bpy.data.objects: ob.hide_render=False
     if mode=='aerial1': hide_above(H-.001)
     if mode in ('aerial1','aerial2'):
