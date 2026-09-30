@@ -5,3 +5,4 @@ src/fonts.css
 src/__pycache__/
 renders/*.png
 renders/paper.png
+__pycache__/
