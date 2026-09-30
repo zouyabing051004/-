@@ -84,9 +84,9 @@ def grab(L=.6,h=.8,z=0,axis='x',mat='door0'):
     cyl(0,0,z+h,.017,L,mat,axis=axis,seg=10,name='grab')
 def shower_seat(z=0): box(0,0,z+.46,.5,.45,.04,'oak_light',bevel=.01,name='seat'); box(0,.2,z+.23,.04,.04,.46,'steel',name='sleg')
 def sofa(w=2.0,d=.9,mat='sage',z=0):
-    box(0,0,z+.22,w-.03,d-.02,.30,mat,bevel=.05,name='sofa_base')
-    box(0,d/2-.1,z+.6,w-.03,.2,.55,mat,bevel=.07,name='sofa_back')
-    for sx in (-1,1): box(sx*(w/2-.085),.0,z+.45,.19,d,.35,mat,bevel=.035,name='sofa_arm')
+    box(0,0,z+.22,w-.03,d-.02,.30,mat,name='sofa_base')
+    box(0,d/2-.1,z+.6,w-.03,.2,.55,mat,name='sofa_back')
+    for sx in (-1,1): box(sx*(w/2-.085),.0,z+.45,.19,d,.35,mat,name='sofa_arm')
     n=max(2,round(w/.7))
     for i in range(n): box(-w/2+.18+(w-.36)*(i+.5)/n,-.04,z+.45,(w-.36)/n-.02,d-.28,.14,mat+'_l' if mat+'_l' in __import__('geo')._mats else mat,bevel=.05,name='cushion')
     for sx in (-1,1): box(sx*(w/2-.09),-d/2+.02,z+.06,.05,.05,.1,'oak',name='sofa_leg')
