@@ -6,3 +6,5 @@ src/__pycache__/
 renders/*.png
 renders/paper.png
 __pycache__/
+renders/old/
+renders/*.png
