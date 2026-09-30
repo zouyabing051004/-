@@ -69,7 +69,7 @@ def render(name,res=(1800,1200),samples=64,exposure=0.0):
 def V(f,pos,tgt,lens,exp=1.0):
     z=lvl(f); return dict(pos=(pos[0],pos[1],pos[2]+z),tgt=(tgt[0],tgt[1],tgt[2]+z),lens=lens,exp=exp)
 VIEWS={
- 'bedroom':V(2,pp(AX[2]+27,Y_UN+70,1.35),pp(AX[2]+12,Y_UN+18,1.0),15,0.4),
+ 'bedroom':V(2,pp(AX[2]+18,Y_UN+26,1.4),pp(AX[2]+20,Y_UN+74,0.95),14,0.6),
  'bath':V(2,pp(AX[2]+16.2,Y_UN+14,1.45),pp(AX[2]+2,Y_UN+16,1.0),14,0.2),
  'hall2':V(2,pp(345,437,1.55),pp(398,490,1.0),16,0.55),
  'corridor2':V(2,pp(84,425,1.5),pp(300,425,1.45),22,0.6),
