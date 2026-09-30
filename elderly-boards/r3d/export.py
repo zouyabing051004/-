@@ -4,7 +4,10 @@ import glob, os, sys
 import numpy as np
 from PIL import Image
 R=os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','renders')
-def grade(im):
+def grade(im,aerial=False):
+    if aerial:
+        a=np.asarray(im.convert('RGB'),dtype=np.float32)/255.0; g=a.mean(axis=2,keepdims=True); a=g+(a-g)*1.12
+        return Image.fromarray((np.clip(a,0,1)*255+.5).astype('uint8'))
     a=np.asarray(im.convert('RGB'),dtype=np.float32)/255.0
     lum=a.mean(axis=2)
     hi=np.percentile(lum,99.3)
@@ -18,4 +21,4 @@ force='--force' in sys.argv
 for f in sorted(glob.glob(os.path.join(R,'f_*.png'))):
     name=os.path.basename(f)[2:-4]; out=os.path.join(R,'final',name+'.jpg')
     if not force and os.path.exists(out) and os.path.getmtime(out)>=os.path.getmtime(f): continue
-    grade(Image.open(f)).save(out,quality=94,subsampling=0,dpi=(300,300)); print('exported',name)
+    grade(Image.open(f),name.startswith('aerial')).save(out,quality=94,subsampling=0,dpi=(300,300)); print('exported',name)
