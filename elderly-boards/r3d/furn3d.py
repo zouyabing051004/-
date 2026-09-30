@@ -123,7 +123,7 @@ def memory_box(mat='door0'):
 def door_leaf(w=.9,h=2.05,mat='door0',z=0,open_deg=0):
     box(0,0,z+h/2,w,.045,h,mat,bevel=.006,name='door'); box(w/2-.1,-.04,z+1.0,.14,.03,.03,'steel',name='dhandle')
 def pendant(z=2.2,r=.22,top=2.85):
-    cyl(0,0,(z+top)/2,.004,top-z,'steel',seg=6,name='cord'); sphere(0,0,z,r,'lamp_shade',sz=.9,seg=16,name='pend')
+    cyl(0,0,(z+top)/2,.004,top-z,'steel',seg=6,name='cord'); sphere(0,0,z,r,'lamp_shade',sz=.9,seg=32,name='pend')
 def downlight(z=2.845,r=.07): cyl(0,0,z,r,.01,'light_emit',seg=16,name='dl')
 def cove(L,axis='x',z=2.84,w=.08): 
     box(0,0,z,L if axis=='x' else w,w if axis=='x' else L,.012,'cove_emit',name='cove')

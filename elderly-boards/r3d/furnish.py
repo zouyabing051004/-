@@ -83,7 +83,7 @@ def hall_1f():
     at(F.bookshelf,0.25,2.9,270,w=1.7)
     at(F.armchair,1.1,2.9,270,mat='sage')
     at(F.sofa,5.6,6.65,180,w=2.0,mat='terra'); at(F.table_round,5.6,5.6,0,d=.7,h=.45)
-    at(F.plant,0.5,6.6,0,h=1.4); at(F.plant,7.4,1.2,0,h=1.6)
+    at(F.plant,7.4,1.2,0,h=1.6)
     for (x,y) in ((3.4,1.7),(5.6,2.1),(3.1,5.0)): at(F.pendant,x,y,0,z=2.05)
     for (x,y) in ((1.5,2.5),(4.5,3.4),(2.2,6.0),(6.0,4.2),(1.5,4.6)): at(F.downlight,x,y,0)
     # reception backdrop slat wall (south of counter) not needed
