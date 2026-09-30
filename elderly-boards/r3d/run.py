@@ -102,12 +102,12 @@ def set_mode(mode):
     # collections hide flag must be mirrored on their objects
     for cn in ('ceil1','ceil2'):
         for ob in bpy.data.collections[cn].objects: ob.hide_render=bpy.data.collections[cn].hide_render
-RES={'bath':(1600,1600),'aerial1':(2400,1500),'aerial2':(2400,1500)}
+RES={'bath':(1300,1300),'aerial1':(2200,1400),'aerial2':(2200,1400)}
 def final(names,samples=128):
     setup_scene(); build_all()
     for name in names:
         v=VIEWS[name]; set_mode(v.get('mode','interior')); camera(v['pos'],v['tgt'],v['lens'])
-        render('f_'+name,RES.get(name,(2400,1300)),samples,v['exp'])
+        render('f_'+name,RES.get(name,(1800,1000)),samples,v['exp'])
 if __name__=='__main__' and sys.argv[1]=='FINAL':
     final(sys.argv[2].split(','),int(sys.argv[3]))
 elif __name__=='__main__':
