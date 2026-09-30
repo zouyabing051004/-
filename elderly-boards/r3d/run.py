@@ -87,8 +87,8 @@ def Vw(f,pos_uv,tgt_uv,zc,zt,lens,exp=1.2):
     a=W(*pos_uv); b=W(*tgt_uv); z=lvl(f)
     return dict(pos=(*P(*a),zc+z),tgt=(*P(*b),zt+z),lens=lens,exp=exp)
 VIEWS['activity1']=Vw(1,(641,84),(692,120),1.6,0.8,16,0.6)
-VIEWS['aerial1']=dict(pos=(9,-97,44),tgt=(33,-45,1.5),lens=48,exp=-0.5,mode='aerial1')
-VIEWS['aerial2']=dict(pos=(9,-97,48),tgt=(33,-45,3.5),lens=48,exp=-0.5,mode='aerial2')
+VIEWS['aerial1']=dict(pos=(11,-102,46),tgt=(31,-45.5,2.0),lens=44,exp=-0.35,mode='aerial1')
+VIEWS['aerial2']=dict(pos=(11,-102,50),tgt=(31,-45.5,3.5),lens=44,exp=-0.35,mode='aerial2')
 def hide_above(z):
     for ob in bpy.data.objects:
         if ob.type=='MESH':
