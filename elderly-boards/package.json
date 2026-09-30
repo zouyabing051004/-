@@ -1,0 +1,11 @@
+{
+  "name": "elderly-boards",
+  "private": true,
+  "description": "Fonts used by the A1 board build (Noto Sans/Serif SC, Ma Shan Zheng, Long Cang)",
+  "dependencies": {
+    "@fontsource/long-cang": "^5.0.0",
+    "@fontsource/ma-shan-zheng": "^5.0.0",
+    "@fontsource/noto-sans-sc": "^5.0.0",
+    "@fontsource/noto-serif-sc": "^5.0.0"
+  }
+}

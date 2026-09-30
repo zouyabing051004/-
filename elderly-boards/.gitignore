@@ -1,0 +1,5 @@
+node_modules/
+tmp/
+out/*.html
+src/fonts.css
+src/__pycache__/
