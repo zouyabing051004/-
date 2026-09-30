@@ -14,16 +14,16 @@ def setup_scene():
     except Exception: pass
     cy.max_bounces=8; cy.diffuse_bounces=4; cy.glossy_bounces=3; cy.transmission_bounces=6; cy.transparent_max_bounces=6
     cy.sample_clamp_indirect=8; cy.caustics_reflective=False; cy.caustics_refractive=False
-    sc.view_settings.view_transform='AgX'; sc.view_settings.look='AgX - Medium High Contrast' if False else 'None'
+    sc.view_settings.view_transform='Khronos PBR Neutral'; sc.view_settings.look='AgX - Medium High Contrast' if False else 'None'
     sc.render.image_settings.file_format='PNG'; sc.render.image_settings.color_depth='16'
     # world
     w=bpy.data.worlds.new('w'); sc.world=w; w.use_nodes=True; nt=w.node_tree
     for n in list(nt.nodes): nt.nodes.remove(n)
     sky=nt.nodes.new('ShaderNodeTexSky'); sky.sky_type='MULTIPLE_SCATTERING'; sky.sun_elevation=math.radians(32); sky.sun_rotation=math.radians(200); sky.sun_disc=False
-    bg=nt.nodes.new('ShaderNodeBackground'); bg.inputs['Strength'].default_value=1.4; out=nt.nodes.new('ShaderNodeOutputWorld')
+    bg=nt.nodes.new('ShaderNodeBackground'); bg.inputs['Strength'].default_value=2.2; out=nt.nodes.new('ShaderNodeOutputWorld')
     nt.links.new(sky.outputs['Color'],bg.inputs['Color']); nt.links.new(bg.outputs['Background'],out.inputs['Surface'])
     # sun
-    sun=bpy.data.lights.new('sun','SUN'); sun.energy=9.0; sun.color=(1,.92,.78); sun.angle=math.radians(1.2)
+    sun=bpy.data.lights.new('sun','SUN'); sun.energy=12.0; sun.color=(1,.96,.9); sun.angle=math.radians(1.2)
     so=bpy.data.objects.new('sun',sun); sc.collection.objects.link(so)
     d=Vector((0.45,0.75,-0.55)); so.rotation_euler=d.to_track_quat('-Z','Y').to_euler()
     # ground
